@@ -28,14 +28,7 @@ export default function Room({ width = 10, depth = 10, height = 3.5 }) {
         <meshStandardMaterial {...materialProps} />
       </mesh>
 
-      {/* Back wall (mountain wall placeholder — will be replaced in phase 2) */}
-      <mesh position={[0, halfH, -halfD]}>
-        <boxGeometry args={[width, height, WALL_THICKNESS]} />
-        <meshStandardMaterial
-          {...materialProps}
-          color={isConstruction ? '#556' : '#222'}
-        />
-      </mesh>
+      {/* Back wall removed — replaced by MountainWall component */}
 
       {/* Front wall (behind the viewer) */}
       <mesh position={[0, halfH, halfD]}>

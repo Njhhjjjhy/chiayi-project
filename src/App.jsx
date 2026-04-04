@@ -7,7 +7,7 @@ import Scene from './components/Scene'
 import VariantSwitcher from './components/VariantSwitcher'
 
 function AppInner() {
-  const { roomWidth, roomDepth, roomHeight, showGrid, cameraPreset } =
+  const { roomWidth, roomDepth, roomHeight, showGrid, cameraPreset, mountainOverrides } =
     useLevaControls()
 
   return (
@@ -26,6 +26,7 @@ function AppInner() {
           roomDepth={roomDepth}
           roomHeight={roomHeight}
           showGrid={showGrid}
+          mountainOverrides={mountainOverrides}
         />
       </Canvas>
       <VariantSwitcher />

@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { variantCategories, viewModes } from '../variants/config'
 import { useVariant } from '../hooks/useVariant.jsx'
 
-function CategorySection({ label, variants }) {
-  const [open, setOpen] = useState(false)
+function CategorySection({ categoryKey, label, variants }) {
+  const [open, setOpen] = useState(true)
+  const { selections, selectVariant } = useVariant()
   const hasVariants = variants.length > 0
+  const activeId = selections[categoryKey]
 
   return (
     <div className="border-b border-white/10 last:border-b-0">
@@ -24,12 +26,23 @@ function CategorySection({ label, variants }) {
         )}
       </button>
       {open && hasVariants && (
-        <div className="px-3 pb-2 text-xs text-white/50">
-          {variants.map((v) => (
-            <div key={v.id} className="py-1">
-              {v.label}
-            </div>
-          ))}
+        <div className="px-3 pb-2">
+          {variants.map((v) => {
+            const isActive = activeId === v.id
+            return (
+              <button
+                key={v.id}
+                onClick={() => selectVariant(categoryKey, v.id)}
+                className={`w-full text-left text-xs py-1.5 px-2 rounded transition-colors cursor-pointer ${
+                  isActive
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/40 hover:text-white/60 hover:bg-white/5'
+                }`}
+              >
+                {v.label}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>
@@ -78,6 +91,7 @@ export default function VariantSwitcher() {
               {Object.entries(variantCategories).map(([key, cat]) => (
                 <CategorySection
                   key={key}
+                  categoryKey={key}
                   label={cat.label}
                   variants={cat.variants}
                 />

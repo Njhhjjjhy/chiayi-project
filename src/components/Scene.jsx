@@ -2,8 +2,9 @@ import { useRef } from 'react'
 import { OrbitControls, Grid } from '@react-three/drei'
 import { useVariant } from '../hooks/useVariant.jsx'
 import Room from './Room'
+import MountainWall from './MountainWall'
 
-export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5, showGrid = true }) {
+export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5, showGrid = true, mountainOverrides = {} }) {
   const controlsRef = useRef()
   const { viewMode } = useVariant()
   const isConstruction = viewMode === 'construction'
@@ -26,12 +27,15 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
       />
 
       {/* Lighting */}
-      <ambientLight intensity={isConstruction ? 0.8 : 0.15} />
+      <ambientLight intensity={isConstruction ? 0.8 : 1.0} />
       {!isConstruction && (
-        <pointLight position={[0, roomHeight - 0.5, 0]} intensity={0.3} />
+        <>
+          <pointLight position={[0, roomHeight - 0.5, 0]} intensity={1.5} />
+          <pointLight position={[0, 2, -3]} intensity={1.0} />
+        </>
       )}
 
-      {/* Grid helper — visible in construction mode, togglable in experience mode */}
+      {/* Grid helper */}
       {(isConstruction || showGrid) && (
         <Grid
           position={[0, 0.001, 0]}
@@ -47,8 +51,11 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
         />
       )}
 
-      {/* Room */}
+      {/* Room shell */}
       <Room width={roomWidth} depth={roomDepth} height={roomHeight} />
+
+      {/* Mountain wall */}
+      <MountainWall overrides={mountainOverrides} />
     </>
   )
 }

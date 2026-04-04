@@ -1,15 +1,10 @@
-import { create } from 'zustand'
-
-// Removed zustand dependency — using simple React context instead
-// to avoid adding another dependency. Can switch to zustand later if needed.
-
 import { createContext, useContext, useState, useCallback } from 'react'
 
 const VariantContext = createContext(null)
 
 export function VariantProvider({ children }) {
   const [selections, setSelections] = useState({
-    mountainWall: null,
+    mountainWall: 'softRolling',
     lighting: null,
     fireflies: null,
     room: null,
