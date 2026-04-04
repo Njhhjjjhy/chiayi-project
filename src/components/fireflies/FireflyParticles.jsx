@@ -11,7 +11,7 @@ const tempColor = new THREE.Color()
 export default function FireflyParticles({ count, positions, opacities, colors, size = 0.2 }) {
   const meshRef = useRef()
 
-  const geometry = useMemo(() => new THREE.SphereGeometry(1, 8, 8), [])
+  const geometry = useMemo(() => new THREE.SphereGeometry(1, 4, 4), [])
   const material = useMemo(() => new THREE.MeshBasicMaterial({
     color: '#ffcc66',
     transparent: true,

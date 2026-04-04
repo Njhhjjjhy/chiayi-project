@@ -108,6 +108,8 @@ function MountainLayer({ profile, depth, color, thickness, isConstruction }) {
         color={color}
         wireframe={isConstruction}
         side={THREE.DoubleSide}
+        roughness={1}
+        metalness={0}
       />
     </mesh>
   )

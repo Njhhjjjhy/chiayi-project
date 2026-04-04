@@ -1,5 +1,3 @@
-import { useCallback } from 'react'
-
 export default function LandingPage({ onScrollToExperience }) {
   return (
     <div className="relative z-30 bg-black">
@@ -21,8 +19,8 @@ export default function LandingPage({ onScrollToExperience }) {
         >
           Enter the room
         </button>
-        <div className="absolute bottom-8 text-white/15 text-xs animate-pulse">
-          Scroll down
+        <div className="absolute bottom-8 text-white/15 text-xs animate-bounce">
+          ↓
         </div>
       </section>
 
