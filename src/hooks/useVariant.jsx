@@ -5,7 +5,7 @@ const VariantContext = createContext(null)
 export function VariantProvider({ children }) {
   const [selections, setSelections] = useState({
     mountainWall: 'softRolling',
-    lighting: null,
+    lighting: 'warmDominant',
     fireflies: null,
     room: null,
   })

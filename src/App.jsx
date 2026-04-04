@@ -2,9 +2,11 @@ import { Canvas } from '@react-three/fiber'
 import { Leva } from 'leva'
 import { useState, useEffect } from 'react'
 import { VariantProvider } from './hooks/useVariant.jsx'
+import { TimelineProvider } from './hooks/useTimeline.jsx'
 import { useLevaControls } from './components/LevaControls'
 import Scene from './components/Scene'
 import VariantSwitcher from './components/VariantSwitcher'
+import TimelineController from './components/TimelineController'
 
 function AppInner() {
   const { roomWidth, roomDepth, roomHeight, showGrid, cameraPreset, mountainOverrides } =
@@ -30,6 +32,7 @@ function AppInner() {
         />
       </Canvas>
       <VariantSwitcher />
+      <TimelineController />
     </>
   )
 }
@@ -49,10 +52,12 @@ export default function App() {
 
   return (
     <VariantProvider>
-      <Leva hidden={levaHidden} collapsed={false} />
-      <div className="w-screen h-screen relative">
-        <AppInner />
-      </div>
+      <TimelineProvider>
+        <Leva hidden={levaHidden} collapsed={false} />
+        <div className="w-screen h-screen relative">
+          <AppInner />
+        </div>
+      </TimelineProvider>
     </VariantProvider>
   )
 }

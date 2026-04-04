@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { useVariant } from '../hooks/useVariant.jsx'
+import { useLightingState } from '../hooks/useLightingState.jsx'
 import { mountainWallVariants } from '../variants/mountainWall.js'
 
 const WALL_WIDTH = 10
@@ -144,14 +145,14 @@ function Backlight({ depth, color, intensity, isConstruction }) {
   )
 }
 
-function SunLines({ depth, color, intensity, isConstruction }) {
-  if (isConstruction) return null
+function SunLines({ depth, color, intensity, sunLineOpacity, isConstruction }) {
+  if (isConstruction || sunLineOpacity <= 0) return null
 
   const lineCount = 5
   const lines = []
   for (let i = 0; i < lineCount; i++) {
     const y = WALL_HEIGHT * 0.3 + (i / (lineCount - 1)) * WALL_HEIGHT * 0.5
-    const opacity = 0.15 + (i / lineCount) * 0.2
+    const opacity = (0.15 + (i / lineCount) * 0.2) * sunLineOpacity
     lines.push(
       <mesh key={i} position={[0, y, depth + 0.01]}>
         <planeGeometry args={[WALL_WIDTH * 0.95, 0.02 + i * 0.008]} />
@@ -172,6 +173,7 @@ function SunLines({ depth, color, intensity, isConstruction }) {
 export default function MountainWall({ overrides = {} }) {
   const { selections, viewMode } = useVariant()
   const isConstruction = viewMode === 'construction'
+  const lighting = useLightingState()
 
   const variantId = selections.mountainWall || 'softRolling'
   const baseVariant = mountainWallVariants[variantId] || mountainWallVariants.softRolling
@@ -184,10 +186,12 @@ export default function MountainWall({ overrides = {} }) {
     peakFrequency,
     profileType,
     layerColors,
-    backlightColor,
     backlightIntensity,
     sunLines,
   } = variant
+
+  // Backlight color driven by timeline, with variant intensity as modifier
+  const backlightColor = lighting.backlightColor
 
   // Generate profiles for each layer
   const profiles = useMemo(() => {
@@ -208,6 +212,7 @@ export default function MountainWall({ overrides = {} }) {
           depth={-0.05}
           color={backlightColor}
           intensity={backlightIntensity}
+          sunLineOpacity={lighting.sunLineOpacity}
           isConstruction={isConstruction}
         />
       )}
