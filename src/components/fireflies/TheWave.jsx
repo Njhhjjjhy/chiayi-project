@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useControls, folder } from 'leva'
 import FireflyParticles from './FireflyParticles.jsx'
 
-const COUNT = 100
+const COUNT = 300
 const ROOM = { w: 10, h: 3.5, d: 10 }
 
 export default function TheWave({ masterOpacity }) {
@@ -90,7 +90,7 @@ export default function TheWave({ masterOpacity }) {
       positions={state.current.positions}
       opacities={state.current.opacities}
       colors={state.current.colors}
-      size={0.12}
+      size={0.2}
     />
   )
 }

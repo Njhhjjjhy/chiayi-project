@@ -4,9 +4,9 @@ import { useControls, folder } from 'leva'
 import FireflyParticles from './FireflyParticles.jsx'
 
 const SPECIES = [
-  { count: 15, cycle: 4, color: [1.0, 0.67, 0.24], zone: { xMin: -4, xMax: -1, zMin: -4, zMax: 0 } },
-  { count: 20, cycle: 3, color: [1.0, 0.78, 0.39], zone: { xMin: -1, xMax: 2, zMin: -3, zMax: 2 } },
-  { count: 12, cycle: 10, color: [0.78, 0.9, 0.39], zone: { xMin: 1, xMax: 4, zMin: -4, zMax: 1 } },
+  { count: 100, cycle: 4, color: [1.0, 0.67, 0.24], zone: { xMin: -4, xMax: -1, zMin: -4, zMax: 0 } },
+  { count: 120, cycle: 3, color: [1.0, 0.78, 0.39], zone: { xMin: -1, xMax: 2, zMin: -3, zMax: 2 } },
+  { count: 80, cycle: 10, color: [0.78, 0.9, 0.39], zone: { xMin: 1, xMax: 4, zMin: -4, zMax: 1 } },
 ]
 
 const TOTAL = SPECIES.reduce((sum, s) => sum + s.count, 0)
@@ -97,7 +97,7 @@ export default function FlashLanguage({ masterOpacity }) {
       positions={state.current.positions}
       opacities={state.current.opacities}
       colors={state.current.colors}
-      size={0.1}
+      size={0.18}
     />
   )
 }

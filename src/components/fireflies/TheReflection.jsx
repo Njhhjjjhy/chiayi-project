@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useControls, folder } from 'leva'
 import FireflyParticles from './FireflyParticles.jsx'
 
-const COUNT = 100
+const COUNT = 300
 const ROOM = { w: 10, h: 3.5, d: 10 }
 
 export default function TheReflection({ masterOpacity }) {
@@ -115,7 +115,7 @@ export default function TheReflection({ masterOpacity }) {
         positions={state.current.positions}
         opacities={state.current.opacities}
         colors={state.current.colors}
-        size={0.1}
+        size={0.18}
       />
     </>
   )
