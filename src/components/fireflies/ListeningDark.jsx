@@ -8,7 +8,7 @@ const ROOM = { w: 10, h: 3.5, d: 10 }
 
 function randomInRoom(i, arr) {
   arr[i * 3] = (Math.random() - 0.5) * ROOM.w * 0.8
-  arr[i * 3 + 1] = 0.3 + Math.random() * (ROOM.h - 0.6)
+  arr[i * 3 + 1] = ROOM.h * 0.5 + Math.random() * ROOM.h * 1.2 // most above or near ceiling
   arr[i * 3 + 2] = (Math.random() - 0.5) * ROOM.d * 0.8
 }
 

@@ -32,7 +32,7 @@ export default function FlashLanguage({ masterOpacity }) {
       for (let i = 0; i < species.count; i++) {
         const z = species.zone
         positions[idx * 3] = z.xMin + Math.random() * (z.xMax - z.xMin)
-        positions[idx * 3 + 1] = 0.5 + Math.random() * (ROOM_H - 1)
+        positions[idx * 3 + 1] = ROOM_H * 0.5 + Math.random() * ROOM_H * 1.2
         positions[idx * 3 + 2] = z.zMin + Math.random() * (z.zMax - z.zMin)
         colors[idx * 3] = species.color[0]
         colors[idx * 3 + 1] = species.color[1]

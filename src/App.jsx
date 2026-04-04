@@ -7,6 +7,7 @@ import { useLevaControls } from './components/LevaControls'
 import Scene from './components/Scene'
 import VariantSwitcher from './components/VariantSwitcher'
 import TimelineController from './components/TimelineController'
+import ConstructionToolbar from './components/ConstructionToolbar'
 
 function AppInner() {
   const { roomWidth, roomDepth, roomHeight, showGrid, mountainOverrides } =
@@ -22,6 +23,7 @@ function AppInner() {
           near: 0.1,
           far: 100,
         }}
+        gl={{ preserveDrawingBuffer: true }}
         className="!absolute inset-0"
       >
         <Scene
@@ -35,6 +37,7 @@ function AppInner() {
       </Canvas>
       <VariantSwitcher onCameraPreset={setActiveCameraPreset} />
       <TimelineController />
+      <ConstructionToolbar />
     </>
   )
 }

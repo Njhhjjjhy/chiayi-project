@@ -8,7 +8,7 @@ export function VariantProvider({ children }) {
     mountainWall: 'softRolling',
     lighting: 'warmDominant',
     fireflies: 'flashLanguage',
-    ceiling: 'flatPanel',
+    ceiling: 'openExposed',
     floor: 'simpleMatte',
   })
   const [viewMode, setViewMode] = useState('experience')
