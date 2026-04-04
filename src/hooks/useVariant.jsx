@@ -6,7 +6,7 @@ export function VariantProvider({ children }) {
   const [selections, setSelections] = useState({
     mountainWall: 'softRolling',
     lighting: 'warmDominant',
-    fireflies: null,
+    fireflies: 'flashLanguage',
     room: null,
   })
   const [viewMode, setViewMode] = useState('experience')
