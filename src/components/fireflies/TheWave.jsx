@@ -25,7 +25,7 @@ export default function TheWave({ masterOpacity }) {
 
     for (let i = 0; i < COUNT; i++) {
       positions[i * 3] = (Math.random() - 0.5) * ROOM.w * 0.8
-      positions[i * 3 + 1] = 0.3 + Math.random() * (ROOM.h - 0.6)
+      positions[i * 3 + 1] = ROOM.h * 0.5 + Math.random() * ROOM.h * 1.2
       positions[i * 3 + 2] = (Math.random() - 0.5) * ROOM.d * 0.8
       colors[i * 3] = 1.0
       colors[i * 3 + 1] = 0.72 + Math.random() * 0.1

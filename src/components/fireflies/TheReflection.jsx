@@ -43,7 +43,7 @@ export default function TheReflection({ masterOpacity }) {
       positions[i * 3 + 1] = ROOM.h / 2
       positions[i * 3 + 2] = 0
       homePositions[i * 3] = (Math.random() - 0.5) * ROOM.w * 0.7
-      homePositions[i * 3 + 1] = 0.5 + Math.random() * (ROOM.h - 1)
+      homePositions[i * 3 + 1] = ROOM.h * 0.5 + Math.random() * ROOM.h * 1.2
       homePositions[i * 3 + 2] = (Math.random() - 0.5) * ROOM.d * 0.7
       colors[i * 3] = 1.0
       colors[i * 3 + 1] = 0.75 + Math.random() * 0.1
