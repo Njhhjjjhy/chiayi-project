@@ -10,7 +10,7 @@ export default function Room({ width = 10, depth = 10, height = 3.5 }) {
 
   // H2: Proper matte material for walls
   const materialProps = isConstruction
-    ? { wireframe: true, color: '#444' }
+    ? { wireframe: true, color: '#666' }
     : { color: '#0e0e0e', roughness: 1, metalness: 0 }
 
   const halfW = width / 2

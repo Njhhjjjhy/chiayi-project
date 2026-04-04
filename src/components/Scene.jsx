@@ -52,11 +52,16 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
 
   const maxOrbitRadius = Math.min(roomWidth, roomDepth) / 2 - 0.5
 
-  // H5: Tone mapping
+  // H5: Tone mapping — only in experience mode
   useEffect(() => {
-    gl.toneMapping = THREE.ACESFilmicToneMapping
-    gl.toneMappingExposure = 0.9
-  }, [gl])
+    if (isConstruction) {
+      gl.toneMapping = THREE.NoToneMapping
+      gl.toneMappingExposure = 1.0
+    } else {
+      gl.toneMapping = THREE.ACESFilmicToneMapping
+      gl.toneMappingExposure = 0.9
+    }
+  }, [gl, isConstruction])
 
   // Construction mode: light background. Experience: black.
   useEffect(() => {
@@ -115,8 +120,9 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
       {/* Lighting */}
       {isConstruction ? (
         <>
-          <ambientLight intensity={1.2} color="#ffffff" />
-          <directionalLight position={[5, 10, 5]} intensity={0.5} />
+          <ambientLight intensity={2.0} color="#ffffff" />
+          <directionalLight position={[5, 10, 5]} intensity={1.0} />
+          <directionalLight position={[-5, 8, -3]} intensity={0.5} />
         </>
       ) : (
         <>

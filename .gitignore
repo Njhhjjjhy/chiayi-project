@@ -18,3 +18,4 @@ dist/
 
 # showcase (portfolio docs, not part of codebase)
 showcase/
+.vercel
