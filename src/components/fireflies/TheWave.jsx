@@ -1,0 +1,96 @@
+import { useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { useControls, folder } from 'leva'
+import FireflyParticles from './FireflyParticles.jsx'
+
+const COUNT = 100
+const ROOM = { w: 10, h: 3.5, d: 10 }
+
+export default function TheWave({ masterOpacity }) {
+  const { waveInterval, waveSpeed, waveWidth } = useControls('fireflies', {
+    theWave: folder({
+      waveInterval: { value: 15, min: 5, max: 30, step: 1, label: 'Wave interval (s)' },
+      waveSpeed: { value: 3, min: 1, max: 8, step: 0.5, label: 'Wave speed (s)' },
+      waveWidth: { value: 2, min: 0.5, max: 5, step: 0.5, label: 'Wave width (m)' },
+    }, { collapsed: true }),
+  })
+
+  const state = useRef(null)
+
+  if (!state.current) {
+    const positions = new Float32Array(COUNT * 3)
+    const opacities = new Float32Array(COUNT)
+    const colors = new Float32Array(COUNT * 3)
+    const basePhases = new Float32Array(COUNT)
+
+    for (let i = 0; i < COUNT; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * ROOM.w * 0.8
+      positions[i * 3 + 1] = 0.3 + Math.random() * (ROOM.h - 0.6)
+      positions[i * 3 + 2] = (Math.random() - 0.5) * ROOM.d * 0.8
+      colors[i * 3] = 1.0
+      colors[i * 3 + 1] = 0.72 + Math.random() * 0.1
+      colors[i * 3 + 2] = 0.2 + Math.random() * 0.1
+      basePhases[i] = Math.random() * Math.PI * 2
+    }
+
+    state.current = {
+      positions, opacities, colors, basePhases,
+      lastWaveTime: 0,
+      waveDirection: 0, // 0=x, 1=z, 2=radial
+    }
+  }
+
+  useFrame(() => {
+    const s = state.current
+    const t = Date.now() / 1000
+
+    // Check if we should start a new wave
+    if (t - s.lastWaveTime > waveInterval) {
+      s.lastWaveTime = t
+      s.waveDirection = Math.floor(Math.random() * 3)
+    }
+
+    const timeSinceWave = t - s.lastWaveTime
+    const waveActive = timeSinceWave < waveSpeed
+    // Wave front position: sweeps from -5 to +5 (room width)
+    const waveFront = waveActive
+      ? -5 + (timeSinceWave / waveSpeed) * 10
+      : -999
+
+    for (let i = 0; i < COUNT; i++) {
+      // Independent pulse
+      const indPulse = (Math.sin(t * 1.2 + s.basePhases[i]) * 0.5 + 0.5) * 0.3
+
+      let waveBrightness = 0
+      if (waveActive) {
+        let particlePos
+        if (s.waveDirection === 0) particlePos = s.positions[i * 3] // x sweep
+        else if (s.waveDirection === 1) particlePos = s.positions[i * 3 + 2] // z sweep
+        else {
+          // Radial from center
+          const dx = s.positions[i * 3]
+          const dz = s.positions[i * 3 + 2]
+          particlePos = Math.sqrt(dx * dx + dz * dz)
+        }
+        const dist = Math.abs(particlePos - waveFront)
+        waveBrightness = Math.max(0, 1 - dist / waveWidth)
+      }
+
+      s.opacities[i] = Math.max(indPulse, waveBrightness) * masterOpacity
+
+      // Gentle drift
+      s.positions[i * 3] += Math.sin(t * 0.4 + i) * 0.0006
+      s.positions[i * 3 + 1] += Math.cos(t * 0.25 + i * 1.5) * 0.0003
+    }
+  })
+
+  return (
+    <FireflyParticles
+      count={COUNT}
+      positions={state.current.positions}
+      opacities={state.current.opacities}
+      colors={state.current.colors}
+      size={0.12}
+    />
+  )
+}

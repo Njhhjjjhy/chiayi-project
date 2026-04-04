@@ -5,6 +5,7 @@ import { useLightingState } from '../hooks/useLightingState.jsx'
 import Room from './Room'
 import MountainWall from './MountainWall'
 import SkyBackdrop from './SkyBackdrop'
+import FireflySystem from './fireflies/FireflySystem.jsx'
 
 export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5, showGrid = true, mountainOverrides = {} }) {
   const controlsRef = useRef()
@@ -63,6 +64,9 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
 
       {/* Mountain wall — backlight driven by timeline */}
       <MountainWall overrides={mountainOverrides} />
+
+      {/* Fireflies — active during darkness phase */}
+      <FireflySystem />
     </>
   )
 }
