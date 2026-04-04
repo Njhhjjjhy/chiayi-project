@@ -1,13 +1,16 @@
 import { useRef } from 'react'
 import { OrbitControls, Grid } from '@react-three/drei'
 import { useVariant } from '../hooks/useVariant.jsx'
+import { useLightingState } from '../hooks/useLightingState.jsx'
 import Room from './Room'
 import MountainWall from './MountainWall'
+import SkyBackdrop from './SkyBackdrop'
 
 export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5, showGrid = true, mountainOverrides = {} }) {
   const controlsRef = useRef()
   const { viewMode } = useVariant()
   const isConstruction = viewMode === 'construction'
+  const lighting = useLightingState()
 
   const maxOrbitRadius = Math.min(roomWidth, roomDepth) / 2 - 0.5
 
@@ -26,12 +29,13 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
         rotateSpeed={0.5}
       />
 
-      {/* Lighting */}
-      <ambientLight intensity={isConstruction ? 0.8 : 1.0} />
-      {!isConstruction && (
+      {/* Lighting — driven by timeline in experience mode */}
+      {isConstruction ? (
+        <ambientLight intensity={0.8} />
+      ) : (
         <>
-          <pointLight position={[0, roomHeight - 0.5, 0]} intensity={1.5} />
-          <pointLight position={[0, 2, -3]} intensity={1.0} />
+          <ambientLight color={lighting.ambientColor} intensity={lighting.ambientIntensity} />
+          <pointLight position={[0, roomHeight - 0.5, 0]} color={lighting.ambientColor} intensity={lighting.ambientIntensity * 0.8} />
         </>
       )}
 
@@ -51,10 +55,13 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
         />
       )}
 
+      {/* Sky backdrop behind mountain wall */}
+      <SkyBackdrop />
+
       {/* Room shell */}
       <Room width={roomWidth} depth={roomDepth} height={roomHeight} />
 
-      {/* Mountain wall */}
+      {/* Mountain wall — backlight driven by timeline */}
       <MountainWall overrides={mountainOverrides} />
     </>
   )

@@ -1,4 +1,5 @@
 import { mountainWallVariantList } from './mountainWall.js'
+import { lightingVariantList } from './lighting.js'
 
 export const variantCategories = {
   mountainWall: {
@@ -7,7 +8,7 @@ export const variantCategories = {
   },
   lighting: {
     label: 'Lighting',
-    variants: [],
+    variants: lightingVariantList,
   },
   fireflies: {
     label: 'Fireflies',
