@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
+import { useThree } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
 import { useVariant } from '../hooks/useVariant.jsx'
 import { useLightingState } from '../hooks/useLightingState.jsx'
@@ -7,13 +8,23 @@ import MountainWall from './MountainWall'
 import SkyBackdrop from './SkyBackdrop'
 import FireflySystem from './fireflies/FireflySystem.jsx'
 
-export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5, showGrid = true, mountainOverrides = {} }) {
+export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5, showGrid = true, mountainOverrides = {}, cameraPreset }) {
   const controlsRef = useRef()
   const { viewMode } = useVariant()
   const isConstruction = viewMode === 'construction'
   const lighting = useLightingState()
+  const { camera } = useThree()
 
   const maxOrbitRadius = Math.min(roomWidth, roomDepth) / 2 - 0.5
+
+  // Apply camera preset
+  useEffect(() => {
+    if (cameraPreset && controlsRef.current) {
+      camera.position.set(...cameraPreset.position)
+      controlsRef.current.target.set(...cameraPreset.target)
+      controlsRef.current.update()
+    }
+  }, [cameraPreset, camera])
 
   return (
     <>

@@ -9,14 +9,15 @@ import VariantSwitcher from './components/VariantSwitcher'
 import TimelineController from './components/TimelineController'
 
 function AppInner() {
-  const { roomWidth, roomDepth, roomHeight, showGrid, cameraPreset, mountainOverrides } =
+  const { roomWidth, roomDepth, roomHeight, showGrid, mountainOverrides } =
     useLevaControls()
+  const [activeCameraPreset, setActiveCameraPreset] = useState(null)
 
   return (
     <>
       <Canvas
         camera={{
-          position: cameraPreset,
+          position: [0, 1.6, 3],
           fov: 60,
           near: 0.1,
           far: 100,
@@ -29,9 +30,10 @@ function AppInner() {
           roomHeight={roomHeight}
           showGrid={showGrid}
           mountainOverrides={mountainOverrides}
+          cameraPreset={activeCameraPreset}
         />
       </Canvas>
-      <VariantSwitcher />
+      <VariantSwitcher onCameraPreset={setActiveCameraPreset} />
       <TimelineController />
     </>
   )

@@ -1,12 +1,5 @@
 import { useControls, folder } from 'leva'
 
-const CAMERA_PRESETS = {
-  'Eye level': [0, 1.6, 3],
-  'Close to wall': [0, 1.6, 0],
-  Overhead: [0, 8, 0.1],
-  Corner: [4, 2.5, 4],
-}
-
 export function useLevaControls() {
   const controls = useControls({
     room: folder(
@@ -23,16 +16,6 @@ export function useLevaControls() {
       },
       { collapsed: true }
     ),
-    camera: folder(
-      {
-        preset: {
-          value: 'Eye level',
-          options: Object.keys(CAMERA_PRESETS),
-          label: 'Preset',
-        },
-      },
-      { collapsed: true }
-    ),
     mountain: folder(
       {
         layerSpacing: { value: 0.4, min: 0.05, max: 1.0, step: 0.05, label: 'Layer spacing' },
@@ -42,7 +25,7 @@ export function useLevaControls() {
         backlightIntensity: { value: 2.0, min: 0, max: 5, step: 0.1, label: 'Backlight intensity' },
         sunLines: { value: false, label: 'Sun lines' },
       },
-      { collapsed: false }
+      { collapsed: true }
     ),
   })
 
@@ -51,7 +34,6 @@ export function useLevaControls() {
     roomDepth: controls.depth,
     roomHeight: controls.height,
     showGrid: controls.showGrid,
-    cameraPreset: CAMERA_PRESETS[controls.preset],
     mountainOverrides: {
       spacing: controls.layerSpacing,
       peakAmplitude: controls.peakAmplitude,

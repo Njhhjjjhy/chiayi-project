@@ -1,4 +1,6 @@
 import { useVariant } from '../hooks/useVariant.jsx'
+import Ceiling from './Ceiling.jsx'
+import Floor from './Floor.jsx'
 
 const WALL_THICKNESS = 0.1
 
@@ -8,7 +10,7 @@ export default function Room({ width = 10, depth = 10, height = 3.5 }) {
 
   const materialProps = isConstruction
     ? { wireframe: true, color: '#444' }
-    : { color: '#1a1a1a' }
+    : { color: '#0e0e0e' }
 
   const halfW = width / 2
   const halfD = depth / 2
@@ -16,17 +18,11 @@ export default function Room({ width = 10, depth = 10, height = 3.5 }) {
 
   return (
     <group>
-      {/* Floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[width, depth]} />
-        <meshStandardMaterial {...materialProps} />
-      </mesh>
+      {/* Floor — variant-driven */}
+      <Floor />
 
-      {/* Ceiling */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]}>
-        <planeGeometry args={[width, depth]} />
-        <meshStandardMaterial {...materialProps} />
-      </mesh>
+      {/* Ceiling — variant-driven */}
+      <Ceiling />
 
       {/* Back wall removed — replaced by MountainWall component */}
 
