@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Leva } from 'leva'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { VariantProvider } from './hooks/useVariant.jsx'
 import { TimelineProvider } from './hooks/useTimeline.jsx'
 import { useLevaControls } from './components/LevaControls'
@@ -8,22 +8,28 @@ import Scene from './components/Scene'
 import VariantSwitcher from './components/VariantSwitcher'
 import TimelineController from './components/TimelineController'
 import ConstructionToolbar from './components/ConstructionToolbar'
+import IntroScreen from './components/IntroScreen'
+import PhaseOverlay from './components/PhaseOverlay'
 
 function AppInner() {
   const { roomWidth, roomDepth, roomHeight, showGrid, mountainOverrides } =
     useLevaControls()
   const [activeCameraPreset, setActiveCameraPreset] = useState(null)
+  const [entered, setEntered] = useState(false)
+
+  const handleEnter = useCallback(() => setEntered(true), [])
 
   return (
     <>
+      <IntroScreen onEnter={handleEnter} />
       <Canvas
         camera={{
-          position: [0, 1.6, 3],
-          fov: 60,
+          position: [0, 1.6, 2.5],
+          fov: 65,
           near: 0.1,
           far: 100,
         }}
-        gl={{ preserveDrawingBuffer: true }}
+        gl={{ preserveDrawingBuffer: true, antialias: true }}
         className="!absolute inset-0"
       >
         <Scene
@@ -35,9 +41,14 @@ function AppInner() {
           cameraPreset={activeCameraPreset}
         />
       </Canvas>
-      <VariantSwitcher onCameraPreset={setActiveCameraPreset} />
-      <TimelineController />
-      <ConstructionToolbar />
+      {entered && (
+        <>
+          <VariantSwitcher onCameraPreset={setActiveCameraPreset} />
+          <TimelineController />
+          <ConstructionToolbar />
+          <PhaseOverlay />
+        </>
+      )}
     </>
   )
 }
