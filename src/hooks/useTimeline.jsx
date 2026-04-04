@@ -59,6 +59,16 @@ export function TimelineProvider({ children }) {
     }
   }, [playing, speed])
 
+  // Listen for skip-to-fireflies event
+  useEffect(() => {
+    function handleSkip() {
+      setTime(0.78)
+      setPlaying(false)
+    }
+    window.addEventListener('skipToFireflies', handleSkip)
+    return () => window.removeEventListener('skipToFireflies', handleSkip)
+  }, [])
+
   return (
     <TimelineContext.Provider
       value={{ time, setTime, playing, play, pause, toggle, speed, setSpeed, jumpToPhase }}
