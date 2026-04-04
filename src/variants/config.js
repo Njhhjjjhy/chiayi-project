@@ -1,10 +1,9 @@
-// Variant definitions for each design category.
-// Each category has a list of named variants that will be populated in later phases.
+import { mountainWallVariantList } from './mountainWall.js'
 
 export const variantCategories = {
   mountainWall: {
     label: 'Mountain wall',
-    variants: [],
+    variants: mountainWallVariantList,
   },
   lighting: {
     label: 'Lighting',
