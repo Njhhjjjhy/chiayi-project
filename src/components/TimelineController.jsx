@@ -6,7 +6,7 @@ export default function TimelineController() {
   const currentPhase = time < 0.25 ? 0 : time < 0.5 ? 1 : time < 0.75 ? 2 : 3
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-10 select-none">
+    <div className="fixed bottom-0 left-0 right-0 z-10 select-none" role="region" aria-label="Timeline controls">
       <div className="bg-black/80 backdrop-blur-sm border-t border-white/10 px-4 py-3">
         {/* Phase labels */}
         <div className="flex mb-2">
@@ -14,11 +14,12 @@ export default function TimelineController() {
             <button
               key={phase.id}
               onClick={() => jumpToPhase(i)}
-              className={`flex-1 text-center text-[10px] uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`flex-1 text-center text-[10px] uppercase tracking-wider transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none rounded ${
                 currentPhase === i
                   ? 'text-white/80'
                   : 'text-white/25 hover:text-white/40'
               }`}
+              aria-label={`Jump to ${phase.label}`}
             >
               {phase.label}
             </button>
@@ -44,13 +45,20 @@ export default function TimelineController() {
             step="0.001"
             value={time}
             onChange={(e) => setTime(parseFloat(e.target.value))}
-            className="w-full h-1.5 appearance-none bg-white/10 rounded-full cursor-pointer
+            aria-label="Timeline position"
+            aria-valuemin={0}
+            aria-valuemax={1}
+            aria-valuenow={time}
+            aria-valuetext={PHASES[currentPhase].label}
+            className="w-full h-2 appearance-none bg-white/10 rounded-full cursor-pointer
               [&::-webkit-slider-thumb]:appearance-none
-              [&::-webkit-slider-thumb]:w-3
-              [&::-webkit-slider-thumb]:h-3
+              [&::-webkit-slider-thumb]:w-5
+              [&::-webkit-slider-thumb]:h-5
               [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:bg-white/80
-              [&::-webkit-slider-thumb]:cursor-pointer"
+              [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(255,255,255,0.3)]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
           />
         </div>
 
@@ -60,22 +68,25 @@ export default function TimelineController() {
             {/* Play/pause */}
             <button
               onClick={toggle}
-              className="text-white/60 hover:text-white text-sm cursor-pointer w-6 text-center"
+              className="text-white/60 hover:text-white text-sm cursor-pointer w-6 text-center focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none rounded"
+              aria-label={playing ? 'Pause' : 'Play'}
             >
               {playing ? '||' : '\u25B6'}
             </button>
 
             {/* Speed */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" role="group" aria-label="Playback speed">
               {Object.keys(SPEEDS).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSpeed(s)}
-                  className={`text-[10px] px-1.5 py-0.5 rounded cursor-pointer transition-colors ${
+                  className={`text-[10px] px-1.5 py-0.5 rounded cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none ${
                     speed === s
                       ? 'bg-white/15 text-white/80'
                       : 'text-white/25 hover:text-white/40'
                   }`}
+                  aria-label={`${s} cycle`}
+                  aria-pressed={speed === s}
                 >
                   {s}
                 </button>
@@ -84,7 +95,7 @@ export default function TimelineController() {
           </div>
 
           {/* Current phase */}
-          <span className="text-[10px] text-white/30 uppercase tracking-wider">
+          <span className="text-[10px] text-white/30 uppercase tracking-wider" aria-live="polite">
             {PHASES[currentPhase].label}
           </span>
         </div>

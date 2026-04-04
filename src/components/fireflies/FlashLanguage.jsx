@@ -83,8 +83,8 @@ export default function FlashLanguage({ masterOpacity }) {
         s.opacities[idx] = brightness * masterOpacity
 
         // Gentle drift
-        s.positions[idx * 3] += Math.sin(t * 0.5 + idx) * 0.0008
-        s.positions[idx * 3 + 1] += Math.cos(t * 0.3 + idx * 1.7) * 0.0004
+        s.positions[idx * 3] += Math.sin(t * 0.5 + idx) * 0.006
+        s.positions[idx * 3 + 1] += Math.cos(t * 0.3 + idx * 1.7) * 0.003
 
         idx++
       }

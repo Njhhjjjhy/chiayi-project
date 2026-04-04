@@ -8,9 +8,10 @@ export default function Room({ width = 10, depth = 10, height = 3.5 }) {
   const { viewMode } = useVariant()
   const isConstruction = viewMode === 'construction'
 
+  // H2: Proper matte material for walls
   const materialProps = isConstruction
     ? { wireframe: true, color: '#444' }
-    : { color: '#0e0e0e' }
+    : { color: '#0e0e0e', roughness: 1, metalness: 0 }
 
   const halfW = width / 2
   const halfD = depth / 2
@@ -27,19 +28,19 @@ export default function Room({ width = 10, depth = 10, height = 3.5 }) {
       {/* Back wall removed — replaced by MountainWall component */}
 
       {/* Front wall (behind the viewer) */}
-      <mesh position={[0, halfH, halfD]}>
+      <mesh position={[0, halfH, halfD]} receiveShadow>
         <boxGeometry args={[width, height, WALL_THICKNESS]} />
         <meshStandardMaterial {...materialProps} />
       </mesh>
 
       {/* Left wall */}
-      <mesh position={[-halfW, halfH, 0]}>
+      <mesh position={[-halfW, halfH, 0]} receiveShadow>
         <boxGeometry args={[WALL_THICKNESS, height, depth]} />
         <meshStandardMaterial {...materialProps} />
       </mesh>
 
       {/* Right wall */}
-      <mesh position={[halfW, halfH, 0]}>
+      <mesh position={[halfW, halfH, 0]} receiveShadow>
         <boxGeometry args={[WALL_THICKNESS, height, depth]} />
         <meshStandardMaterial {...materialProps} />
       </mesh>

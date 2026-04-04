@@ -79,8 +79,8 @@ export default function TheWave({ masterOpacity }) {
       s.opacities[i] = Math.max(indPulse, waveBrightness) * masterOpacity
 
       // Gentle drift
-      s.positions[i * 3] += Math.sin(t * 0.4 + i) * 0.0006
-      s.positions[i * 3 + 1] += Math.cos(t * 0.25 + i * 1.5) * 0.0003
+      s.positions[i * 3] += Math.sin(t * 0.4 + i) * 0.005
+      s.positions[i * 3 + 1] += Math.cos(t * 0.25 + i * 1.5) * 0.003
     }
   })
 

@@ -93,8 +93,8 @@ export default function ListeningDark({ masterOpacity }) {
       s.opacities[i] = Math.max(0, Math.min(1, s.opacities[i])) * masterOpacity
 
       // Gentle drift
-      s.positions[i * 3] += Math.sin(Date.now() * 0.0003 + i) * 0.001
-      s.positions[i * 3 + 1] += Math.cos(Date.now() * 0.0002 + i * 1.3) * 0.0005
+      s.positions[i * 3] += Math.sin(Date.now() * 0.0003 + i) * 0.008
+      s.positions[i * 3 + 1] += Math.cos(Date.now() * 0.0002 + i * 1.3) * 0.004
     }
   })
 

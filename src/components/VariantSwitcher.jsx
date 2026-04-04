@@ -14,7 +14,7 @@ function CategorySection({ categoryKey, label, variants }) {
         onClick={() => hasVariants && setOpen(!open)}
         className={`w-full flex items-center justify-between px-3 py-2 text-left text-sm transition-colors ${
           hasVariants
-            ? 'hover:bg-white/5 cursor-pointer'
+            ? 'hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none'
             : 'opacity-40 cursor-default'
         }`}
       >

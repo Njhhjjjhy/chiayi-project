@@ -29,7 +29,6 @@ export default function PhaseOverlay() {
   const phaseIndex = time < 0.25 ? 0 : time < 0.5 ? 1 : time < 0.75 ? 2 : 3
   const phaseKey = PHASES[phaseIndex].id
 
-  // Show label when phase changes
   useEffect(() => {
     if (phaseKey !== lastPhaseRef.current) {
       lastPhaseRef.current = phaseKey
@@ -46,11 +45,18 @@ export default function PhaseOverlay() {
       className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none text-center transition-opacity duration-1000 ${
         showLabel ? 'opacity-100' : 'opacity-0'
       }`}
+      aria-live="polite"
     >
-      <div className="text-white/50 text-lg font-light tracking-widest uppercase mb-1">
+      <div
+        className="text-white/70 text-lg font-light tracking-widest uppercase mb-1"
+        style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7)' }}
+      >
         {PHASE_DESCRIPTIONS[currentPhase]}
       </div>
-      <div className="text-white/25 text-xs tracking-wide">
+      <div
+        className="text-white/40 text-xs tracking-wide"
+        style={{ textShadow: '0 0 15px rgba(0,0,0,0.9)' }}
+      >
         {PHASE_SUBTITLES[currentPhase]}
       </div>
     </div>
