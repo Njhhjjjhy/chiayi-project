@@ -23,14 +23,27 @@ function smoothstep(t) {
   return t * t * (3 - 2 * t)
 }
 
+const DAYLIGHT_STATE = {
+  ambientColor: '#ffffff',
+  ambientIntensity: 1.0,
+  backlightColor: '#e0d8c8',
+  skyTopColor: '#d4d0c8',
+  skyBottomColor: '#c8c0b0',
+  sunLineOpacity: 0,
+  phaseIndex: 0,
+  phaseName: 'daylight',
+}
+
 export function useLightingState() {
   const { time } = useTimeline()
-  const { selections } = useVariant()
+  const { selections, viewMode } = useVariant()
 
   const paletteId = selections.lighting || 'warmDominant'
   const palette = lightingVariants[paletteId] || lightingVariants.warmDominant
 
   return useMemo(() => {
+    if (viewMode === 'light') return DAYLIGHT_STATE
+
     // Determine which two phases we're between
     const phaseProgress = time * 4 // 0-4 range
     const phaseIndex = Math.min(Math.floor(phaseProgress), 3)
@@ -50,5 +63,5 @@ export function useLightingState() {
       phaseIndex,
       phaseName: PHASE_KEYS[phaseIndex],
     }
-  }, [time, palette])
+  }, [time, palette, viewMode])
 }

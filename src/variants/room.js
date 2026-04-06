@@ -1,12 +1,11 @@
 export const ceilingVariants = {
-  flatPanel: { id: 'flatPanel', label: 'Flat panel grid' },
-  organicCanopy: { id: 'organicCanopy', label: 'Organic canopy' },
+  droppedPanelGrid: { id: 'droppedPanelGrid', label: 'Dropped panel grid' },
+  mountainTopology: { id: 'mountainTopology', label: 'Mountain topology' },
   openExposed: { id: 'openExposed', label: 'Open / exposed' },
 }
 
 export const floorVariants = {
-  darkWood: { id: 'darkWood', label: 'Dark wood planks' },
-  forestFloor: { id: 'forestFloor', label: 'Forest floor' },
+  forestFloorPBR: { id: 'forestFloorPBR', label: 'Forest floor (PBR)' },
   simpleMatte: { id: 'simpleMatte', label: 'Simple dark matte' },
 }
 

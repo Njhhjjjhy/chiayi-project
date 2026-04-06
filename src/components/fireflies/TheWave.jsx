@@ -2,9 +2,9 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useControls, folder } from 'leva'
 import FireflyParticles from './FireflyParticles.jsx'
+import { distributeSurface } from './surfacePositions.js'
 
 const COUNT = 300
-const ROOM = { w: 10, h: 3.5, d: 10 }
 
 export default function TheWave({ masterOpacity }) {
   const { waveInterval, waveSpeed, waveWidth } = useControls('fireflies', {
@@ -18,15 +18,12 @@ export default function TheWave({ masterOpacity }) {
   const state = useRef(null)
 
   if (!state.current) {
-    const positions = new Float32Array(COUNT * 3)
+    const { positions } = distributeSurface(COUNT, { ceiling: 0.5, leftWall: 0.25, rightWall: 0.25 }, 77)
     const opacities = new Float32Array(COUNT)
     const colors = new Float32Array(COUNT * 3)
     const basePhases = new Float32Array(COUNT)
 
     for (let i = 0; i < COUNT; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * ROOM.w * 0.8
-      positions[i * 3 + 1] = ROOM.h * 0.5 + Math.random() * ROOM.h * 1.2
-      positions[i * 3 + 2] = (Math.random() - 0.5) * ROOM.d * 0.8
       colors[i * 3] = 1.0
       colors[i * 3 + 1] = 0.72 + Math.random() * 0.1
       colors[i * 3 + 2] = 0.2 + Math.random() * 0.1
@@ -35,8 +32,7 @@ export default function TheWave({ masterOpacity }) {
 
     state.current = {
       positions, opacities, colors, basePhases,
-      lastWaveTime: 0,
-      waveDirection: 0, // 0=x, 1=z, 2=radial
+      lastWaveTime: 0, waveDirection: 0,
     }
   }
 
@@ -44,7 +40,6 @@ export default function TheWave({ masterOpacity }) {
     const s = state.current
     const t = Date.now() / 1000
 
-    // Check if we should start a new wave
     if (t - s.lastWaveTime > waveInterval) {
       s.lastWaveTime = t
       s.waveDirection = Math.floor(Math.random() * 3)
@@ -52,22 +47,17 @@ export default function TheWave({ masterOpacity }) {
 
     const timeSinceWave = t - s.lastWaveTime
     const waveActive = timeSinceWave < waveSpeed
-    // Wave front position: sweeps from -5 to +5 (room width)
-    const waveFront = waveActive
-      ? -5 + (timeSinceWave / waveSpeed) * 10
-      : -999
+    const waveFront = waveActive ? -5 + (timeSinceWave / waveSpeed) * 10 : -999
 
     for (let i = 0; i < COUNT; i++) {
-      // Independent pulse
       const indPulse = (Math.sin(t * 1.2 + s.basePhases[i]) * 0.5 + 0.5) * 0.3
 
       let waveBrightness = 0
       if (waveActive) {
         let particlePos
-        if (s.waveDirection === 0) particlePos = s.positions[i * 3] // x sweep
-        else if (s.waveDirection === 1) particlePos = s.positions[i * 3 + 2] // z sweep
+        if (s.waveDirection === 0) particlePos = s.positions[i * 3]
+        else if (s.waveDirection === 1) particlePos = s.positions[i * 3 + 2]
         else {
-          // Radial from center
           const dx = s.positions[i * 3]
           const dz = s.positions[i * 3 + 2]
           particlePos = Math.sqrt(dx * dx + dz * dz)
@@ -77,10 +67,6 @@ export default function TheWave({ masterOpacity }) {
       }
 
       s.opacities[i] = Math.max(indPulse, waveBrightness) * masterOpacity
-
-      // Gentle drift
-      s.positions[i * 3] += Math.sin(t * 0.4 + i) * 0.005
-      s.positions[i * 3 + 1] += Math.cos(t * 0.25 + i * 1.5) * 0.003
     }
   })
 
@@ -90,7 +76,7 @@ export default function TheWave({ masterOpacity }) {
       positions={state.current.positions}
       opacities={state.current.opacities}
       colors={state.current.colors}
-      size={0.2}
+      size={0.03}
     />
   )
 }

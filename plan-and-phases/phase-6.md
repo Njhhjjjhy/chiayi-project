@@ -1,66 +1,50 @@
-# Phase 6: structure qa tool
+# Phase 6: merchandise (the 3rd story)
 
-## Goal
+Priority: lower.
 
-Build a separate view mode for construction planning — measurements, dimensions, and material specs. This is a practical tool for planning the physical build.
+## Physical space
 
-## What to build
+The left portion of the building (outside the exhibition area) serves as a retail space. See `exhibition-details_exhibition-space.webp` where the left zone is labeled "Retail."
 
-### 1. Construction view mode
+This space is where visitors exit after the exhibition. The transition from dark immersion to bright retail creates a deliberate moment of re-entry.
 
-Extend the existing "construction view" toggle from phase 1 into a full qa tool:
+### Design requirements
 
-- All materials switch to wireframe.
-- Background becomes white or light gray (blueprint style).
-- A 1-meter grid overlay is visible on the floor and optionally on walls.
-- All atmospheric lighting is replaced with flat neutral illumination.
+- The retail area should feel like an extension of the exhibition, not a generic gift shop.
+- Dim warm lighting (warmer and brighter than the exhibition, but not harsh fluorescent).
+- Natural materials for display fixtures: wood, bamboo, stone where possible.
+- Exhibition imagery and theme on the walls to maintain continuity.
+- Clear branding connecting the merchandise to the exhibition experience.
 
-### 2. Dimension labels
+## Merchandise platform
 
-Add floating text labels (using drei's Html or Text components) showing:
+Use Inkslap (https://inkslap.com) or a similar print-on-demand platform for producing merchandise. This keeps upfront inventory costs low.
 
-- Room dimensions: 10m x 10m x 3.5m (or whatever the current ceiling height is).
-- Mountain wall: total width, height, depth from wall to foreground layer.
-- Mountain wall layers: spacing between each layer, thickness of each panel.
-- Ceiling panel grid: 120cm x 120cm panel size, number of panels.
-- Firefly module positions (if the canopy grid variant is active): grid spacing, strip lengths.
+### Product categories
 
-Dimensions should update live if Leva parameters change.
+- T-shirts and apparel with firefly motif designs.
+- Art prints (exhibition imagery, concept art, Alishan landscape photography).
+- Postcards.
+- Tote bags.
+- Stickers.
+- Locally made items from the Tsou community (handmade crafts, textiles) - these connect to Nanghia's social enterprise mission.
 
-### 3. Material annotations
+### Design direction
 
-Small labels near each surface indicating the intended physical material:
+Merchandise designs should use:
 
-- Mountain wall panels: "mdf or plywood, 12-18mm, painted".
-- Backlighting: "rgb led strip, diffusion channel".
-- Ceiling panels: "120x120cm modular panels".
-- Floor: "dark wood or composite".
-- Hanging elements: "ramie fiber, paper mulberry".
-- Firefly lights: "warm micro-led 2700k, Arduino-controlled".
+- The firefly motif (bioluminescent points of light in darkness).
+- Alishan mountain silhouette imagery.
+- The exhibition's visual identity and color palette (greens, warm ambers, deep blacks).
+- The "you are what you see" concept phrase where appropriate.
 
-### 4. Export capability
+All merchandise designs must use sentence case for any text.
 
-- A "screenshot" button that captures the current 3d view at high resolution.
-- Optionally, a "generate spec sheet" button that outputs the current variant combination and all its parameters as a downloadable text or pdf file.
+## Website integration
 
-### 5. Plan view overlay
+Create a branded section or page on the project website showing available merchandise. This page should:
 
-When in overhead camera mode + construction view, the display should look like an architectural floor plan:
-
-- Room outline clearly visible.
-- Mountain wall position and depth marked.
-- Ceiling panel grid visible.
-- Any suspended elements (canopy grid) shown as dotted outlines.
-- Scale bar.
-
-## Deliverable
-
-A practical tool for Riaan and Corbett to plan the physical build, with real-world measurements and material annotations.
-
-## Acceptance criteria
-
-- Construction view is visually distinct from experience view (wireframe, light background, flat lighting).
-- Dimensions are labeled accurately and update with parameter changes.
-- Material annotations are present for all major surfaces.
-- Screenshot export works.
-- Overhead plan view looks like a basic floor plan.
+- Display product images with prices.
+- Link to the print-on-demand platform for purchases.
+- Be accessible from the main navigation.
+- Include the exhibition branding and theme.

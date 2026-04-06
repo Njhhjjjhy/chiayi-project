@@ -6,7 +6,13 @@ export default function TimelineController() {
   const currentPhase = time < 0.25 ? 0 : time < 0.5 ? 1 : time < 0.75 ? 2 : 3
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-10 select-none" role="region" aria-label="Timeline controls">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-10 select-none"
+      role="region"
+      aria-label="Timeline controls"
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerMove={(e) => e.stopPropagation()}
+    >
       <div className="bg-black/80 backdrop-blur-sm border-t border-white/10 px-4 py-3">
         {/* Phase labels */}
         <div className="flex mb-2">

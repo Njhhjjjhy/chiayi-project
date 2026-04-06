@@ -1,16 +1,10 @@
-import { useRef, useMemo, useCallback } from 'react'
+import { useRef, useCallback } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useControls, folder } from 'leva'
 import FireflyParticles from './FireflyParticles.jsx'
+import { distributeSurface } from './surfacePositions.js'
 
 const COUNT = 300
-const ROOM = { w: 10, h: 3.5, d: 10 }
-
-function randomInRoom(i, arr) {
-  arr[i * 3] = (Math.random() - 0.5) * ROOM.w * 0.8
-  arr[i * 3 + 1] = ROOM.h * 0.5 + Math.random() * ROOM.h * 1.2 // most above or near ceiling
-  arr[i * 3 + 2] = (Math.random() - 0.5) * ROOM.d * 0.8
-}
 
 export default function ListeningDark({ masterOpacity }) {
   const { stillnessThreshold, fadeInSpeed, fadeOutSpeed, maxVisible } = useControls(
@@ -25,48 +19,38 @@ export default function ListeningDark({ masterOpacity }) {
     }
   )
 
-  const state = useRef({
-    positions: new Float32Array(COUNT * 3),
-    opacities: new Float32Array(COUNT),
-    colors: new Float32Array(COUNT * 3),
-    targets: new Float32Array(COUNT), // target opacity per particle
-    stillTime: 0,
-    lastMouseX: 0,
-    lastMouseY: 0,
-    isStill: false,
-    initialized: false,
-  })
+  const state = useRef(null)
 
-  // Initialize positions
-  if (!state.current.initialized) {
-    const s = state.current
+  if (!state.current) {
+    const { positions } = distributeSurface(COUNT)
+    const opacities = new Float32Array(COUNT)
+    const colors = new Float32Array(COUNT * 3)
+    const targets = new Float32Array(COUNT)
+
     for (let i = 0; i < COUNT; i++) {
-      randomInRoom(i, s.positions)
-      s.opacities[i] = 0
-      s.targets[i] = 0
-      // Warm amber color
-      s.colors[i * 3] = 1.0
-      s.colors[i * 3 + 1] = 0.7 + Math.random() * 0.15
-      s.colors[i * 3 + 2] = 0.2 + Math.random() * 0.1
+      opacities[i] = 0
+      targets[i] = 0
+      colors[i * 3] = 1.0
+      colors[i * 3 + 1] = 0.7 + Math.random() * 0.15
+      colors[i * 3 + 2] = 0.2 + Math.random() * 0.1
     }
-    s.initialized = true
+
+    state.current = { positions, opacities, colors, targets, stillTime: 0, isStill: false }
   }
 
-  const handlePointerMove = useCallback((e) => {
+  const handlePointerMove = useCallback(() => {
     const s = state.current
-    s.lastMouseX = e?.clientX || 0
-    s.lastMouseY = e?.clientY || 0
     s.stillTime = 0
     s.isStill = false
   }, [])
 
   // Track mouse globally
-  useMemo(() => {
+  useRef(() => {
     if (typeof window !== 'undefined') {
       window.addEventListener('mousemove', handlePointerMove)
       return () => window.removeEventListener('mousemove', handlePointerMove)
     }
-  }, [handlePointerMove])
+  })
 
   useFrame((_, delta) => {
     const s = state.current
@@ -75,26 +59,20 @@ export default function ListeningDark({ masterOpacity }) {
     const still = s.stillTime > stillnessThreshold
     const maxCount = Math.floor(COUNT * maxVisible)
 
-    // Determine target opacities
     let visibleCount = 0
     for (let i = 0; i < COUNT; i++) {
       if (still && visibleCount < maxCount) {
-        s.targets[i] = 0.6 + Math.random() * 0.001 // slight flicker
+        s.targets[i] = 0.6 + Math.random() * 0.001
         visibleCount++
       } else if (!still) {
         s.targets[i] = 0
       }
     }
 
-    // Lerp opacities
     for (let i = 0; i < COUNT; i++) {
       const speed = s.targets[i] > s.opacities[i] ? fadeInSpeed : fadeOutSpeed
       s.opacities[i] += (s.targets[i] - s.opacities[i]) * speed * delta
       s.opacities[i] = Math.max(0, Math.min(1, s.opacities[i])) * masterOpacity
-
-      // Gentle drift
-      s.positions[i * 3] += Math.sin(Date.now() * 0.0003 + i) * 0.008
-      s.positions[i * 3 + 1] += Math.cos(Date.now() * 0.0002 + i * 1.3) * 0.004
     }
   })
 
@@ -104,7 +82,7 @@ export default function ListeningDark({ masterOpacity }) {
       positions={state.current.positions}
       opacities={state.current.opacities}
       colors={state.current.colors}
-      size={0.2}
+      size={0.03}
     />
   )
 }

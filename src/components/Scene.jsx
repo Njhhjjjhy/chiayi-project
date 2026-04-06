@@ -1,29 +1,29 @@
 import { useRef, useEffect, Suspense } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing'
+import { BlendFunction } from 'postprocessing'
 import * as THREE from 'three'
 import { useVariant } from '../hooks/useVariant.jsx'
 import { useLightingState } from '../hooks/useLightingState.jsx'
 import Room from './Room'
-import MountainWall from './MountainWall'
+import WallSystem from './walls/WallSystem.jsx'
 import SkyBackdrop from './SkyBackdrop'
 import FireflySystem from './fireflies/FireflySystem.jsx'
 import DimensionLabels from './DimensionLabels.jsx'
+import Seating from './Seating.jsx'
+import { GuidedTourCamera } from './GuidedTour.jsx'
+import { useTour } from '../hooks/useTour.jsx'
+import MeasureTool from './MeasureTool.jsx'
+import RoomLabels from './RoomLabels.jsx'
 
-function CameraBreathing() {
-  const { camera } = useThree()
-  const baseY = useRef(camera.position.y)
-
-  useEffect(() => {
-    baseY.current = camera.position.y
-  }, [camera.position.y])
-
+function CameraBreathing({ controlsRef }) {
   useFrame(({ clock }) => {
+    if (!controlsRef?.current) return
     const t = clock.getElapsedTime()
-    // Subtle breathing sway
-    camera.position.y = baseY.current + Math.sin(t * 0.3) * 0.015
-    camera.rotation.z = Math.sin(t * 0.2) * 0.002
+    // Subtle breathing via orbit target offset — doesn't fight OrbitControls
+    const target = controlsRef.current.target
+    target.y = 1.6 + Math.sin(t * 0.3) * 0.01
   })
 
   return null
@@ -43,39 +43,43 @@ function CameraBoundsEnforcer({ roomWidth, roomDepth, roomHeight }) {
   return null
 }
 
-export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5, showGrid = true, mountainOverrides = {}, cameraPreset }) {
+export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.52, showGrid = true, cameraPreset }) {
   const controlsRef = useRef()
-  const { viewMode } = useVariant()
-  const isConstruction = viewMode === 'construction'
+  const { viewMode, isConstruction, isLight, isExperience, showSeating } = useVariant()
+  const { active: tourActive } = useTour()
   const lighting = useLightingState()
   const { camera, scene, gl } = useThree()
 
   const maxOrbitRadius = Math.min(roomWidth, roomDepth) / 2 - 0.5
 
-  // H5: Tone mapping — only in experience mode
+  // H5: Tone mapping per view mode
   useEffect(() => {
     if (isConstruction) {
       gl.toneMapping = THREE.NoToneMapping
       gl.toneMappingExposure = 1.0
+    } else if (isLight) {
+      gl.toneMapping = THREE.LinearToneMapping
+      gl.toneMappingExposure = 1.2
     } else {
       gl.toneMapping = THREE.ACESFilmicToneMapping
       gl.toneMappingExposure = 0.9
     }
-  }, [gl, isConstruction])
+  }, [gl, isConstruction, isLight])
 
-  // Construction mode: light background. Experience: black.
+  // Background per view mode
   useEffect(() => {
-    scene.background = new THREE.Color(isConstruction ? '#e8e8e8' : '#000000')
-  }, [isConstruction, scene])
+    const bg = isConstruction ? '#e8e8e8' : isLight ? '#f5f2ed' : '#000000'
+    scene.background = new THREE.Color(bg)
+  }, [isConstruction, isLight, scene])
 
-  // C2: Fog — driven by timeline in experience mode
+  // C2: Fog — driven by timeline in experience mode, none in light/construction
   useEffect(() => {
-    if (isConstruction) {
-      scene.fog = null
+    if (isExperience) {
+      scene.fog = new THREE.FogExp2('#000000', 0.08)
     } else {
-      scene.fog = new THREE.FogExp2(lighting.ambientColor, 0.04)
+      scene.fog = null
     }
-  }, [isConstruction, lighting.ambientColor, scene])
+  }, [isExperience, lighting.ambientColor, scene])
 
   // Apply camera preset
   useEffect(() => {
@@ -102,20 +106,25 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
         minDistance={0.5}
         maxPolarAngle={Math.PI * 0.85}
         minPolarAngle={Math.PI * 0.1}
-        enablePan={true}
+        enablePan={!tourActive}
+        enableRotate={!tourActive}
+        enableZoom={!tourActive}
         panSpeed={0.5}
         rotateSpeed={0.5}
         enableDamping
         dampingFactor={0.05}
       />
 
-      {/* M2: Camera bounds enforcement in experience mode */}
+      {/* Guided tour camera controller */}
+      {tourActive && <GuidedTourCamera controlsRef={controlsRef} />}
+
+      {/* M2: Camera bounds enforcement in experience/light mode */}
       {!isConstruction && (
         <CameraBoundsEnforcer roomWidth={roomWidth} roomDepth={roomDepth} roomHeight={roomHeight} />
       )}
 
-      {/* Subtle camera breathing in experience mode */}
-      {!isConstruction && <CameraBreathing />}
+      {/* Subtle camera breathing in experience mode only (disabled during tour) */}
+      {isExperience && !tourActive && <CameraBreathing controlsRef={controlsRef} />}
 
       {/* Lighting */}
       {isConstruction ? (
@@ -124,17 +133,41 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
           <directionalLight position={[5, 10, 5]} intensity={1.0} />
           <directionalLight position={[-5, 8, -3]} intensity={0.5} />
         </>
-      ) : (
+      ) : isLight ? (
         <>
-          <ambientLight color={lighting.ambientColor} intensity={lighting.ambientIntensity} />
-          <pointLight
-            position={[0, roomHeight - 0.5, 0]}
-            color={lighting.ambientColor}
-            intensity={lighting.ambientIntensity * 0.8}
+          <ambientLight intensity={1.2} color="#fff8f0" />
+          <directionalLight
+            position={[2, roomHeight + 2, 4]}
+            intensity={2.5}
+            color="#fff8e7"
             castShadow
             shadow-mapSize-width={512}
             shadow-mapSize-height={512}
           />
+          <directionalLight
+            position={[-3, roomHeight, -2]}
+            intensity={0.8}
+            color="#e8e0d8"
+          />
+        </>
+      ) : (
+        <>
+          <ambientLight color={lighting.ambientColor} intensity={lighting.ambientIntensity} />
+
+          {/* Moonlight directional — faint, during blue hour and darkness */}
+          {lighting.phaseIndex >= 1 && (
+            <directionalLight
+              position={[2, 10, -2]}
+              target-position={[0, 0, 0]}
+              color="#2a2a40"
+              intensity={0.02}
+              castShadow
+              shadow-mapSize-width={1024}
+              shadow-mapSize-height={1024}
+              shadow-bias={-0.001}
+              shadow-radius={8}
+            />
+          )}
         </>
       )}
 
@@ -160,20 +193,34 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
       {/* Room shell */}
       <Room width={roomWidth} depth={roomDepth} height={roomHeight} />
 
-      {/* Mountain wall */}
-      <MountainWall overrides={mountainOverrides} />
+      {/* The big wall */}
+      <WallSystem />
 
       {/* Fireflies */}
       <FireflySystem />
 
-      {/* C1: Bloom post-processing for firefly glow */}
-      {!isConstruction && (
+      {/* Seating — toggled via UI */}
+      {showSeating && <Seating />}
+
+      {/* Post-processing — experience mode only */}
+      {isExperience && (
         <EffectComposer>
           <Bloom
-            luminanceThreshold={0.2}
+            luminanceThreshold={0.3}
             luminanceSmoothing={0.9}
-            intensity={1.5}
+            intensity={0.8}
+            radius={0.4}
             mipmapBlur
+          />
+          <Vignette
+            offset={0.3}
+            darkness={0.6}
+            blendFunction={BlendFunction.NORMAL}
+          />
+          <Noise
+            premultiply
+            blendFunction={BlendFunction.ADD}
+            opacity={0.03}
           />
         </EffectComposer>
       )}
@@ -184,9 +231,14 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
           roomWidth={roomWidth}
           roomDepth={roomDepth}
           roomHeight={roomHeight}
-          mountainOverrides={mountainOverrides}
         />
       )}
+
+      {/* Hover labels for room elements */}
+      <RoomLabels />
+
+      {/* Measure tool — available in all modes */}
+      <MeasureTool />
     </>
   )
 }

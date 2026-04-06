@@ -5,13 +5,14 @@ const VariantContext = createContext(null)
 
 export function VariantProvider({ children }) {
   const [selections, setSelections] = useState({
-    mountainWall: 'softRolling',
+    wall: 'layeredMountain',
     lighting: 'warmDominant',
-    fireflies: 'flashLanguage',
-    ceiling: 'openExposed',
-    floor: 'simpleMatte',
+    fireflies: 'scatteredDrift',
+    ceiling: 'droppedPanelGrid',
+    floor: 'forestFloorPBR',
   })
   const [viewMode, setViewMode] = useState('experience')
+  const [showSeating, setShowSeating] = useState(false)
   const [favorites, setFavorites] = useState([])
 
   const selectVariant = useCallback((category, variantId) => {
@@ -49,6 +50,10 @@ export function VariantProvider({ children }) {
     <VariantContext.Provider
       value={{
         selections, selectVariant, viewMode, setViewMode,
+        isExperience: viewMode === 'experience',
+        isConstruction: viewMode === 'construction',
+        isLight: viewMode === 'light',
+        showSeating, setShowSeating,
         randomize, favorites, saveFavorite, loadFavorite, removeFavorite,
       }}
     >

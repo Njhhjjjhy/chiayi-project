@@ -19,3 +19,13 @@ dist/
 # showcase (portfolio docs, not part of codebase)
 showcase/
 .vercel
+
+# PBR textures (265MB, downloaded via download-textures.sh)
+public/textures/
+
+# AI tool artifacts
+.agents/
+.claude/
+.windsurf/
+.handoffs/
+skills-lock.json

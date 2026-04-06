@@ -1,8 +1,36 @@
 import { useState } from 'react'
 import { variantCategories, viewModes, cameraPresets } from '../variants/config'
 import { useVariant } from '../hooks/useVariant.jsx'
+import { useTour } from '../hooks/useTour.jsx'
 
-function CategorySection({ categoryKey, label, variants }) {
+function VariantDescription({ variant, onClose }) {
+  if (!variant?.description) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="relative bg-black/90 border border-white/15 rounded-xl max-w-sm w-full p-5 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-white/80 text-sm font-medium tracking-wide mb-2">
+          {variant.label}
+        </div>
+        <div className="text-white/50 text-xs leading-relaxed">
+          {variant.description}
+        </div>
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-white/20 hover:text-white/50 text-xs cursor-pointer transition-colors"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function CategorySection({ categoryKey, label, variants, onShowInfo }) {
   const [open, setOpen] = useState(false)
   const { selections, selectVariant } = useVariant()
   const hasVariants = variants.length > 0
@@ -30,17 +58,27 @@ function CategorySection({ categoryKey, label, variants }) {
           {variants.map((v) => {
             const isActive = activeId === v.id
             return (
-              <button
-                key={v.id}
-                onClick={() => selectVariant(categoryKey, v.id)}
-                className={`w-full text-left text-xs py-1.5 px-2 rounded transition-colors cursor-pointer ${
-                  isActive
-                    ? 'bg-white/10 text-white'
-                    : 'text-white/40 hover:text-white/60 hover:bg-white/5'
-                }`}
-              >
-                {v.label}
-              </button>
+              <div key={v.id} className="flex items-center gap-1">
+                <button
+                  onClick={() => selectVariant(categoryKey, v.id)}
+                  className={`flex-1 text-left text-xs py-1.5 px-2 rounded transition-colors cursor-pointer ${
+                    isActive
+                      ? 'bg-white/10 text-white'
+                      : 'text-white/40 hover:text-white/60 hover:bg-white/5'
+                  }`}
+                >
+                  {v.label}
+                </button>
+                {v.description && (
+                  <button
+                    onClick={() => onShowInfo(v)}
+                    className="text-[10px] text-white/20 hover:text-white/50 cursor-pointer transition-colors px-1 py-1"
+                    title="Info"
+                  >
+                    ?
+                  </button>
+                )}
+              </div>
             )
           })}
         </div>
@@ -50,12 +88,21 @@ function CategorySection({ categoryKey, label, variants }) {
 }
 
 export default function VariantSwitcher({ onCameraPreset }) {
-  const { viewMode, setViewMode, randomize, favorites, saveFavorite, loadFavorite, removeFavorite } = useVariant()
+  const { viewMode, setViewMode, showSeating, setShowSeating, randomize, favorites, saveFavorite, loadFavorite, removeFavorite } = useVariant()
+  const { active: tourActive, startTour } = useTour()
   const [collapsed, setCollapsed] = useState(false)
   const [showFavorites, setShowFavorites] = useState(false)
+  const [infoVariant, setInfoVariant] = useState(null)
+
+  // Hide switcher during guided tour
+  if (tourActive) return null
 
   return (
-    <div className="fixed top-4 left-4 z-10 select-none max-h-[calc(100vh-120px)] overflow-y-auto">
+    <div
+      className="fixed top-4 left-4 z-10 select-none max-h-[calc(100vh-120px)] overflow-y-auto"
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerMove={(e) => e.stopPropagation()}
+    >
       <div className="bg-black/80 backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden w-56">
         {/* Header */}
         <button
@@ -87,6 +134,16 @@ export default function VariantSwitcher({ onCameraPreset }) {
               </div>
             </div>
 
+            {/* Present button */}
+            <div className="px-3 py-2 border-t border-white/10">
+              <button
+                onClick={() => startTour({ viewMode, showSeating })}
+                className="w-full text-[10px] py-1.5 rounded bg-white/5 text-white/50 hover:text-white/80 hover:bg-white/10 cursor-pointer transition-colors uppercase tracking-wider"
+              >
+                Present
+              </button>
+            </div>
+
             {/* Camera presets */}
             <div className="px-3 py-2 border-t border-white/10">
               <div className="text-[10px] uppercase tracking-wider text-white/30 mb-1.5">Camera</div>
@@ -111,8 +168,23 @@ export default function VariantSwitcher({ onCameraPreset }) {
                   categoryKey={key}
                   label={cat.label}
                   variants={cat.variants}
+                  onShowInfo={setInfoVariant}
                 />
               ))}
+            </div>
+
+            {/* Seating toggle */}
+            <div className="px-3 py-2 border-t border-white/10">
+              <button
+                onClick={() => setShowSeating(!showSeating)}
+                className={`w-full text-[10px] py-1.5 rounded transition-colors cursor-pointer ${
+                  showSeating
+                    ? 'bg-white/15 text-white'
+                    : 'bg-white/5 text-white/40 hover:text-white/60 hover:bg-white/10'
+                }`}
+              >
+                {showSeating ? 'Seating visible' : 'Show seating'}
+              </button>
             </div>
 
             {/* Actions */}
@@ -166,6 +238,10 @@ export default function VariantSwitcher({ onCameraPreset }) {
           </>
         )}
       </div>
+
+      {infoVariant && (
+        <VariantDescription variant={infoVariant} onClose={() => setInfoVariant(null)} />
+      )}
     </div>
   )
 }

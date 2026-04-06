@@ -1,45 +1,8 @@
+import { useState } from 'react'
 import { Html } from '@react-three/drei'
 import { useVariant } from '../hooks/useVariant.jsx'
-import { mountainWallVariants } from '../variants/mountainWall.js'
-
-function Label({ position, children, color = '#333', bg = '#fff' }) {
-  return (
-    <Html position={position} center style={{ pointerEvents: 'none' }}>
-      <div style={{
-        background: bg,
-        color: color,
-        padding: '2px 6px',
-        borderRadius: '3px',
-        fontSize: '10px',
-        fontFamily: 'system-ui, sans-serif',
-        whiteSpace: 'nowrap',
-        border: '1px solid #ccc',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-      }}>
-        {children}
-      </div>
-    </Html>
-  )
-}
-
-function DimLine({ position, children }) {
-  return (
-    <Html position={position} center style={{ pointerEvents: 'none' }}>
-      <div style={{
-        background: '#1a6bff',
-        color: '#fff',
-        padding: '1px 5px',
-        borderRadius: '2px',
-        fontSize: '9px',
-        fontFamily: 'system-ui, sans-serif',
-        fontWeight: 600,
-        whiteSpace: 'nowrap',
-      }}>
-        {children}
-      </div>
-    </Html>
-  )
-}
+import { wallVariants } from '../variants/wall.js'
+import DimensionLine from './DimensionLine.jsx'
 
 function MaterialNote({ position, children }) {
   return (
@@ -60,75 +23,251 @@ function MaterialNote({ position, children }) {
   )
 }
 
-export default function DimensionLabels({ roomWidth, roomDepth, roomHeight, mountainOverrides }) {
-  const { selections } = useVariant()
+function InfoLabel({ position, children }) {
+  return (
+    <Html position={position} center style={{ pointerEvents: 'none' }}>
+      <div style={{
+        background: '#fff',
+        color: '#333',
+        padding: '2px 6px',
+        borderRadius: '3px',
+        fontSize: '10px',
+        fontFamily: 'system-ui, sans-serif',
+        whiteSpace: 'nowrap',
+        border: '1px solid #ccc',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+      }}>
+        {children}
+      </div>
+    </Html>
+  )
+}
+
+// Toggle buttons overlay for dimension categories
+function DimensionToggles({ categories, activeCategories, onToggle }) {
+  return (
+    <div className="fixed bottom-16 right-4 z-10 select-none">
+      <div className="bg-white/95 border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+        <div className="px-3 py-1.5 text-[9px] font-medium uppercase tracking-wider text-gray-400 border-b border-gray-200">
+          Dimensions
+        </div>
+        <div className="p-1.5 flex flex-col gap-1">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => onToggle(cat.id)}
+              className={`text-[10px] px-2 py-1 rounded cursor-pointer transition-colors text-left ${
+                activeCategories.includes(cat.id)
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  : 'bg-gray-50 text-gray-400 hover:bg-gray-100 border border-transparent'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const DIM_CATEGORIES = [
+  { id: 'room', label: 'Room' },
+  { id: 'wall', label: 'The big wall' },
+  { id: 'seating', label: 'Seating' },
+  { id: 'human', label: 'Human reference' },
+  { id: 'materials', label: 'Materials' },
+]
+
+export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
+  const { selections, showSeating } = useVariant()
+  const [activeCategories, setActiveCategories] = useState(['room', 'wall', 'materials'])
+
   const halfW = roomWidth / 2
   const halfD = roomDepth / 2
 
-  const mwId = selections.mountainWall || 'softRolling'
-  const mw = mountainWallVariants[mwId] || mountainWallVariants.softRolling
-  const spacing = mountainOverrides.spacing || mw.spacing
-  const layers = mw.layers
-  const totalDepth = (layers - 1) * spacing
+  const wallId = selections.wall || 'layeredMountain'
+  const wall = wallVariants[wallId] || wallVariants.layeredMountain
+
+  const toggleCategory = (id) => {
+    setActiveCategories((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    )
+  }
+
+  const has = (id) => activeCategories.includes(id)
 
   return (
     <group>
-      {/* Room dimensions */}
-      <DimLine position={[0, 0.05, halfD + 0.3]}>{roomWidth}m</DimLine>
-      <DimLine position={[-halfW - 0.3, 0.05, 0]}>{roomDepth}m</DimLine>
-      <DimLine position={[-halfW - 0.3, roomHeight / 2, -halfD]}>{roomHeight}m</DimLine>
-
-      {/* Room dimension labels */}
-      <Label position={[0, roomHeight + 0.3, 0]}>
-        Room: {roomWidth} x {roomDepth} x {roomHeight}m
-      </Label>
-
-      {/* Mountain wall info */}
-      <Label position={[0, roomHeight + 0.3, -halfD]}>
-        Mountain wall: {roomWidth}m wide, {layers} layers, {spacing.toFixed(2)}m spacing, {totalDepth.toFixed(2)}m total depth
-      </Label>
-
-      {/* Scale bar on floor */}
-      <DimLine position={[halfW - 0.5, 0.05, halfD - 0.3]}>1m scale</DimLine>
-
-      {/* Ceiling info */}
-      {selections.ceiling === 'flatPanel' && (
-        <Label position={[0, roomHeight - 0.1, 0]}>
-          Ceiling: 120x120cm panels ({Math.floor(roomWidth / 1.2)} x {Math.floor(roomDepth / 1.2)} grid)
-        </Label>
+      {/* === ROOM DIMENSIONS === */}
+      {has('room') && (
+        <>
+          {/* Width — along front wall */}
+          <DimensionLine
+            start={[-halfW, 0, halfD]}
+            end={[halfW, 0, halfD]}
+            label={`${roomWidth}m`}
+            offset={0.4}
+            offsetDirection={[0, 0, 1]}
+          />
+          {/* Depth — along left wall */}
+          <DimensionLine
+            start={[-halfW, 0, halfD]}
+            end={[-halfW, 0, -halfD]}
+            label={`${roomDepth}m`}
+            offset={0.4}
+            offsetDirection={[-1, 0, 0]}
+          />
+          {/* Height — left wall corner */}
+          <DimensionLine
+            start={[-halfW, 0, -halfD]}
+            end={[-halfW, roomHeight, -halfD]}
+            label={`${roomHeight}m`}
+            offset={0.4}
+            offsetDirection={[-1, 0, 0]}
+          />
+          {/* Room summary */}
+          <InfoLabel position={[0, roomHeight + 0.4, 0]}>
+            Room: {roomWidth} x {roomDepth} x {roomHeight}m
+          </InfoLabel>
+          {/* 1m scale bar */}
+          <DimensionLine
+            start={[halfW - 1, 0.02, halfD - 0.3]}
+            end={[halfW, 0.02, halfD - 0.3]}
+            label="1m"
+          />
+        </>
       )}
 
-      {/* Material annotations */}
-      <MaterialNote position={[0, roomHeight * 0.6, -halfD + 0.3]}>
-        MDF or plywood, 12-18mm, painted
-      </MaterialNote>
-      <MaterialNote position={[0, roomHeight * 0.8, -halfD + totalDepth + 0.3]}>
-        RGB LED strip, diffusion channel
-      </MaterialNote>
-      <MaterialNote position={[-halfW + 0.5, roomHeight * 0.5, 0]}>
-        Side wall: matte black fabric or paint
-      </MaterialNote>
-      <MaterialNote position={[halfW - 0.5, roomHeight * 0.5, 0]}>
-        Side wall: matte black fabric or paint
-      </MaterialNote>
-      <MaterialNote position={[0, 0.15, 0]}>
-        Floor: dark wood or composite
-      </MaterialNote>
-      <MaterialNote position={[0, roomHeight - 0.2, 0]}>
-        Ceiling: 120x120cm modular panels
-      </MaterialNote>
+      {/* === THE BIG WALL === */}
+      {has('wall') && (
+        <>
+          <InfoLabel position={[0, roomHeight + 0.4, -halfD]}>
+            Wall: {wall.label}
+          </InfoLabel>
+          {/* Wall width */}
+          <DimensionLine
+            start={[-halfW, roomHeight * 0.5, -halfD]}
+            end={[halfW, roomHeight * 0.5, -halfD]}
+            label="10m (full width)"
+            offset={0.3}
+            offsetDirection={[0, 0, -1]}
+            color="#2a7a2a"
+          />
+        </>
+      )}
 
-      {/* Firefly module annotations */}
-      {selections.fireflies === 'canopyGrid' && (
-        <MaterialNote position={[0, roomHeight - 0.5, 0]}>
-          Hanging elements: ramie fiber, paper mulberry — warm micro-LED 2700K, Arduino-controlled
-        </MaterialNote>
+      {/* === SEATING === */}
+      {has('seating') && showSeating && (
+        <>
+          {/* Bench height */}
+          <DimensionLine
+            start={[2, 0, 2.0]}
+            end={[2, 0.45, 2.0]}
+            label="0.45m"
+            offset={0.3}
+            offsetDirection={[1, 0, 0]}
+            color="#8844aa"
+          />
+          {/* Row 1 position */}
+          <DimensionLine
+            start={[0, 0.02, 0]}
+            end={[0, 0.02, 2.0]}
+            label="Row 1: 2.0m"
+            offset={0.5}
+            offsetDirection={[1, 0, 0]}
+            color="#8844aa"
+            fontSize="8px"
+          />
+          {/* Row 2 position */}
+          <DimensionLine
+            start={[0, 0.02, 0]}
+            end={[0, 0.02, 3.5]}
+            label="Row 2: 3.5m"
+            offset={0.8}
+            offsetDirection={[1, 0, 0]}
+            color="#8844aa"
+            fontSize="8px"
+          />
+        </>
       )}
-      {selections.fireflies === 'theVeil' && (
-        <MaterialNote position={[0, roomHeight * 0.5, halfD - 0.3]}>
-          Fiber veil wall: ramie fiber with embedded micro-LEDs at 3-5 depth levels
-        </MaterialNote>
+
+      {/* === HUMAN REFERENCE HEIGHTS === */}
+      {has('human') && (
+        <>
+          {/* Standing eye height */}
+          <DimensionLine
+            start={[halfW - 0.8, 0, halfD - 0.5]}
+            end={[halfW - 0.8, 1.7, halfD - 0.5]}
+            label="Standing: 1.7m"
+            offset={0.25}
+            offsetDirection={[1, 0, 0]}
+            color="#cc6600"
+          />
+          {/* Seated eye height */}
+          <DimensionLine
+            start={[halfW - 0.8, 0, halfD - 1.2]}
+            end={[halfW - 0.8, 1.1, halfD - 1.2]}
+            label="Seated eye: 1.1m"
+            offset={0.25}
+            offsetDirection={[1, 0, 0]}
+            color="#cc6600"
+          />
+          {/* Ceiling clearance from standing */}
+          <DimensionLine
+            start={[halfW - 0.8, 1.7, halfD - 0.5]}
+            end={[halfW - 0.8, roomHeight, halfD - 0.5]}
+            label={`Clearance: ${(roomHeight - 1.7).toFixed(1)}m`}
+            offset={0.5}
+            offsetDirection={[1, 0, 0]}
+            color="#cc6600"
+            fontSize="8px"
+          />
+        </>
       )}
+
+      {/* === MATERIALS === */}
+      {has('materials') && (
+        <>
+          <MaterialNote position={[0, roomHeight * 0.6, -halfD + 0.3]}>
+            Big wall: {wall.label}
+          </MaterialNote>
+          <MaterialNote position={[0, roomHeight * 0.8, -halfD + 0.6]}>
+            Ceiling LED modules: 18 LEDs + 1 IR sensor each
+          </MaterialNote>
+          <MaterialNote position={[-halfW + 0.5, roomHeight * 0.5, 0]}>
+            Side wall: matte black fabric or paint
+          </MaterialNote>
+          <MaterialNote position={[halfW - 0.5, roomHeight * 0.5, 0]}>
+            Side wall: matte black fabric or paint
+          </MaterialNote>
+          <MaterialNote position={[0, 0.15, 0]}>
+            Floor: artificial turf / dried grass mats
+          </MaterialNote>
+          <MaterialNote position={[0, roomHeight - 0.2, 0]}>
+            Ceiling: 120x120cm modular panels
+          </MaterialNote>
+          {selections.fireflies === 'canopyGrid' && (
+            <MaterialNote position={[0, roomHeight - 0.5, 0]}>
+              Hanging: ramie fiber, paper mulberry — 2700K micro-LED, Arduino
+            </MaterialNote>
+          )}
+          {selections.fireflies === 'theVeil' && (
+            <MaterialNote position={[0, roomHeight * 0.5, halfD - 0.3]}>
+              Fiber veil: ramie with embedded micro-LEDs, 3-5 depth levels
+            </MaterialNote>
+          )}
+        </>
+      )}
+
+      {/* Category toggles (HTML overlay) */}
+      <Html fullscreen>
+        <DimensionToggles
+          categories={DIM_CATEGORIES}
+          activeCategories={activeCategories}
+          onToggle={toggleCategory}
+        />
+      </Html>
     </group>
   )
 }

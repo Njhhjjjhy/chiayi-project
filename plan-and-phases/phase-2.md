@@ -1,90 +1,77 @@
-# Phase 2: mountain wall variants
+# Phase 2: the big wall - 5 treatment options
 
-## Goal
+Priority: high.
 
-Build multiple versions of the layered mountain wall so variants can be compared in real time. The mountain wall occupies one full 10-meter-wide wall of the room.
+## What to change
 
-## Context
+Remove the current mountain-only wall concept. Replace it with 5 distinct wall treatment options presented with equal visual weight. Each option gets its own card, section, or panel on the page.
 
-The physical installation uses cut plywood or mdf panels shaped into mountain silhouette profiles, mounted at varying depths from the wall. Led strips behind each layer's top edge create a glowing backlight effect. The color of this backlight shifts through the 4-phase sunset transition (built in phase 3).
+## Format for each option
 
-Reference images to keep in mind: layered green mountain murals with atmospheric depth, led-backlit mountain silhouettes with purple/pink glow, and actual Alishan sunset landscapes with bamboo silhouettes.
+Every option must include exactly these fields:
 
-## What to build
+- Name (2-4 words).
+- One-sentence description.
+- Theme connection: how it relates to fireflies, ecology, and "you are what you see."
+- Materials list, prioritizing materials available in Taiwan.
+- Sensory experience: what visitors see, touch, and smell.
+- Behavior in darkness: how it looks when only firefly LEDs are active.
+- Complexity: low, medium, or high.
+- Cost range: low (under 50k TWD), medium (50-150k TWD), or high (150k+ TWD).
 
-### 1. Mountain wall component
+## Option 1 - living moss wall
 
-Create `src/components/MountainWall.jsx`. This component:
+Inspired by Olafur Eliasson's "moss wall" (1994). A wall-sized surface covered in living moss or lichen, woven into wire mesh and mounted directly on the wall. Eliasson's version uses reindeer moss and was exhibited at Taipei Fine Arts Museum in 2025.
 
-- Generates mountain silhouette profiles procedurally using code (sine waves, perlin noise, or similar).
-- Each profile is an extruded shape or a custom geometry — a 2d mountain ridgeline extruded into a thin slab (representing a plywood panel).
-- Layers are positioned at increasing z-depths from the camera, with spacing between them.
-- Each layer has an emissive strip or area light behind its top edge to simulate led backlighting.
-- The component accepts a variant config object that controls all parameters.
+For this exhibition, use local Alishan mountain moss or lichen instead of reindeer moss. The wall becomes a living extension of the forest outside.
 
-### 2. Variant definitions
+- Theme connection: the wall is alive, just like the fireflies. Ecology made tangible. Visitors smell the forest.
+- Materials: local mountain moss or lichen, galvanized wire mesh, wood frame, misting system for hydration.
+- Sensory: visual texture of living organic surface, earthy forest scent, subtle color shifts as moss hydration changes.
+- In darkness: moss texture catches and scatters the green firefly light, creating soft organic shadows across the wall surface.
+- Complexity: medium (sourcing and maintaining living moss requires ongoing care).
+- Cost: medium.
 
-Create at least 3 mountain wall variants in `src/variants/mountainWall.js`:
+## Option 2 - layered mountain silhouette wall
 
-**Variant a — soft rolling peaks:**
-- 3 layers.
-- Smooth, gently rolling silhouettes (low-frequency sine curves).
-- Colors fading from deep forest green (foreground) to pale sage (background).
-- Moderate spacing between layers (0.3-0.5m).
-- Backlight: warm amber.
+The existing mountain concept, refined. Multiple layers of thin wood or foam-core panels cut into mountain ridge profiles, spaced 5-15 cm apart, with LED rope lights behind each layer. The layers create depth through parallax.
 
-**Variant b — sharp ridgelines:**
-- 5 layers.
-- Angular, jagged peaks with visible treeline texture (small triangular bumps along the ridge).
-- Higher contrast: near-black foreground to medium green background.
-- Tighter spacing (0.15-0.25m).
-- Backlight: warm white.
+- Theme connection: Alishan's mountain landscape is the fireflies' home. The wall is their habitat made visible.
+- Materials: 4-6 layers of 6 mm plywood or foam-core, LED rope lights (warm amber to deep green gradient), spacer brackets, black paint for edges.
+- Sensory: visual depth through layered silhouettes, warm-to-cool color gradient from back to front.
+- In darkness: backlit silhouettes glow softly, providing a warm horizon line below the firefly ceiling. Colors shift from deep green (foreground mountains) to warm amber/orange (background, simulating sunset).
+- Complexity: low.
+- Cost: low.
 
-**Variant c — geometric/stylized:**
-- 4 layers.
-- Simplified geometric shapes — straight-line segments forming angular mountain forms (inspired by the led-backlit reference image with purple glow).
-- Monochromatic dark palette (charcoal to medium gray).
-- Even spacing (0.3m).
-- Backlight: configurable color (default: purple/pink).
+## Option 3 - reflective fracture wall
 
-### 3. Backlight system
+Inspired by Eliasson's "when love is not enough wall" (2007). Triangular and angular mirror fragments mounted across the wall surface, creating kaleidoscopic reflections.
 
-Behind each mountain layer, add a light source that simulates the led strip effect:
+- Theme connection: directly reinforces "you are what you see." Visitors see themselves fragmented among reflected firefly lights. Buddhism's "everything is an extension of yourself" made literal - your reflection merges with the fireflies.
+- Materials: mirror acrylic panels (safer than glass), triangular mounting brackets, plywood backing, black adhesive for edges.
+- Sensory: visual multiplied reflections of every light source in the room, including visitors' own silhouettes.
+- In darkness: even a few active firefly LEDs produce dozens of reflected points of light across the wall. Visitor movement causes the reflections to shift constantly.
+- Complexity: medium.
+- Cost: medium.
 
-- Use area lights, emissive planes, or point lights spread along the top edge.
-- The light should bleed between layers and create visible glow on the gap surfaces.
-- Backlight color and intensity should be controllable via Leva.
-- In phase 3, these will be driven by the sunset timeline. For now, use static controllable colors.
+## Option 4 - fiber veil wall
 
-### 4. Optional: horizontal sun lines
+A deep-pile wall surface (10-15 cm thick) made from local natural fibers with embedded micro-LEDs at varying depths.
 
-Add a toggleable element behind the mountain layers — thin horizontal emissive strips that suggest the banded look of a sunset sky. These should fade in and out depending on the lighting phase (will be connected in phase 3).
+- Theme connection: fireflies emerging from undergrowth. The wall is the forest floor turned vertical.
+- Materials: paper mulberry bark, raw ramie fiber, dried pampas grass, or a combination. Wire mesh backing. Warm-white micro-LEDs embedded at 3-15 cm depth within the fiber mass.
+- Sensory: visual glow from within a textured organic surface. Tactile - visitors can lean close and see individual lights sharper or softer depending on how deeply they are embedded. The fibers may have a faint natural scent.
+- In darkness: the wall appears to breathe with scattered points of soft light emerging through layers of fiber. An intimate, close-looking counterpart to the ceiling's overhead display.
+- Complexity: high (hand-assembly of fiber layers with embedded LEDs).
+- Cost: medium to high.
 
-### 5. Leva controls for this phase
+## Option 5 - projection-reactive surface
 
-Expose in the Leva panel:
+A matte white or light fabric surface covering the wall, used as a projection canvas connected to the same infrared detection system as the ceiling modules.
 
-- Active mountain variant (a, b, c).
-- Number of layers (override per variant).
-- Layer spacing.
-- Peak amplitude and frequency.
-- Foreground and background layer colors.
-- Backlight color and intensity.
-- Sun lines on/off.
-
-### 6. Variant switcher integration
-
-Register the mountain wall variants in the variant switcher ui so they can be toggled from the sidebar.
-
-## Deliverable
-
-Three switchable mountain wall styles inside the room, each with adjustable parameters. The wall should look compelling even with basic lighting.
-
-## Acceptance criteria
-
-- At least 3 visually distinct mountain wall variants are switchable.
-- Each variant has procedurally generated silhouette profiles (not hardcoded paths).
-- Led backlighting is visible between layers.
-- Leva controls adjust parameters in real time.
-- The mountain wall fits the 10-meter wall width correctly.
-- Variant switcher ui shows the mountain wall options.
+- Theme connection: visitors become part of the artwork. Their shadow silhouettes appear on the wall surrounded by projected firefly particles. When a visitor moves, the projected fireflies scatter and regroup around them. Connects to the shadow/silhouette artworks in the reference images.
+- Materials: white projection fabric or painted matte surface, short-throw projector, custom projection software, connection to the IR sensor network.
+- Sensory: visual interactive projections that respond to visitor movement in real time.
+- In darkness: the projected fireflies provide their own light on the wall surface. Visitor silhouettes create dynamic negative spaces within the projection.
+- Complexity: high (requires custom software development and projector calibration).
+- Cost: high.

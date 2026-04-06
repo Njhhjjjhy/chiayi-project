@@ -18,18 +18,17 @@ const PHASE_SUBTITLES = {
 
 export default function PhaseOverlay() {
   const { time } = useTimeline()
-  const { viewMode } = useVariant()
+  const { isExperience } = useVariant()
   const [showLabel, setShowLabel] = useState(false)
   const [currentPhase, setCurrentPhase] = useState('')
   const lastPhaseRef = useRef('')
   const timerRef = useRef(null)
 
-  if (viewMode === 'construction') return null
-
   const phaseIndex = time < 0.25 ? 0 : time < 0.5 ? 1 : time < 0.75 ? 2 : 3
   const phaseKey = PHASES[phaseIndex].id
 
   useEffect(() => {
+    if (!isExperience) return
     if (phaseKey !== lastPhaseRef.current) {
       lastPhaseRef.current = phaseKey
       setCurrentPhase(phaseKey)
@@ -38,7 +37,9 @@ export default function PhaseOverlay() {
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => setShowLabel(false), 3000)
     }
-  }, [phaseKey])
+  }, [phaseKey, isExperience])
+
+  if (!isExperience) return null
 
   return (
     <div
