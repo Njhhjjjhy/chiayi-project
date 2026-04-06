@@ -1,56 +1,79 @@
-# Firefly immersive experience — build plan
+# Project plan - firefly immersive exhibition
 
-## What this project is
+## What this is
 
-A web-based 3d proposal visualization tool for the Firefly Immersive Experience, an installation being built in a 10x10 meter indoor space in the Alishan mountain range, Taiwan. The web tool lets Riaan and Corbett compare design variants side-by-side, make decisions, and eventually refine into a final design that becomes a public promotional website.
+An immersive firefly art exhibition at Nanghia (https://nanghia.com), a social enterprise in Laiji Village, Alishan Township, Taiwan. Nanghia is a community gathering place with an immersive gallery, cultural park, and bistro. Profits go back to the local Tsou indigenous community.
 
-The entire 3d world is built in code using React, React Three Fiber, and @react-three/drei. No imported model files. Everything is constructed from geometric primitives.
+## Collaborators
 
-## Tech stack
+- **Riaan** - tech and immersive design.
+- **Corbett Wall** - organizer, Nanghia founder.
 
-- React 18+ with Vite
-- React Three Fiber + @react-three/drei
-- Tailwind CSS for ui elements
-- Leva (debug controls for tweaking parameters in real time)
-- Deployed to Vercel
+## Positioning
 
-## File structure
+Art + science + tech. Must feel like a proper art exhibition, not a theme park attraction. The inside experience draws inspiration from teamLab (https://www.teamlab.art/).
 
-Each phase has its own markdown file with detailed instructions:
+## Core theme
 
-- plan.md — this file (overview and summary)
-- phase-1.md — foundation and variant infrastructure
-- phase-2.md — mountain wall variants
-- phase-3.md — lighting and the 4-phase sunset transition
-- phase-4.md — firefly behavior variants (6 proposals)
-- phase-5.md — room environment variants
-- phase-6.md — structure qa tool
-- phase-7.md — decision consolidation
-- phase-8.md — public promotional website
-- references.md — links to 3d web experiences, particle systems, and technical resources
+Fireflies represent the delicate balance between humans and nature. Their bioluminescence works through the same fundamental mechanism as electrical signals in human brain synapses - both are living systems communicating through light and chemistry. This scientific parallel connects to a Buddhist philosophical idea: everything you see is an extension of yourself, and you are part of everything. The fireflies are not separate from you. They are a reflection of you.
 
-## Summary
+The goal is positive reinforcement: visitors leave seeing nature differently, feeling connected to it, wanting to protect it because it is part of them. Not guilt, not doom.
 
-| Phase | Focus | Sessions | Priority |
-|---|---|---|---|
-| 1 | Foundation and variant infrastructure | 1 | Now |
-| 2 | Mountain wall variants | 1-2 | Now |
-| 3 | Lighting and 4-phase transition | 1-2 | Now |
-| 4 | Firefly behavior variants (6 proposals) | 2-3 | Now |
-| 5 | Room environment variants | 1-2 | Now |
-| 6 | Structure qa tool | 1 | After phase 5 |
-| 7 | Decision consolidation | 1 | After decisions are made |
-| 8 | Public promotional website | 2-3 | Future |
+## Target audience
 
-Total estimated effort: 10-16 Claude Code sessions across all phases.
+Primarily non-artsy visitors: families, tourists already visiting Alishan, casual travelers. The storyline must be clear without requiring art world knowledge.
 
-Phases 1-5 are the core proposal tool. Phase 6 is a practical build-planning addition. Phases 7-8 happen after decisions are made.
+## Phases overview
 
-## How to use this plan
+| phase | focus | priority |
+|---|---|---|
+| 1 | space and architecture | highest |
+| 2 | the big wall - 5 treatment options | high |
+| 3 | visitor experience and narrative | high |
+| 4 | marketing and promotion | medium |
+| 5 | floor and environment | medium |
+| 6 | merchandise | lower |
 
-1. Start with phase 1. Read phase-1.md and follow its instructions.
-2. After each phase, review what was built. Flag anything that needs adjustment.
-3. Move to the next phase only when you're satisfied with the current one.
-4. At any point, you can go back and add more variants to an earlier phase.
-5. After phase 5, sit down with Corbett and walk through all the combinations.
-6. Make your choices, then run phase 7 to consolidate.
+## External references
+
+| reference | url | relevance |
+|---|---|---|
+| Nanghia (the venue) | https://nanghia.com | venue context, brand alignment |
+| teamLab | https://www.teamlab.art/ | immersive experience benchmark |
+| Eliasson - moss wall (1994) | https://olafureliasson.net/artwork/moss-wall-1994/ | wall option 1 inspiration. reindeer moss on wire mesh, living surface with scent. exhibited at Taipei Fine Arts Museum 2025. |
+| Eliasson - walk through wall (2005) | https://olafureliasson.net/artwork/walk-through-wall-2005/ | moire and optical effects reference. glass panes with concentric mirrored rings. |
+| Eliasson - when love is not enough wall (2007) | https://olafureliasson.net/artwork/when-love-is-not-enough-wall-2007/ | wall option 3 inspiration. stainless steel mirrors, crystalline kaleidoscopic triangular forms. |
+| Eliasson - gallery overview | https://www.tanyabonakdargallery.com/artists/27-olafur-eliasson/ | exhibition presentation quality benchmark. his works are described as "devices for the experience of reality." |
+
+## Reference images catalog
+
+### Project art and design references
+
+| file | description | use |
+|---|---|---|
+| `durer_20230317T00_54_37_956Z.png` | carved wooden disc with concentric patterns on a stand, by durer.ai x Christiaan Jurie Burger | art direction reference |
+| `Light1_15.jpg`, `Light1_18.jpg`, `Light1_19.jpg` | illuminated rectangular lamps with perforated mesh upper sections and wooden bases | ceiling module housing reference |
+| `download15.jpg` | hourglass-shaped light sculpture with textured surface and warm glow | lighting design reference |
+| `1000004539.jpg` | woven lattice pendant lamps with dark screen backdrop, by durer.ai x Christiaan Jurie Burger | craft-informed lighting reference |
+| `1000004540.jpg` | painted mountain mural in sunset colors on a wall | wall option 2 reference |
+| `1000004541.jpg` | LED-backlit mountain silhouettes with purple/magenta lighting | wall option 2 reference |
+| `1000003491.jpg`, `1000003492.jpg`, `1000003493.jpg` | Japanese ceiling light fixtures with geometric lattice patterns | traditional light diffusion reference |
+| `1000001417.jpg` - `1000001422.jpg`, `1000001430.jpg` | dark atmospheric images: spotlight beams in darkness, illuminated water sprays, textured materials | mood and atmosphere reference |
+| `fbff0e765c554e869eba61838def9cfd1_all_113.jpg` | ceramic coiled sculpture at an art fair | sculptural reference |
+| `fbff0e765c554e869eba61838def9cfd1_all_123.jpg`, `_124.jpg` | abstract layered fabric artworks labeled "Daun" | mixed media reference |
+| `fbff0e765c554e869eba61838def9cfd1_all_144.jpg`, `_145.jpg` | carved wooden totem/column sculptures | sculptural reference |
+
+### Venue space images
+
+| file | what it shows |
+|---|---|
+| `exhibition-details_ceiling-designs.webp` | reference ceiling with triangular panels forming mountain topology (red annotation: "use this ceiling design made of triangular shapes to resemble mountain topology") |
+| `exhibition-details_exhibition-curtains.webp` | curtain reference for sectioning the space (red annotation: "we will need curtains or something to section the exhibition area") |
+| `exhibition-details_exhibition-other-view.webp` | full room view showing columns, track lighting, dark wainscoting, back windows |
+| `exhibition-details_exhibition-sections.webp` | annotated photo: entrance (red), back wall (white), vent to cover (green), back windows (white), total area (yellow) |
+| `exhibition-details_exhibition-space.webp` | room with exhibition zone outlined in pink, retail zone labeled "Retail" in orange |
+| `firefly-room-dimensions.png` | full architectural floor plan with dimensions |
+| `firefly-room-dimensions_back-windows.webp` | floor plan, back windows highlighted in blue on right/east wall |
+| `firefly-room-dimensions_big-wall.webp` | floor plan, big wall highlighted in purple/magenta across top/north side |
+| `firefly-room-dimensions_entrance.webp` | floor plan, entrance highlighted in green on left side |
+| `firefly-room-dimensions_total-exhibition-area.webp` | floor plan, total exhibition area outlined in red |

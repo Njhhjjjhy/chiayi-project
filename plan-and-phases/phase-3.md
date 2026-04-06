@@ -1,104 +1,150 @@
-# Phase 3: lighting and the 4-phase sunset transition
+# Phase 3: visitor experience and narrative
 
-## Goal
+Priority: high.
 
-Build the temporal experience — the controllable transition from golden hour through twilight to blue hour to darkness. This drives the entire room's mood.
+## Experience flow - 15 to 20 minutes, entrance to exit
 
-## Context
+Create a page or section that maps this journey. Each step should be visually distinct.
 
-The physical installation transitions visitors through four lighting phases, simulating the passage of time from late afternoon to full darkness when fireflies appear. The mountain wall backlighting, ambient room light, and sky backdrop all change together.
+### Step 1 - entrance statement wall (2-3 minutes)
 
-## What to build
+A wall at the entrance that introduces the story, concept, and theme. This is the first thing visitors see before entering the dark space.
 
-### 1. Timeline controller
+Content on the wall:
+- Exhibition title.
+- A brief paragraph explaining what visitors are about to experience.
+- The core theme in simple language: fireflies as a bridge between humans and nature, light as communication, "you are what you see."
+- Visual elements that set the tone (photographs of Alishan at dusk, firefly macro photography, or abstract representations).
 
-Create `src/components/TimelineController.jsx` and `src/hooks/useTimeline.js`.
+The entrance is 240 cm wide x 352 cm tall. Design for this exact size.
 
-The timeline is a normalized value from 0.0 to 1.0:
-- 0.0 — 0.25: golden hour.
-- 0.25 — 0.50: twilight.
-- 0.50 — 0.75: blue hour.
-- 0.75 — 1.0: darkness (firefly phase).
+### Step 2 - sound transition (1-2 minutes)
 
-The controller supports:
-- Manual scrubbing: a slider in the ui that lets you drag to any point on the timeline.
-- Auto-play: the timeline advances automatically at a configurable speed.
-- Phase presets: buttons to jump directly to the start of each phase.
+As visitors move from the lit entrance into the dark exhibition space, ambient sound introduces the concept.
 
-### 2. Lighting states per phase
+Sound layers:
+- Forest ambience: cicadas, rustling leaves, distant water, wind through bamboo.
+- A subtle musical layer that evokes nightfall - slow, minimal, not melodic enough to become the focus.
+- The sound should feel like dusk arriving. Volume increases gradually as visitors move deeper into the dark space.
 
-**Golden hour (0.0 - 0.25):**
-- Ambient light: warm amber (#ffb347), intensity ~0.6.
-- Mountain wall backlight: orange-gold gradient.
-- Sky backdrop (behind mountain wall): warm gradient from gold at the bottom to pale peach at the top.
-- Horizontal sun lines (if enabled): visible, warm gold.
-- Room side walls: faintly warm.
+Sound is the bridge between the bright entrance and the dark interior. It tells visitors "you are entering a different world."
 
-**Twilight (0.25 - 0.50):**
-- Ambient light: deepening coral to rose (#ff6b6b to #c06080), intensity reducing to ~0.3.
-- Mountain wall backlight: coral to purple gradient.
-- Sky backdrop: gradient shifting from deep orange to magenta to purple.
-- Sun lines: fading out.
-- Room side walls: dimming.
+### Step 3 - firefly discovery (10-12 minutes)
 
-**Blue hour (0.50 - 0.75):**
-- Ambient light: deep indigo (#2d1b69), intensity ~0.15.
-- Mountain wall backlight: indigo to deep blue, only visible on the rearmost layer edges.
-- Sky backdrop: deep purple to near-black.
-- Sun lines: gone.
-- Room: mostly dark, mountain ridgeline edges faintly visible.
+Visitors receive infrared flashlights at the entrance. Inside the dark space, they discover fireflies by pointing their flashlights at ceiling modules. The flashlights trigger the infrared detectors, causing nearby firefly LEDs to respond.
 
-**Darkness (0.75 - 1.0):**
-- Ambient light: near-zero intensity (#0a0a15), ~0.02.
-- Mountain wall backlight: off or barely perceptible blue.
-- Sky backdrop: black.
-- Room: effectively dark. This is the canvas for fireflies (phase 4).
+This creates personal agency. Each visitor is actively discovering and interacting, not passively watching.
 
-All transitions should interpolate smoothly using lerp or easing functions. No hard cuts between phases.
+The floor underfoot feels like a forest floor (see phase 5). The big wall (see phase 2) provides peripheral visual context. The ceiling is the primary interactive surface.
 
-### 3. Color palette variants
+Max capacity: 30 adults in the space simultaneously.
 
-Create at least 3 palette options in `src/variants/lighting.js`:
+### Step 4 - exit through retail (2-3 minutes)
 
-**Variant a — warm dominant:**
-- Emphasizes oranges, golds, and warm pinks. The twilight leans more coral than purple.
+Visitors exit into the merchandise area (see phase 6). The transition from dark immersion to bright retail creates a moment of re-entry. The retail space is thematically connected but clearly separate.
 
-**Variant b — cool dominant:**
-- Twilight skews quickly into purples and blues. Less time in warm tones.
+## Firefly algorithm - 3 states, 2 variants each
 
-**Variant c — natural/documentary:**
-- More muted, realistic colors based on actual Alishan sunset observations. Less saturated than a and b.
+The LED system has 3 behavioral states. Write the logic as pseudo-code that an Arduino developer can implement.
 
-### 4. Transition speed variants
+### State 1 - idle (no visitors detected)
 
-- 30-second full cycle (quick preview).
-- 60-second full cycle (presentation speed).
-- 2-minute full cycle (closer to exhibition pace).
-- 5-minute full cycle (actual real-time feel).
+Fireflies blink on their own in a naturalistic pattern. Not all LEDs are ever on simultaneously.
 
-Speed should be adjustable via the Leva panel or a dropdown in the ui.
+**Variant A - random scatter:**
+```
+for each LED in module:
+  brightness = 0
+  target_brightness = random(30, 255)
+  fade_duration = random(1000, 4000) ms
+  pause_after = random(2000, 8000) ms
 
-### 5. Ui elements for this phase
+at any moment, 10-30% of all LEDs across the ceiling are active
+each LED independently fades in, holds briefly, fades out, then pauses
+no coordination between modules
+```
 
-- A timeline scrubber/slider bar at the bottom of the screen.
-- Phase labels above the scrubber (golden hour, twilight, blue hour, darkness).
-- A play/pause button.
-- Speed selector.
-- The current phase name displayed somewhere subtle.
+**Variant B - drift wave:**
+```
+wave_origin = (x: random, y: random)  // picks a new origin every 30-60 seconds
+wave_speed = 0.5 modules per second
+wave_width = 3 modules
 
-### 6. Integration with mountain wall
+as wave passes through a module:
+  activate 30-50% of that module's LEDs
+  fade in over 1500 ms, hold 1000 ms, fade out over 2000 ms
 
-The mountain wall backlight colors must be driven by the timeline controller, not set independently. The Leva overrides from phase 2 should still work but act as modifiers on top of the timeline-driven values.
+result: a slow wave of activation drifts across the ceiling
+looks like wind moving through a field of fireflies
+```
 
-## Deliverable
+### State 2 - motion (visitor walking detected by IR sensor)
 
-A controllable sunset-to-darkness transition with multiple timing and color palette variants. The room should feel atmospheric and cinematic at every point on the timeline.
+The module's infrared detector senses a body moving below.
 
-## Acceptance criteria
+**Variant A - ripple:**
+```
+on motion_detected(module_id):
+  increase module brightness by 40%
+  increase blink rate by 2x for 3-5 seconds
+  trigger adjacent modules at 50% intensity with 500 ms delay
+  after 5 seconds, return to idle state
 
-- Scrubbing the timeline visibly changes the entire room's lighting in real time.
-- All 4 phases are distinct and transitions are smooth.
-- At least 3 color palette variants are switchable.
-- Speed is adjustable.
-- Mountain wall backlighting is driven by the timeline.
-- The darkness phase creates a convincingly dark room suitable for firefly emergence.
+result: a ripple of increased activity follows the visitor
+```
+
+**Variant B - startle:**
+```
+on motion_detected(module_id):
+  immediately turn off all LEDs in module (0 ms)
+  wait 2000 ms (total darkness above the visitor)
+  reactivate LEDs one by one at 300 ms intervals
+  each LED fades in slowly over 1500 ms
+
+result: fireflies go dark when startled, then cautiously return
+mimics real firefly behavior when disturbed
+```
+
+### State 3 - flashlight interaction (IR flashlight pointed at detector)
+
+A visitor deliberately aims their infrared flashlight at a module.
+
+**Variant A - discovery reward:**
+```
+on flashlight_detected(module_id):
+  activate all 18 LEDs in rapid cascade:
+    LED 1 on at 0 ms
+    LED 2 on at 80 ms
+    LED 3 on at 160 ms
+    ...continue through LED 18
+  hold all 18 at full brightness for 3000 ms
+  fade all out together over 2000 ms
+  return to idle
+
+result: a burst of light rewards the visitor's discovery
+```
+
+**Variant B - chain reaction:**
+```
+on flashlight_detected(module_id):
+  activate all 18 LEDs over 500 ms
+  after 500 ms, trigger each adjacent module (up/down/left/right):
+    activate 12 of 18 LEDs over 800 ms
+  after 1000 ms, trigger next ring of modules:
+    activate 6 of 18 LEDs over 1200 ms
+  spreading stops after 2-3 rings
+  all activated modules fade back to idle over 3000 ms
+
+result: a chain reaction spreads outward from the flashlight point
+creates a sense of interconnection across the ceiling
+```
+
+## Local Alishan firefly context
+
+Include a section on the page with this factual information:
+
+- Alishan hosts approximately 42 firefly species, roughly two-thirds of all species found in Taiwan.
+- Peak firefly season: April through June.
+- Laiji Village and the broader Alishan region are among Taiwan's premier bioluminescent habitats.
+- Common local species include Luciola cerata and Aquatica ficta.
+- Real firefly flash patterns vary by species: some flash in slow single pulses (2-4 second intervals), others in rapid double or triple bursts. The LED algorithm should reference these real patterns where possible.

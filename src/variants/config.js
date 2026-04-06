@@ -1,12 +1,12 @@
-import { mountainWallVariantList } from './mountainWall.js'
+import { wallVariantList } from './wall.js'
 import { lightingVariantList } from './lighting.js'
 import { fireflyVariantList } from './fireflies.js'
 import { ceilingVariantList, floorVariantList } from './room.js'
 
 export const variantCategories = {
-  mountainWall: {
-    label: 'Mountain wall',
-    variants: mountainWallVariantList,
+  wall: {
+    label: 'The big wall',
+    variants: wallVariantList,
   },
   lighting: {
     label: 'Lighting',
@@ -28,6 +28,7 @@ export const variantCategories = {
 
 export const viewModes = {
   experience: 'Experience',
+  light: 'Light',
   construction: 'Construction',
 }
 
@@ -37,4 +38,7 @@ export const cameraPresets = {
   overhead: { label: 'Overhead', position: [0, 9, 0.01], target: [0, 0, 0] },
   corner: { label: 'Corner', position: [4, 2.5, 4], target: [0, 1.5, -1] },
   free: { label: 'Free orbit', position: [0, 1.6, 3], target: [0, 1.6, -2] },
+  audienceView: { label: 'Audience POV', position: [0, 1.1, 2.5], target: [0, 1.4, -3] },
+  installationOverview: { label: 'Overview', position: [5, 3.5, 5], target: [0, 1.2, -1] },
+  mountainDetail: { label: 'Mountain detail', position: [0, 1.6, -2], target: [0, 1.8, -5] },
 }

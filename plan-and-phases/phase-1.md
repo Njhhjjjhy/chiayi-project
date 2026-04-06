@@ -1,80 +1,62 @@
-# Phase 1: foundation and variant infrastructure
+# Phase 1: space and architecture
 
-## Goal
+Priority: highest.
 
-Set up the project, build a variant switcher ui, and get a basic 3d scene running with an empty room shell.
+## Room dimensions
 
-## What to build
+Replace all placeholder or outdated dimensions with these confirmed specs:
 
-### 1. Project scaffold
+| measurement | value |
+|---|---|
+| total ceiling height | 4.2 m |
+| usable height after beams | 3.52 m |
+| pillar to opposite wall | 5.82 m |
+| entrance width | 240 cm |
+| entrance height | 352 cm |
+| approximate floor area | 10 m x 10 m (confirm exact from the architectural floor plan) |
+| max comfortable capacity | 30 adults |
 
-Create a Vite + React project with the following dependencies:
+## Room layout
 
-```
-npm create vite@latest firefly-experience -- --template react
-cd firefly-experience
-npm install three @react-three/fiber @react-three/drei leva tailwindcss @tailwindcss/vite
-```
+The exhibition occupies the right portion of the visitor service center (遊客服務中心). The left section is retail/merchandise.
 
-### 2. App structure
+Key landmarks and their positions (see annotated floor plans for exact locations):
 
-```
-src/
-  App.jsx                  — main layout with canvas and ui overlay
-  components/
-    Scene.jsx              — the 3d scene container
-    Room.jsx               — the 10x10m room shell (floor, walls, ceiling placeholder)
-    VariantSwitcher.jsx    — ui panel for switching between variants
-  variants/
-    config.js              — variant definitions (will grow in later phases)
-  hooks/
-    useVariant.js          — shared state for currently selected variants
-  styles/
-    index.css              — tailwind base styles
-```
+- **Entrance:** left side of the exhibition zone, opening from the retail area. See `firefly-room-dimensions_entrance.webp` (green highlight).
+- **Big wall:** runs horizontally along the top/north side, spanning the full width of the exhibition area. See `firefly-room-dimensions_big-wall.webp` (purple/magenta highlight).
+- **Back windows:** far right/east wall. Must be blacked out completely for darkness. See `firefly-room-dimensions_back-windows.webp` (blue highlight).
+- **Vent:** on the back wall, must be covered or concealed. See `exhibition-details_exhibition-sections.webp` (green text label).
+- **Total exhibition area:** see `firefly-room-dimensions_total-exhibition-area.webp` (red outline).
 
-### 3. The 3d scene
+## Existing constraints
 
-- A React Three Fiber canvas filling the viewport.
-- A perspective camera positioned at roughly eye height (1.6m) near one wall, looking toward the opposite wall (where the mountain wall will go).
-- OrbitControls from drei, constrained so the camera stays inside the room.
-- A ground plane at y=0, 10x10 meters, dark matte material.
-- Four walls as simple box geometries (thin, tall), positioned at the room edges. Use a neutral dark material. Leave the wall facing the camera (the "mountain wall") as a placeholder — it will be replaced in phase 2.
-- A ceiling plane at y=3.5 (3.5 meter ceiling height is a reasonable starting assumption — can be adjusted later).
-- Basic ambient light so the geometry is visible.
-- A grid helper on the floor (togglable) showing 1-meter increments.
+- There are track lights already mounted on the ceiling. They cannot be removed. The dropped ceiling module system must sit below them or accommodate them.
+- The room has structural columns and exposed beams that divide the ceiling into zones.
+- The space is in a government-leased venue, so all installations must be modular and removable.
 
-### 4. The variant switcher ui
+## Ceiling module system - two options side by side
 
-A minimal sidebar or bottom panel overlaying the 3d canvas. It should have:
+The ceiling grid size is undecided. Present both options on the same page so they can be compared visually.
 
-- Collapsible sections for each design category (mountain wall, lighting, fireflies, room). These will be empty at first and populated in later phases.
-- A "view mode" toggle: experience view (atmospheric) vs construction view (wireframe + grid + dimensions). Construction view is just wireframe materials + the grid helper visible.
-- A label showing which variants are currently active.
+### Option A - small squares
 
-Use tailwind for styling. Keep it dark and minimal so it doesn't compete with the scene.
+- Grid unit: 60 cm x 60 cm.
+- One module = 4 squares arranged 2x2 = 120 cm x 120 cm total.
+- Each module: 18 LEDs (greenish tone), 1 infrared motion detector.
+- Calculate and display: total modules that fit the ~10 x 10 m space, total LED count, total IR sensors.
+- Show a grid layout diagram with module placement.
+- Mark where modules cannot be placed due to beams or existing lights.
 
-### 5. Leva integration
+### Option B - large panels
 
-Add a Leva panel (can be hidden by default, toggled with a keyboard shortcut like `L`) for real-time parameter tweaking. In this phase, expose:
+- Grid unit: 120 cm x 120 cm (single panel per module).
+- Each module: 18 LEDs (greenish tone), 1 infrared motion detector.
+- Calculate and display: total modules that fit the ~10 x 10 m space, total LED count, total IR sensors.
+- Show a grid layout diagram with module placement.
+- Mark where modules cannot be placed due to beams or existing lights.
 
-- Room dimensions (width, depth, height) so they can be adjusted live.
-- Camera position presets (eye-level, overhead, corner).
-- Grid visibility toggle.
+### For both options
 
-### 6. Vercel deployment
-
-Add a `vercel.json` if needed. Make sure `npm run build` works and the output is deployable.
-
-## Deliverable
-
-A running app showing an empty dark room with a grid floor, orbit controls, a variant switcher skeleton, and Leva parameter controls. Nothing inside the room yet, but the infrastructure to add everything in later phases.
-
-## Acceptance criteria
-
-- The room renders at correct 10x10m scale.
-- OrbitControls work but are constrained to stay roughly inside the room.
-- The variant switcher ui is visible and has empty placeholder sections.
-- The view mode toggle switches between atmospheric (lit) and construction (wireframe + grid).
-- Leva panel is accessible and room dimensions update live.
-- The app builds and deploys to Vercel without errors.
+- LEDs operate in sequences driven by an algorithm. At any moment some lights are on, some are off.
+- Each module's infrared detector tracks visitor movement below.
+- The algorithm logic is detailed in phase 3.

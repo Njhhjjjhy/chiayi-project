@@ -8,7 +8,7 @@ import { useFrame } from '@react-three/fiber'
 const tempObject = new THREE.Object3D()
 const tempColor = new THREE.Color()
 
-export default function FireflyParticles({ count, positions, opacities, colors, size = 0.2 }) {
+export default function FireflyParticles({ count, positions, opacities, colors, size = 0.03 }) {
   const meshRef = useRef()
 
   const geometry = useMemo(() => new THREE.SphereGeometry(1, 4, 4), [])

@@ -5,7 +5,7 @@ import { useLightingState } from '../hooks/useLightingState.jsx'
 import { mountainWallVariants } from '../variants/mountainWall.js'
 
 const WALL_WIDTH = 10
-const WALL_HEIGHT = 3.5
+const WALL_HEIGHT = 3.52
 const SEGMENTS = 120
 
 // Simple seeded pseudo-random for deterministic noise
@@ -115,8 +115,8 @@ function MountainLayer({ profile, depth, color, thickness, isConstruction }) {
   )
 }
 
-function Backlight({ depth, color, intensity, isConstruction }) {
-  if (isConstruction) return null
+function Backlight({ depth, color, intensity, isConstruction, isLight }) {
+  if (isConstruction || isLight) return null
 
   return (
     <group>
@@ -132,23 +132,23 @@ function Backlight({ depth, color, intensity, isConstruction }) {
           side={THREE.DoubleSide}
         />
       </mesh>
-      {/* Actual point lights that illuminate surrounding geometry */}
+      {/* Point lights behind the wall — kept low so they don't poke above the silhouette */}
       {[-3, 0, 3].map((x) => (
         <pointLight
           key={x}
-          position={[x, WALL_HEIGHT * 0.6, depth + 0.05]}
+          position={[x, WALL_HEIGHT * 0.3, depth - 0.1]}
           color={color}
-          intensity={intensity * 1.5}
-          distance={4}
-          decay={1.5}
+          intensity={intensity * 1.2}
+          distance={2.5}
+          decay={2}
         />
       ))}
     </group>
   )
 }
 
-function SunLines({ depth, color, intensity, sunLineOpacity, isConstruction }) {
-  if (isConstruction || sunLineOpacity <= 0) return null
+function SunLines({ depth, color, intensity, sunLineOpacity, isConstruction, isLight }) {
+  if (isConstruction || isLight || sunLineOpacity <= 0) return null
 
   const lineCount = 5
   const lines = []
@@ -173,8 +173,7 @@ function SunLines({ depth, color, intensity, sunLineOpacity, isConstruction }) {
 }
 
 export default function MountainWall({ overrides = {} }) {
-  const { selections, viewMode } = useVariant()
-  const isConstruction = viewMode === 'construction'
+  const { selections, isConstruction, isLight } = useVariant()
   const lighting = useLightingState()
 
   const variantId = selections.mountainWall || 'softRolling'
@@ -216,6 +215,7 @@ export default function MountainWall({ overrides = {} }) {
           intensity={backlightIntensity}
           sunLineOpacity={lighting.sunLineOpacity}
           isConstruction={isConstruction}
+          isLight={isLight}
         />
       )}
 
@@ -234,6 +234,7 @@ export default function MountainWall({ overrides = {} }) {
               color={backlightColor}
               intensity={backlightIntensity * (0.5 + ((layerCount - 1 - i) / layerCount) * 0.5)}
               isConstruction={isConstruction}
+              isLight={isLight}
             />
             {/* The mountain panel itself */}
             <MountainLayer

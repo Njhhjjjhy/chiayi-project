@@ -1,78 +1,55 @@
-# Phase 5: room environment variants
+# Phase 5: floor and environment
+
+Priority: medium.
 
 ## Goal
 
-Build out the full room so mountain wall + ceiling + floor + fireflies work together as a cohesive space. Create switchable variants for each room element.
+The floor must feel like walking through a forest at night. Combined with the firefly ceiling above, the wall treatment on the big wall, and ambient forest sound, every surface contributes to a single continuous immersion.
 
-## What to build
+## Floor design
 
-### 1. Ceiling variants
+### Base layer
 
-Create `src/components/Ceiling.jsx` with at least 3 options:
+A soft, uneven surface covering the entire exhibition area (~10 x 10 m). Options:
 
-**Variant a — flat dropped ceiling with panel grid:**
-- A flat plane at 3.5m height.
-- Visible grid lines dividing it into 120x120cm panels (matching the physical ceiling spec).
-- Neutral dark material with subtle panel seams.
+- Artificial turf (short pile, dark green).
+- Dried grass mats layered for texture variation.
+- A combination of both: turf as base with dried grass mats in patches.
 
-**Variant b — organic canopy:**
-- A curved or undulating ceiling surface.
-- Suggests a natural forest canopy.
-- Darker in the center, slightly lighter at edges.
+The surface must feel different from a normal floor the moment visitors step on it. The unevenness should be subtle enough to walk safely, but noticeable enough to register as "not indoors."
 
-**Variant c — open/exposed:**
-- No visible ceiling. The room fades to black above 3.5m.
-- Creates a sense of limitless vertical space (useful for canopy grid firefly variant).
+### Scattered elements
 
-### 2. Floor variants
+Placed across the floor to reinforce the forest feeling:
 
-Create `src/components/Floor.jsx` with at least 3 options:
+- Smooth river stones (fist-sized or smaller, no sharp edges).
+- Small pieces of driftwood or fallen branches.
+- Dried leaves in scattered patches.
+- Moss patches (real or artificial) in clusters.
 
-**Variant a — dark wood planks:**
-- A plane with a procedural wood plank texture (repeating rectangles with slight color variation).
-- Matte finish, dark walnut tones.
+### Safety requirements
 
-**Variant b — forest floor:**
-- Dark earth base with subtle grass tuft geometry scattered across the surface.
-- Very sparse — just enough to suggest being in nature, not a dense lawn.
+The room is dark. Visitors are looking up at the ceiling, not at their feet.
 
-**Variant c — simple dark matte:**
-- Plain dark surface. Lets the wall and fireflies do all the visual work.
-- The safest option for visual clarity.
+- No tripping hazards: all floor elements must be flush or gently ramped, nothing protruding more than 3 cm above the base surface.
+- Nothing sharp: all stones must be smooth, all wood must be sanded.
+- Subtle ground-level edge lighting along the walls for safety navigation. Dim enough not to break the dark immersion (warm amber, under 5 lux), bright enough to prevent falls.
+- Clear pathways from entrance to exit must be maintained even with scattered elements.
 
-### 3. Side wall treatment
+### Modularity
 
-The three non-mountain walls should be:
-- Dark, neutral, and non-distracting.
-- Slightly absorptive-looking (matte black or very dark gray).
-- One wall may serve as the veil surface (for firefly variant 5) or the reflection screen (variant 6).
+The space is in a government-leased venue. The entire floor treatment must be:
 
-### 4. Camera presets
+- Assembled and disassembled without permanent modifications to the building floor.
+- Transportable in sections.
+- Storable when not in use.
 
-Add switchable camera positions to the ui:
+Consider a modular mat system (interlocking tiles or rolled sections) as the base, with scattered elements placed on top during installation.
 
-- First-person standing: eye height (1.6m), centered in the room, facing the mountain wall.
-- First-person seated: lower eye height (1.1m), centered.
-- Overhead plan view: looking straight down from above, showing the room layout.
-- Corner perspective: positioned in a room corner looking diagonally across.
-- Free orbit: unconstrained orbit controls for manual inspection.
+## Sound environment
 
-### 5. Combination selector
+Ambient sound fills the entire space continuously during operating hours. See phase 3, step 2 for the sound design specifications. The sound system needs:
 
-The variant switcher should now allow combining:
-- Mountain wall variant (from phase 2) + lighting palette (from phase 3) + firefly behavior (from phase 4) + ceiling + floor.
-- A "randomize" button that picks a random combination.
-- A "favorites" system where you can save a combination for later comparison.
-
-## Deliverable
-
-A fully enclosed 3d room where all elements work together. Every element is switchable. Combinations can be compared.
-
-## Acceptance criteria
-
-- At least 3 ceiling and 3 floor variants are switchable.
-- Side walls are present and non-distracting.
-- Camera presets switch instantly.
-- The combination selector allows mixing any mountain + lighting + firefly + ceiling + floor together.
-- The room feels cohesive and immersive in first-person view.
-- Construction view (from phase 1) still works and shows all geometry in wireframe.
+- At least 4 speakers positioned in the corners or along the walls for spatial distribution.
+- A looping audio track of at least 30 minutes before repeating (so visitors who stay the full 15-20 minutes do not hear a loop point).
+- Volume level: audible but not dominant. Visitors should be able to speak to each other in quiet voices.
