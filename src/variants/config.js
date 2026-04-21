@@ -40,5 +40,4 @@ export const cameraPresets = {
   free: { label: 'Free orbit', position: [0, 1.6, 3], target: [0, 1.6, -2] },
   audienceView: { label: 'Audience POV', position: [0, 1.1, 2.5], target: [0, 1.4, -3] },
   installationOverview: { label: 'Overview', position: [5, 3.5, 5], target: [0, 1.2, -1] },
-  mountainDetail: { label: 'Mountain detail', position: [0, 1.6, -2], target: [0, 1.8, -5] },
 }

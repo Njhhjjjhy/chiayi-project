@@ -4,8 +4,8 @@ import { useVariant } from '../hooks/useVariant.jsx'
 import { useTimeline } from '../hooks/useTimeline.jsx'
 import { useCeilingPanelTexture } from '../useExhibitionTextures.js'
 
-const ROOM = { w: 10, d: 10 }
-const DROPPED_H = 3.2    // dropped ceiling height
+const ROOM = { w: 8.83, d: 10 }
+const DROPPED_H = 3.4    // dropped ceiling height
 const STRUCTURAL_H = 3.5 // structural ceiling above panels
 const PANEL_SIZE = 1.18  // panel dimension (1.2m pitch - 0.02m gap)
 const PANEL_GAP = 0.02
@@ -151,11 +151,11 @@ function MountainTopologyCeiling({ isConstruction, ceilingOpacity }) {
         const x = (ix / gridX - 0.5) * ROOM.w
         const z = (iz / gridZ - 0.5) * ROOM.d
         let h = 0
-        h += Math.sin(x * 0.8 + 1.2) * Math.cos(z * 0.6 + 0.8) * 0.4
-        h += Math.sin(x * 1.5 + z * 1.0) * 0.25
-        h += Math.cos(x * 0.5 - z * 1.3 + 2.0) * 0.2
-        h += Math.sin(x * 2.2 - z * 0.7) * 0.12
-        h += (rand() - 0.5) * 0.25
+        h += Math.sin(x * 0.8 + 1.2) * Math.cos(z * 0.6 + 0.8) * 0.12
+        h += Math.sin(x * 1.5 + z * 1.0) * 0.08
+        h += Math.cos(x * 0.5 - z * 1.3 + 2.0) * 0.06
+        h += Math.sin(x * 2.2 - z * 0.7) * 0.04
+        h += (rand() - 0.5) * 0.08
         const edgeFade = Math.min(1, Math.min(ix, gridX - ix) / 2, Math.min(iz, gridZ - iz) / 2)
         h *= edgeFade
         vertices.push([x, h, z])

@@ -44,3 +44,10 @@ Fireflies represent the delicate balance between humans and nature. Their biolum
 - Leva for debug controls
 - React Router for multi-page structure
 - No design token system yet — all styling is inline Tailwind utilities
+
+
+## Obsidian vault
+
+- Path: /Users/riaan/Documents/personal/obsidian-vault
+- After each session, write a handoff note to /Users/riaan/Documents/personal/obsidian-vault/sessions/
+- Use filename format: YYYY-MM-DD-[project-name]-[topic].md

@@ -31,14 +31,6 @@ const VIEWS = {
     up: [0, 1, 0],
     frustumSize: 12,
   },
-  mountainDetail: {
-    label: 'Mountain Detail',
-    description: 'Layer spacing close-up',
-    position: [0, 2, -2],
-    lookAt: [0, 2, -5],
-    up: [0, 1, 0],
-    frustumSize: 5,
-  },
 }
 
 export const BLUEPRINT_VIEW_LIST = Object.entries(VIEWS).map(([id, v]) => ({ id, ...v }))

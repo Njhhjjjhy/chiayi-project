@@ -43,7 +43,7 @@ Primarily non-artsy visitors: families, tourists already visiting Alishan, casua
 | Eliasson - moss wall (1994) | https://olafureliasson.net/artwork/moss-wall-1994/ | wall option 1 inspiration. reindeer moss on wire mesh, living surface with scent. exhibited at Taipei Fine Arts Museum 2025. |
 | Eliasson - walk through wall (2005) | https://olafureliasson.net/artwork/walk-through-wall-2005/ | moire and optical effects reference. glass panes with concentric mirrored rings. |
 | Eliasson - when love is not enough wall (2007) | https://olafureliasson.net/artwork/when-love-is-not-enough-wall-2007/ | wall option 3 inspiration. stainless steel mirrors, crystalline kaleidoscopic triangular forms. |
-| Eliasson - gallery overview | https://www.tanyabonakdargallery.com/artists/27-olafur-eliasson/ | exhibition presentation quality benchmark. his works are described as "devices for the experience of reality." |
+| Eliasson - gallery overview | https://www.tanyabonakdargallery.com/artists/27-olafur-eliasson/ | exhibition quality benchmark. his works are described as "devices for the experience of reality." |
 
 ## Reference images catalog
 

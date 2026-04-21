@@ -364,7 +364,7 @@ export default function WallPage() {
             { label: 'Eliasson — Moss wall (1994)', url: 'https://olafureliasson.net/artwork/moss-wall-1994/', note: 'Wall option 1 inspiration' },
             { label: 'Eliasson — Walk through wall (2005)', url: 'https://olafureliasson.net/artwork/walk-through-wall-2005/', note: 'Moire and optical effects reference' },
             { label: 'Eliasson — When love is not enough wall (2007)', url: 'https://olafureliasson.net/artwork/when-love-is-not-enough-wall-2007/', note: 'Wall option 3 inspiration' },
-            { label: 'Eliasson — gallery overview', url: 'https://www.tanyabonakdargallery.com/artists/27-olafur-eliasson/', note: 'Exhibition presentation quality benchmark' },
+            { label: 'Eliasson — gallery overview', url: 'https://www.tanyabonakdargallery.com/artists/27-olafur-eliasson/', note: 'Exhibition quality benchmark' },
           ].map((ref) => (
             <a
               key={ref.url}

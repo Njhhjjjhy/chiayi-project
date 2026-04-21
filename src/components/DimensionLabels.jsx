@@ -86,8 +86,8 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
   const halfW = roomWidth / 2
   const halfD = roomDepth / 2
 
-  const wallId = selections.wall || 'layeredMountain'
-  const wall = wallVariants[wallId] || wallVariants.layeredMountain
+  const wallId = selections.wall || 'livingMoss'
+  const wall = wallVariants[wallId] || wallVariants.livingMoss
 
   const toggleCategory = (id) => {
     setActiveCategories((prev) =>
@@ -149,7 +149,7 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
           <DimensionLine
             start={[-halfW, roomHeight * 0.5, -halfD]}
             end={[halfW, roomHeight * 0.5, -halfD]}
-            label="10m (full width)"
+            label="8.83m (full width)"
             offset={0.3}
             offsetDirection={[0, 0, -1]}
             color="#2a7a2a"
@@ -236,16 +236,16 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
             Ceiling LED modules: 18 LEDs + 1 IR sensor each
           </MaterialNote>
           <MaterialNote position={[-halfW + 0.5, roomHeight * 0.5, 0]}>
-            Side wall: matte black fabric or paint
+            Entrance-wall: visitor entrance + long open span to bistro; infill TBD (covering strategy pending)
           </MaterialNote>
           <MaterialNote position={[halfW - 0.5, roomHeight * 0.5, 0]}>
-            Side wall: matte black fabric or paint
+            Window-wall: multi-pane glass partition + small window + silver door + HVAC plenum (covering TBD)
           </MaterialNote>
           <MaterialNote position={[0, 0.15, 0]}>
-            Floor: artificial turf / dried grass mats
+            Floor: existing grey marble porcelain; covering TBD
           </MaterialNote>
           <MaterialNote position={[0, roomHeight - 0.2, 0]}>
-            Ceiling: 120x120cm modular panels
+            Ceiling: dropped panel grid at 3.4m (120x120cm panels); structural beams + HVAC + sprinklers above
           </MaterialNote>
           {selections.fireflies === 'canopyGrid' && (
             <MaterialNote position={[0, roomHeight - 0.5, 0]}>

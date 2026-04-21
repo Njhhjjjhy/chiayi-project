@@ -8,7 +8,6 @@ import { useVariant } from '../hooks/useVariant.jsx'
 import { useLightingState } from '../hooks/useLightingState.jsx'
 import Room from './Room'
 import WallSystem from './walls/WallSystem.jsx'
-import SkyBackdrop from './SkyBackdrop'
 import FireflySystem from './fireflies/FireflySystem.jsx'
 import DimensionLabels from './DimensionLabels.jsx'
 import Seating from './Seating.jsx'
@@ -43,7 +42,7 @@ function CameraBoundsEnforcer({ roomWidth, roomDepth, roomHeight }) {
   return null
 }
 
-export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.52, showGrid = true, cameraPreset }) {
+export default function Scene({ roomWidth = 8.83, roomDepth = 10, roomHeight = 3.52, showGrid = true, cameraPreset }) {
   const controlsRef = useRef()
   const { viewMode, isConstruction, isLight, isExperience, showSeating } = useVariant()
   const { active: tourActive } = useTour()
@@ -186,9 +185,6 @@ export default function Scene({ roomWidth = 10, roomDepth = 10, roomHeight = 3.5
           infiniteGrid={false}
         />
       )}
-
-      {/* Sky backdrop behind mountain wall */}
-      <SkyBackdrop />
 
       {/* Room shell */}
       <Room width={roomWidth} depth={roomDepth} height={roomHeight} />

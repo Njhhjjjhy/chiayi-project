@@ -180,7 +180,7 @@ repeat: [3, 2]
 color: multiply with #0a0a0a (the walls should be barely visible)
 ```
 
-**Option B: moss/fiber wall (the "veil" concept — proposal 5)**
+**Option B: moss/fiber wall (the "veil" concept)**
 
 If one of the side walls becomes the textured fiber wall with embedded firefly lights, use:
 

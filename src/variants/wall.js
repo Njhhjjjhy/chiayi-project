@@ -9,13 +9,6 @@ export const wallVariants = {
     complexity: 'medium',
     cost: 'medium',
   },
-  layeredMountain: {
-    id: 'layeredMountain',
-    label: 'Layered mountain silhouette',
-    description: 'Multiple layers of panels cut into mountain ridge profiles, spaced apart with LED rope lights behind each layer.',
-    complexity: 'low',
-    cost: 'low',
-  },
   reflectiveFracture: {
     id: 'reflectiveFracture',
     label: 'Reflective fracture wall',

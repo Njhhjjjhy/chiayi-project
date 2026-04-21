@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { useVariant } from '../hooks/useVariant.jsx'
 import { useForestFloorTexture, useWoodPathTexture, EXHIBITION_COLORS } from '../useExhibitionTextures.js'
 
-const ROOM = { w: 10, d: 10 }
+const ROOM = { w: 8.83, d: 10 }
 
 // PBR forest floor with wooden walkway paths
 function ForestFloorTextured() {
