@@ -1,3 +1,4 @@
+import { Instances, Instance } from '@react-three/drei'
 import { useVariant } from '../hooks/useVariant.jsx'
 import Ceiling from './Ceiling.jsx'
 import Floor from './Floor.jsx'
@@ -9,6 +10,15 @@ const H = 3.52      // height
 const WALL_T = 0.12
 const HW = W / 2    // 4.415
 const HD = D / 2    // 5
+
+// Wall inside-face coordinates. All four wall meshes are offset OUT of the room
+// by WALL_T/2, so every wall's room-facing surface sits exactly at the nominal
+// boundary (±HW on x, ±HD on z). Overlays (wainscot, curtains, A/Cs, doors,
+// etc.) reference these directly — no WALL_T/2 math in overlay expressions.
+const INSIDE_FRONT_Z = -HD
+const INSIDE_BACK_Z = HD
+const INSIDE_ENTRANCE_X = -HW
+const INSIDE_WINDOW_X = HW
 
 // 3D code → user's wall names (existing venue reality; covering strategy TBD):
 //   z = -HD wall → "front-wall" (8.83m). Feature-wall position. HVAC plenum + silver
@@ -23,11 +33,13 @@ const HD = D / 2    // 5
 //                   upper front-wall corner.
 
 // ---- entrance-wall (x = -HW) ----
-// Visitor entrance: 45 cm from front-wall corner (= z = -HD)
-const ENT_W = 0.9
-const ENT_START = -HD + 0.45    // -4.55
-const ENT_END = ENT_START + ENT_W // -3.65
-const ENT_Z = (ENT_START + ENT_END) / 2 // -4.10
+// Visitor entrance: 45 cm from front-wall corner (= z = -HD). Full room
+// height — no transom above.
+const ENT_W = 2.4
+const ENT_H = 3.52
+const ENT_START = -HD + 0.45        // -4.55
+const ENT_END = ENT_START + ENT_W   // -2.15
+const ENT_Z = (ENT_START + ENT_END) / 2 // -3.35
 
 // ---- back-wall (z = +HD) — 2 door openings measured from window-wall corner (+HW) ----
 const D1_W = 0.96, D1_H = 2.36
@@ -50,29 +62,42 @@ const D2_X = (D2_START_X + D2_END_X) / 2 // -3.965
 // Main partition + small window sit on top of the (short) window-wall panelling cap.
 // Partition extends from the 99 cm gap (past the silver door) ALL THE WAY to the
 // back-wall corner — there is no solid wall section between partition and back-wall.
-const MAIN_WIN_START_Z = -HD + 1.19 + 0.59 + 0.99            // -2.23 (silver-door-end edge)
-const MAIN_WIN_W = HD - MAIN_WIN_START_Z                      // 7.23 (to back-wall corner)
-const MAIN_WIN_SILL = 0.35, MAIN_WIN_TOP = 2.33
-const MAIN_WIN_H = MAIN_WIN_TOP - MAIN_WIN_SILL              // 1.98
-const MAIN_WIN_Z = MAIN_WIN_START_Z + MAIN_WIN_W / 2         // +1.385
-const SMALL_WIN_W = 0.59, SMALL_WIN_SILL = 0.35, SMALL_WIN_TOP = 1.78
-const SMALL_WIN_H = SMALL_WIN_TOP - SMALL_WIN_SILL           // 1.43
+// Main glass partition — 570 wide × 233 high, sill at 32 cm, 90 cm gap
+// before it (past silver door). Ends flush with back-wall corner.
+const MAIN_WIN_W = 5.70
+const MAIN_WIN_SILL = 0.32, MAIN_WIN_TOP = 2.33
+const MAIN_WIN_H = MAIN_WIN_TOP - MAIN_WIN_SILL              // 2.01
+const MAIN_WIN_START_Z = HD - MAIN_WIN_W                      // -0.70
+const MAIN_WIN_Z = MAIN_WIN_START_Z + MAIN_WIN_W / 2         // +2.15
+// Small window — 178 × 59 per site dim drawing (window-wall.webp).
+// Sill kept at 35 cm so window top (213 cm) stays below the HVAC plenum.
+const SMALL_WIN_W = 0.59, SMALL_WIN_SILL = 0.35, SMALL_WIN_TOP = 2.13
+const SMALL_WIN_H = SMALL_WIN_TOP - SMALL_WIN_SILL           // 1.78
 const SMALL_WIN_Z = -HD + 1.19 + SMALL_WIN_W / 2             // -3.515
 
-// Silver service door on window-wall, in the gap between small window and main glass partition
-const STEEL_DOOR_W = 0.80, STEEL_DOOR_H = 2.00
-const STEEL_DOOR_Z = -HD + 1.19 + 0.59 + 0.50           // ~-2.72 (in the 99cm gap)
+// Silver service door on window-wall — 207 × 99 per site dim drawing.
+// Sits 63 cm past the small window end; 90 cm clearance before the
+// main glass partition.
+const STEEL_DOOR_W = 0.99, STEEL_DOOR_H = 2.07
+const STEEL_DOOR_Z = -HD + 1.19 + 0.59 + 0.63 + STEEL_DOOR_W / 2   // -2.095
 
-// HVAC plenum hanging in upper corner near front-wall × window-wall.
-// LONG axis runs along z (parallel to window-wall) — duct extends from the front-wall
-// corner toward the back-wall (matches cam 1 / cam 3 / photos 14 + 16).
-// Dims (0.80 × 0.80 × 2.0) are PROPORTIONAL ESTIMATES against the silver door (~80×200).
-const PLENUM_DEPTH_Z = 2.0   // long axis, along z (parallel to window-wall)
-const PLENUM_WIDTH_X = 0.80  // sticks 80 cm into the room from the window-wall plane
-const PLENUM_HEIGHT_Y = 0.80 // hangs ~80 cm below the structural ceiling
-const PLENUM_X = HW - WALL_T / 2 - PLENUM_WIDTH_X / 2 - 0.02   // hugged against window-wall
-const PLENUM_Z = -HD + WALL_T / 2 + PLENUM_DEPTH_Z / 2 + 0.05  // one end at front-wall, extending +z
-const PLENUM_Y = H - PLENUM_HEIGHT_Y / 2 - 0.05                // hung just below structural ceiling
+// HVAC plenum — BACK flush with window-wall, positioned ABOVE the silver
+// service door. NOT pressed against the front-wall — clearly detached from it
+// per reference photos 8 / 14 / 36 / 41. Main body protrudes ~65 cm into the
+// room from the window-wall. Stepped drop hangs below the main body's +z end.
+const PLENUM_MAIN_DEPTH_Z = 1.35
+const PLENUM_MAIN_WIDTH_X = 1.80
+const PLENUM_MAIN_HEIGHT_Y = 0.70
+const PLENUM_MAIN_X = INSIDE_WINDOW_X - PLENUM_MAIN_WIDTH_X / 2   // back flush with window-wall
+const PLENUM_MAIN_Z = STEEL_DOOR_Z                                // z-centred on silver door
+const PLENUM_MAIN_Y = H - PLENUM_MAIN_HEIGHT_Y / 2 - 0.47         // bottom ~50 cm above door-top
+const PLENUM_DROP_DEPTH_Z = 0.80
+const PLENUM_DROP_WIDTH_X = 0.60
+const PLENUM_DROP_HEIGHT_Y = 0.45
+// Drop hangs at the far (room-facing) end of the main duct, away from window-wall.
+const PLENUM_DROP_X = PLENUM_MAIN_X - PLENUM_MAIN_WIDTH_X / 2 + PLENUM_DROP_WIDTH_X / 2 + 0.10
+const PLENUM_DROP_Z = PLENUM_MAIN_Z
+const PLENUM_DROP_Y = PLENUM_MAIN_Y - PLENUM_MAIN_HEIGHT_Y / 2 - PLENUM_DROP_HEIGHT_Y / 2
 
 
 
@@ -152,133 +177,121 @@ export default function Room({ width = W, depth = D, height = H }) {
       <Floor />
       <Ceiling />
 
-      {/* ===== entrance-wall (x = -HW) ===== */}
+      {/* ===== entrance-wall (x = -HW) — mesh offset OUT by WALL_T/2; inside face at INSIDE_ENTRANCE_X ===== */}
       {/* Section A: front-wall side of entrance (0.45m sliver) */}
-      <mesh position={[-HW, height / 2, leftA_z]} receiveShadow>
+      <mesh position={[INSIDE_ENTRANCE_X - WALL_T / 2, height / 2, leftA_z]} receiveShadow>
         <boxGeometry args={[WALL_T, height, leftA_len]} />
         <meshStandardMaterial {...wall} />
       </mesh>
       {/* Section B: from entrance to back-wall corner (includes structural column + panels filling big opening) */}
-      <mesh position={[-HW, height / 2, leftB_z]} receiveShadow>
+      <mesh position={[INSIDE_ENTRANCE_X - WALL_T / 2, height / 2, leftB_z]} receiveShadow>
         <boxGeometry args={[WALL_T, height, leftB_len]} />
         <meshStandardMaterial {...wall} />
       </mesh>
-      {/* Wall above the entrance opening (from door top to ceiling) */}
-      <mesh position={[-HW, (2.36 + height) / 2, ENT_Z]} receiveShadow>
-        <boxGeometry args={[WALL_T, height - 2.36, ENT_W]} />
-        <meshStandardMaterial {...wall} />
-      </mesh>
-      {/* Visitor entrance curtain (just inside the room face; floor to door-top) */}
-      <mesh position={[-HW + WALL_T / 2 + 0.04, 2.36 / 2, ENT_Z]}>
-        <boxGeometry args={[0.02, 2.36 - 0.04, ENT_W - 0.04]} />
+      {/* Visitor entrance curtain — full room height, no transom above */}
+      <mesh position={[INSIDE_ENTRANCE_X + 0.04, ENT_H / 2, ENT_Z]}>
+        <boxGeometry args={[0.02, ENT_H - 0.04, ENT_W - 0.04]} />
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
 
-      {/* ===== window-wall (x = +HW) ===== */}
-      <mesh position={[HW, height / 2, 0]} receiveShadow>
+      {/* ===== window-wall (x = +HW) — mesh offset OUT by WALL_T/2; inside face at INSIDE_WINDOW_X ===== */}
+      <mesh position={[INSIDE_WINDOW_X + WALL_T / 2, height / 2, 0]} receiveShadow>
         <boxGeometry args={[WALL_T, height, depth]} />
         <meshStandardMaterial {...wall} />
       </mesh>
       {/* Main glass partition (multi-pane interior glazing) */}
-      <mesh position={[HW - WALL_T / 2 - 0.02, MAIN_WIN_SILL + MAIN_WIN_H / 2, MAIN_WIN_Z]}>
+      <mesh position={[INSIDE_WINDOW_X - 0.02, MAIN_WIN_SILL + MAIN_WIN_H / 2, MAIN_WIN_Z]}>
         <boxGeometry args={[0.05, MAIN_WIN_H, MAIN_WIN_W]} />
         <meshStandardMaterial {...blackout} />
       </mesh>
       {/* Small window in stepped notch */}
-      <mesh position={[HW - WALL_T / 2 - 0.02, SMALL_WIN_SILL + SMALL_WIN_H / 2, SMALL_WIN_Z]}>
+      <mesh position={[INSIDE_WINDOW_X - 0.02, SMALL_WIN_SILL + SMALL_WIN_H / 2, SMALL_WIN_Z]}>
         <boxGeometry args={[0.05, SMALL_WIN_H, SMALL_WIN_W]} />
         <meshStandardMaterial {...blackout} />
       </mesh>
 
-      {/* ===== front-wall (z = -HD) — feature-wall position; WallSystem renders in front ===== */}
-      <mesh position={[0, height / 2, -HD - WALL_T / 2]} receiveShadow>
+      {/* ===== front-wall (z = -HD) — mesh offset OUT by WALL_T/2; inside face at INSIDE_FRONT_Z ===== */}
+      <mesh position={[0, height / 2, INSIDE_FRONT_Z - WALL_T / 2]} receiveShadow>
         <boxGeometry args={[width, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
       </mesh>
 
-      {/* ===== back-wall (z = +HD) — 2 swing doors (curtained over for now) ===== */}
+      {/* ===== back-wall (z = +HD) — mesh offset OUT by WALL_T/2; inside face at INSIDE_BACK_Z ===== */}
       {/* Section A: between D2 and D1 */}
-      <mesh position={[backA_x, height / 2, HD + WALL_T / 2]} receiveShadow>
+      <mesh position={[backA_x, height / 2, INSIDE_BACK_Z + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[backA_len, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
       </mesh>
       {/* Section B: from D1 to window-wall corner */}
-      <mesh position={[backB_x, height / 2, HD + WALL_T / 2]} receiveShadow>
+      <mesh position={[backB_x, height / 2, INSIDE_BACK_Z + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[backB_len, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
       </mesh>
       {/* Wall above D1 (from door top to ceiling) */}
-      <mesh position={[D1_X, (D1_H + height) / 2, HD + WALL_T / 2]} receiveShadow>
+      <mesh position={[D1_X, (D1_H + height) / 2, INSIDE_BACK_Z + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[D1_W, height - D1_H, WALL_T]} />
         <meshStandardMaterial {...wall} />
       </mesh>
       {/* Wall above D2 */}
-      <mesh position={[D2_X, (D2_H + height) / 2, HD + WALL_T / 2]} receiveShadow>
+      <mesh position={[D2_X, (D2_H + height) / 2, INSIDE_BACK_Z + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[D2_W, height - D2_H, WALL_T]} />
         <meshStandardMaterial {...wall} />
       </mesh>
       {/* D1 curtain (floor to door-top) */}
-      <mesh position={[D1_X, D1_H / 2, HD - 0.04]}>
+      <mesh position={[D1_X, D1_H / 2, INSIDE_BACK_Z - 0.04]}>
         <boxGeometry args={[D1_W - 0.04, D1_H - 0.04, 0.02]} />
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
       {/* D2 curtain */}
-      <mesh position={[D2_X, D2_H / 2, HD - 0.04]}>
+      <mesh position={[D2_X, D2_H / 2, INSIDE_BACK_Z - 0.04]}>
         <boxGeometry args={[D2_W - 0.04, D2_H - 0.04, 0.02]} />
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
 
       {/* ===== Window-wall existing infrastructure ===== */}
       {/* Silver/stainless service door (between small window and main glass partition) */}
-      <mesh position={[HW - WALL_T / 2 - 0.04, STEEL_DOOR_H / 2, STEEL_DOOR_Z]} castShadow receiveShadow>
+      <mesh position={[INSIDE_WINDOW_X - 0.04, STEEL_DOOR_H / 2, STEEL_DOOR_Z]} castShadow receiveShadow>
         <boxGeometry args={[0.06, STEEL_DOOR_H, STEEL_DOOR_W]} />
         <meshStandardMaterial {...steelDoor} />
       </mesh>
       {/* Wall A/C unit on upper window-wall, near back-wall corner */}
-      <mesh position={[HW - 0.15, 2.85, HD - 1.2]} castShadow receiveShadow>
+      <mesh position={[INSIDE_WINDOW_X - 0.15, 2.85, INSIDE_BACK_Z - 1.2]} castShadow receiveShadow>
         <boxGeometry args={[0.28, 0.36, 0.95]} />
         <meshStandardMaterial {...acUnit} />
       </mesh>
-      {/* HVAC plenum / duct hanging in front-wall × window-wall corner — long axis along z */}
-      <mesh position={[PLENUM_X, PLENUM_Y, PLENUM_Z]} castShadow receiveShadow>
-        <boxGeometry args={[PLENUM_WIDTH_X, PLENUM_HEIGHT_Y, PLENUM_DEPTH_Z]} />
+      {/* HVAC plenum L-shape — main horizontal duct flush with structural ceiling */}
+      <mesh position={[PLENUM_MAIN_X, PLENUM_MAIN_Y, PLENUM_MAIN_Z]} castShadow receiveShadow>
+        <boxGeometry args={[PLENUM_MAIN_WIDTH_X, PLENUM_MAIN_HEIGHT_Y, PLENUM_MAIN_DEPTH_Z]} />
         <meshStandardMaterial {...ductMetal} />
       </mesh>
-      {/* Plenum vertical riser — chunky box running from plenum top up to structural ceiling */}
-      {(() => {
-        const plenumTopY = PLENUM_Y + PLENUM_HEIGHT_Y / 2
-        const riserH = height - plenumTopY
-        const riserY = plenumTopY + riserH / 2
-        return (
-          <mesh position={[PLENUM_X, riserY, PLENUM_Z + PLENUM_DEPTH_Z / 2 - 0.4]} castShadow receiveShadow>
-            <boxGeometry args={[PLENUM_WIDTH_X * 0.8, riserH, 0.5]} />
-            <meshStandardMaterial {...ductMetal} />
-          </mesh>
-        )
-      })()}
+      {/* HVAC stepped-drop extension — smaller box continuing +z past the main body, hanging lower */}
+      <mesh position={[PLENUM_DROP_X, PLENUM_DROP_Y, PLENUM_DROP_Z]} castShadow receiveShadow>
+        <boxGeometry args={[PLENUM_DROP_WIDTH_X, PLENUM_DROP_HEIGHT_Y, PLENUM_DROP_DEPTH_Z]} />
+        <meshStandardMaterial {...ductMetal} />
+      </mesh>
 
-      {/* Control / electrical panel above silver door (white painted box with switches) */}
-      <mesh position={[HW - WALL_T / 2 - 0.04, STEEL_DOOR_H + 0.20, STEEL_DOOR_Z - STEEL_DOOR_W / 2 - 0.20]}>
+      {/* Control / electrical panel — centred directly above the silver door */}
+      <mesh position={[INSIDE_WINDOW_X - 0.04, STEEL_DOOR_H + 0.20, STEEL_DOOR_Z]}>
         <boxGeometry args={[0.05, 0.32, 0.28]} />
         <meshStandardMaterial color="#e8e6e0" roughness={0.7} metalness={0.05} />
       </mesh>
 
       {/* Back-wall existing infrastructure */}
       {/* Two split A/C units mounted high above the doors */}
-      <mesh position={[-2.215, 2.85, HD - 0.15]} castShadow receiveShadow>
+      <mesh position={[-2.215, 2.85, INSIDE_BACK_Z - 0.15]} castShadow receiveShadow>
         <boxGeometry args={[0.95, 0.36, 0.28]} />
         <meshStandardMaterial {...acUnit} />
       </mesh>
-      <mesh position={[2.0, 2.85, HD - 0.15]} castShadow receiveShadow>
+      <mesh position={[2.0, 2.85, INSIDE_BACK_Z - 0.15]} castShadow receiveShadow>
         <boxGeometry args={[0.95, 0.36, 0.28]} />
         <meshStandardMaterial {...acUnit} />
       </mesh>
       {/* Red sprinkler pipe — horizontal run across upper back-wall, with vertical drop near entrance-wall corner */}
-      <mesh position={[0, 3.05, HD - 0.06]} rotation={[0, 0, Math.PI / 2]}>
+      <mesh position={[0, 3.05, INSIDE_BACK_Z - 0.06]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.025, 0.025, W, 12]} />
         <meshStandardMaterial {...sprinklerRed} />
       </mesh>
-      <mesh position={[-HW + 0.15, (3.05 + height) / 2, HD - 0.06]}>
+      <mesh position={[INSIDE_ENTRANCE_X + 0.15, (3.05 + height) / 2, INSIDE_BACK_Z - 0.06]}>
         <cylinderGeometry args={[0.025, 0.025, height - 3.05, 12]} />
         <meshStandardMaterial {...sprinklerRed} />
       </mesh>
@@ -313,111 +326,122 @@ export default function Room({ width = W, depth = D, height = H }) {
         const wwB_len = HD - WW_DOOR_HI                   // 7.30
         const wwB_z = (WW_DOOR_HI + HD) / 2               // +1.35
 
-        // Plank generator. Skips planks whose centre falls inside any skipRange [lo,hi].
-        // axis='x' → planks along x (front/back walls, plank face normal in z)
-        // axis='z' → planks along z (window wall, plank face normal in x)
-        function planks(axis, wallInsideFace, signDir, totalLen, keyPrefix, skipRanges = [], wsH = WAINSCOT_H) {
+        // Plank-position generator. Skips planks whose centre falls inside any skipRange [lo,hi].
+        // axis='x' → planks distributed along x (front/back walls, plank face normal in z)
+        // axis='z' → planks distributed along z (window wall, plank face normal in x)
+        function plankPositions(axis, wallInsideFace, signDir, totalLen, wsH, skipRanges = []) {
           const count = Math.floor(totalLen / PLANK_PITCH)
           const startT = -((count - 1) * PLANK_PITCH) / 2
           const out = []
           for (let i = 0; i < count; i++) {
             const t = startT + i * PLANK_PITCH
             if (skipRanges.some(([lo, hi]) => t >= lo && t <= hi)) continue
-            let pos, args
             if (axis === 'x') {
-              pos = [t, wsH / 2, wallInsideFace + signDir * (PLANK_RELIEF / 2 + 0.001)]
-              args = [PLANK_W, wsH, PLANK_RELIEF]
+              out.push([t, wsH / 2, wallInsideFace + signDir * (PLANK_RELIEF / 2 + 0.001)])
             } else {
-              pos = [wallInsideFace + signDir * (PLANK_RELIEF / 2 + 0.001), wsH / 2, t]
-              args = [PLANK_RELIEF, wsH, PLANK_W]
+              out.push([wallInsideFace + signDir * (PLANK_RELIEF / 2 + 0.001), wsH / 2, t])
             }
-            out.push(
-              <mesh key={`${keyPrefix}-${i}`} position={pos} receiveShadow>
-                <boxGeometry args={args} />
-                <meshStandardMaterial {...plankFace} />
-              </mesh>
-            )
           }
           return out
         }
+
+        // Front-wall + back-wall planks share the same geometry (PLANK_W × WAINSCOT_H × PLANK_RELIEF)
+        const fwPlankPos = plankPositions('x', INSIDE_FRONT_Z + WAINSCOT_T + 0.01, +1, width, WAINSCOT_H)
+        const bwPlankPos = plankPositions('x', INSIDE_BACK_Z - WAINSCOT_T - 0.01, -1, width, WAINSCOT_H,
+          [[D2_START_X, D2_END_X + DOOR_CLEAR], [D1_START_X - DOOR_CLEAR, D1_END_X + DOOR_CLEAR]])
+        const tallPlankPos = [...fwPlankPos, ...bwPlankPos]
+        // Window-wall planks use short wainscot and a rotated footprint (PLANK_RELIEF × WW_WAINSCOT_H × PLANK_W)
+        const wwPlankPos = plankPositions('z', INSIDE_WINDOW_X - WAINSCOT_T - 0.01, -1, depth, WW_WAINSCOT_H,
+          [[WW_DOOR_LO, WW_DOOR_HI]])
 
         return (
           <>
             {/* (1) Bulk wainscoting back panels — split at every real door opening */}
             {/* Front-wall: continuous, no doors */}
-            <mesh position={[0, WAINSCOT_H / 2, -HD + WAINSCOT_T / 2 + 0.005]} receiveShadow>
+            <mesh position={[0, WAINSCOT_H / 2, INSIDE_FRONT_Z + WAINSCOT_T / 2 + 0.005]} receiveShadow>
               <boxGeometry args={[width, WAINSCOT_H, WAINSCOT_T]} />
               <meshStandardMaterial {...wainscot} />
             </mesh>
             {/* Back-wall A — between D2 and D1 */}
-            <mesh position={[bwA_x, WAINSCOT_H / 2, HD - WAINSCOT_T / 2 - 0.005]} receiveShadow>
+            <mesh position={[bwA_x, WAINSCOT_H / 2, INSIDE_BACK_Z - WAINSCOT_T / 2 - 0.005]} receiveShadow>
               <boxGeometry args={[bwA_len, WAINSCOT_H, WAINSCOT_T]} />
               <meshStandardMaterial {...wainscot} />
             </mesh>
             {/* Back-wall B — from D1 to window-wall corner */}
-            <mesh position={[bwB_x, WAINSCOT_H / 2, HD - WAINSCOT_T / 2 - 0.005]} receiveShadow>
+            <mesh position={[bwB_x, WAINSCOT_H / 2, INSIDE_BACK_Z - WAINSCOT_T / 2 - 0.005]} receiveShadow>
               <boxGeometry args={[bwB_len, WAINSCOT_H, WAINSCOT_T]} />
               <meshStandardMaterial {...wainscot} />
             </mesh>
             {/* Window-wall A — from front-wall corner to silver service door (short panelling) */}
-            <mesh position={[HW - WALL_T / 2 - WAINSCOT_T / 2 - 0.005, WW_WAINSCOT_H / 2, wwA_z]} receiveShadow>
+            <mesh position={[INSIDE_WINDOW_X - WAINSCOT_T / 2 - 0.005, WW_WAINSCOT_H / 2, wwA_z]} receiveShadow>
               <boxGeometry args={[WAINSCOT_T, WW_WAINSCOT_H, wwA_len]} />
               <meshStandardMaterial {...wainscot} />
             </mesh>
             {/* Window-wall B — from silver service door to back-wall corner (short panelling) */}
-            <mesh position={[HW - WALL_T / 2 - WAINSCOT_T / 2 - 0.005, WW_WAINSCOT_H / 2, wwB_z]} receiveShadow>
+            <mesh position={[INSIDE_WINDOW_X - WAINSCOT_T / 2 - 0.005, WW_WAINSCOT_H / 2, wwB_z]} receiveShadow>
               <boxGeometry args={[WAINSCOT_T, WW_WAINSCOT_H, wwB_len]} />
               <meshStandardMaterial {...wainscot} />
             </mesh>
             {/* Entrance-wall intentionally has NO wainscot — matches the real venue */}
 
-            {/* (2) Vertical plank faces — skip any plank whose centre falls inside a door */}
-            {planks('x', -HD + WAINSCOT_T + 0.01, +1, width, 'fw')}
-            {planks('x', HD - WAINSCOT_T - 0.01, -1, width, 'bw',
-              [[D2_START_X, D2_END_X + DOOR_CLEAR], [D1_START_X - DOOR_CLEAR, D1_END_X + DOOR_CLEAR]])}
-            {planks('z', HW - WALL_T / 2 - WAINSCOT_T - 0.01, -1, depth, 'ww',
-              [[WW_DOOR_LO, WW_DOOR_HI]], WW_WAINSCOT_H)}
+            {/* (2) Vertical plank faces — rendered via instanced meshes for performance.
+                  Two groups (tall vs. short) because front/back walls and window-wall use
+                  different wainscot heights and rotated plank footprints. */}
+            {tallPlankPos.length > 0 && (
+              <Instances limit={tallPlankPos.length} receiveShadow>
+                <boxGeometry args={[PLANK_W, WAINSCOT_H, PLANK_RELIEF]} />
+                <meshStandardMaterial {...plankFace} />
+                {tallPlankPos.map((p, i) => <Instance key={`tall-${i}`} position={p} />)}
+              </Instances>
+            )}
+            {wwPlankPos.length > 0 && (
+              <Instances limit={wwPlankPos.length} receiveShadow>
+                <boxGeometry args={[PLANK_RELIEF, WW_WAINSCOT_H, PLANK_W]} />
+                <meshStandardMaterial {...plankFace} />
+                {wwPlankPos.map((p, i) => <Instance key={`ww-${i}`} position={p} />)}
+              </Instances>
+            )}
 
             {/* (3a) Cap rail — same cuts as the bulk panels */}
-            <mesh position={[0, WAINSCOT_H + CAP_H / 2, -HD + 0.05]}>
+            <mesh position={[0, WAINSCOT_H + CAP_H / 2, INSIDE_FRONT_Z + 0.05]}>
               <boxGeometry args={[width, CAP_H, 0.06]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[bwA_x, WAINSCOT_H + CAP_H / 2, HD - 0.05]}>
+            <mesh position={[bwA_x, WAINSCOT_H + CAP_H / 2, INSIDE_BACK_Z - 0.05]}>
               <boxGeometry args={[bwA_len, CAP_H, 0.06]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[bwB_x, WAINSCOT_H + CAP_H / 2, HD - 0.05]}>
+            <mesh position={[bwB_x, WAINSCOT_H + CAP_H / 2, INSIDE_BACK_Z - 0.05]}>
               <boxGeometry args={[bwB_len, CAP_H, 0.06]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[HW - WALL_T / 2 - 0.03, WW_WAINSCOT_H + CAP_H / 2, wwA_z]}>
+            <mesh position={[INSIDE_WINDOW_X - 0.03, WW_WAINSCOT_H + CAP_H / 2, wwA_z]}>
               <boxGeometry args={[0.06, CAP_H, wwA_len]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[HW - WALL_T / 2 - 0.03, WW_WAINSCOT_H + CAP_H / 2, wwB_z]}>
+            <mesh position={[INSIDE_WINDOW_X - 0.03, WW_WAINSCOT_H + CAP_H / 2, wwB_z]}>
               <boxGeometry args={[0.06, CAP_H, wwB_len]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
 
             {/* (3b) Skirting board — same cuts as the bulk panels */}
-            <mesh position={[0, SKIRT_H / 2, -HD + 0.05]}>
+            <mesh position={[0, SKIRT_H / 2, INSIDE_FRONT_Z + 0.05]}>
               <boxGeometry args={[width, SKIRT_H, 0.06]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[bwA_x, SKIRT_H / 2, HD - 0.05]}>
+            <mesh position={[bwA_x, SKIRT_H / 2, INSIDE_BACK_Z - 0.05]}>
               <boxGeometry args={[bwA_len, SKIRT_H, 0.06]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[bwB_x, SKIRT_H / 2, HD - 0.05]}>
+            <mesh position={[bwB_x, SKIRT_H / 2, INSIDE_BACK_Z - 0.05]}>
               <boxGeometry args={[bwB_len, SKIRT_H, 0.06]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[HW - WALL_T / 2 - 0.03, SKIRT_H / 2, wwA_z]}>
+            <mesh position={[INSIDE_WINDOW_X - 0.03, SKIRT_H / 2, wwA_z]}>
               <boxGeometry args={[0.06, SKIRT_H, wwA_len]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
-            <mesh position={[HW - WALL_T / 2 - 0.03, SKIRT_H / 2, wwB_z]}>
+            <mesh position={[INSIDE_WINDOW_X - 0.03, SKIRT_H / 2, wwB_z]}>
               <boxGeometry args={[0.06, SKIRT_H, wwB_len]} />
               <meshStandardMaterial {...plankFace} />
             </mesh>
@@ -425,18 +449,6 @@ export default function Room({ width = W, depth = D, height = H }) {
         )
       })()}
 
-      {/* ===== EDGE SAFETY LIGHTING (experience mode) ===== */}
-      {!isConstruction && !isLight && (
-        <>
-          {[
-            [0, 0.03, HD - 0.2],
-            [HW - 0.2, 0.03, 0],
-            [-HW + 0.2, 0.03, -2],
-          ].map(([x, y, z], i) => (
-            <pointLight key={`edge-${i}`} position={[x, y, z]} color="#ffaa44" intensity={0.04} distance={3} decay={2} />
-          ))}
-        </>
-      )}
     </group>
   )
 }

@@ -6,12 +6,12 @@ import { useVariant } from '../hooks/useVariant.jsx'
 // Updated for post-site-visit geometry (8.83 × 10 × 3.52 room).
 const LABELS = [
   {
-    name: 'Visitor entrance (45cm from front-wall corner; currently shown with dark curtain)',
-    position: [-4.3, 1.76, -4.10],
+    name: 'Visitor entrance (240×352 full-height, 45cm from front-wall corner; currently shown with dark curtain)',
+    position: [-4.3, 1.76, -3.35],
     color: '#e53935',
   },
   {
-    name: 'Front-wall (8.83m, feature-wall position — WallSystem renders the selected variant in front)',
+    name: 'Front-wall (8.83m, feature-wall position)',
     position: [0, 1.76, -4.5],
     color: '#6a1b9a',
   },
@@ -22,11 +22,11 @@ const LABELS = [
   },
   {
     name: 'Small window in stepped notch (59×178 — existing)',
-    position: [4.3, 1.29, -3.515],
+    position: [4.3, 1.24, -3.515],
     color: '#1565c0',
   },
   {
-    name: 'Silver service door on window-wall (~80×200, in the 99cm gap between small window and main glass)',
+    name: 'Silver service door on window-wall (99×207, between small window and main glass)',
     position: [4.3, 1.0, -2.72],
     color: '#90a4ae',
   },
@@ -41,7 +41,7 @@ const LABELS = [
     color: '#37474f',
   },
   {
-    name: 'Wainscoting — dark wood, ~90cm, runs around all 4 walls (existing; stays visible)',
+    name: 'Wainscoting — dark wood, ~90cm on front/back walls, ~30cm on window-wall; entrance-wall has none',
     position: [3.0, 0.4, -4.0],
     color: '#5d4037',
   },
@@ -66,12 +66,7 @@ const LABELS = [
     color: '#e53935',
   },
   {
-    name: 'Feature wall treatment (WallSystem — selectable variant)',
-    position: [0, 2.0, -3.8],
-    color: '#e65100',
-  },
-  {
-    name: 'Ceiling (dropped panel grid at 3.4m; structural beams + HVAC + sprinklers sit above)',
+    name: 'Ceiling (mountain topology — sculptural covering over existing infrastructure)',
     position: [0, 3.2, 0],
     color: '#455a64',
   },

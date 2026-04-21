@@ -1,16 +1,11 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import { variantCategories } from '../variants/config.js'
+import { DEFAULT_VARIANTS } from '../variants/defaults.js'
 
 const VariantContext = createContext(null)
 
 export function VariantProvider({ children }) {
-  const [selections, setSelections] = useState({
-    wall: 'livingMoss',
-    lighting: 'warmDominant',
-    fireflies: 'scatteredDrift',
-    ceiling: 'droppedPanelGrid',
-    floor: 'forestFloorPBR',
-  })
+  const [selections, setSelections] = useState({ ...DEFAULT_VARIANTS })
   const [viewMode, setViewMode] = useState('experience')
   const [showSeating, setShowSeating] = useState(false)
   const [favorites, setFavorites] = useState([])

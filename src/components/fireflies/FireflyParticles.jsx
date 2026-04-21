@@ -12,12 +12,17 @@ export default function FireflyParticles({ count, positions, opacities, colors, 
   const meshRef = useRef()
 
   const geometry = useMemo(() => new THREE.SphereGeometry(1, 4, 4), [])
+  // Base material color is GREEN — fireflies are green, never yellow.
+  // depthTest disabled so LEDs render "through" the mountain topology ceiling —
+  // the ceiling is the fabric, the fireflies are the LEDs behind it, they bleed
+  // through via additive blending.
   const material = useMemo(() => new THREE.MeshBasicMaterial({
-    color: '#ffcc66',
+    color: '#66ff88',
     transparent: true,
     opacity: 1,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
+    depthTest: false,
   }), [])
 
   useFrame(() => {
@@ -37,11 +42,11 @@ export default function FireflyParticles({ count, positions, opacities, colors, 
       tempObject.updateMatrix()
       mesh.setMatrixAt(i, tempObject.matrix)
 
-      // Set color per instance
+      // Set color per instance — fallback is green
       if (colors) {
         tempColor.setRGB(colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2])
       } else {
-        tempColor.setRGB(1, 0.8, 0.4)
+        tempColor.setRGB(0.4, 1.0, 0.5)
       }
       mesh.setColorAt(i, tempColor)
     }
