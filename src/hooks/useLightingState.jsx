@@ -2,9 +2,45 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { useTimeline } from './useTimeline.jsx'
 import { useVariant } from './useVariant.jsx'
-import { lightingVariants } from '../variants/lighting.js'
 
 const PHASE_KEYS = ['golden', 'twilight', 'blue', 'darkness']
+
+// Single inlined palette for the 4-phase sunset → darkness cycle.
+// Lighting variant picker has been removed — this is the only palette.
+const PALETTE = {
+  golden: {
+    ambient: '#f5c842',
+    ambientIntensity: 0.15,
+    backlight: '#f5c842',
+    skyTop: '#f5c842',
+    skyBottom: '#c44b6c',
+    sunLineOpacity: 1.0,
+  },
+  twilight: {
+    ambient: '#c44b6c',
+    ambientIntensity: 0.08,
+    backlight: '#c44b6c',
+    skyTop: '#5a3b8a',
+    skyBottom: '#c44b6c',
+    sunLineOpacity: 0.3,
+  },
+  blue: {
+    ambient: '#3a2a5a',
+    ambientIntensity: 0.05,
+    backlight: '#1a1050',
+    skyTop: '#0a0a20',
+    skyBottom: '#1a1a2e',
+    sunLineOpacity: 0,
+  },
+  darkness: {
+    ambient: '#050510',
+    ambientIntensity: 0.01,
+    backlight: '#050510',
+    skyTop: '#000000',
+    skyBottom: '#000000',
+    sunLineOpacity: 0,
+  },
+}
 
 // Lerp between two hex colors
 function lerpColor(hex1, hex2, t) {
@@ -36,10 +72,7 @@ const DAYLIGHT_STATE = {
 
 export function useLightingState() {
   const { time } = useTimeline()
-  const { selections, viewMode } = useVariant()
-
-  const paletteId = selections.lighting || 'warmDominant'
-  const palette = lightingVariants[paletteId] || lightingVariants.warmDominant
+  const { viewMode } = useVariant()
 
   return useMemo(() => {
     if (viewMode === 'light') return DAYLIGHT_STATE
@@ -50,8 +83,8 @@ export function useLightingState() {
     const nextIndex = Math.min(phaseIndex + 1, 3)
     const t = smoothstep(phaseProgress - phaseIndex)
 
-    const from = palette.phases[PHASE_KEYS[phaseIndex]]
-    const to = palette.phases[PHASE_KEYS[nextIndex]]
+    const from = PALETTE[PHASE_KEYS[phaseIndex]]
+    const to = PALETTE[PHASE_KEYS[nextIndex]]
 
     return {
       ambientColor: lerpColor(from.ambient, to.ambient, t),
@@ -63,5 +96,5 @@ export function useLightingState() {
       phaseIndex,
       phaseName: PHASE_KEYS[phaseIndex],
     }
-  }, [time, palette, viewMode])
+  }, [time, viewMode])
 }

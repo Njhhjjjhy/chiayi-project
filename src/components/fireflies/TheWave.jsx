@@ -4,7 +4,7 @@ import { useControls, folder } from 'leva'
 import FireflyParticles from './FireflyParticles.jsx'
 import { distributeSurface } from './surfacePositions.js'
 
-const COUNT = 300
+const COUNT = 600
 
 export default function TheWave({ masterOpacity }) {
   const { waveInterval, waveSpeed, waveWidth } = useControls('fireflies', {
@@ -23,10 +23,12 @@ export default function TheWave({ masterOpacity }) {
     const colors = new Float32Array(COUNT * 3)
     const basePhases = new Float32Array(COUNT)
 
+    // Fireflies are GREEN (matches Taiwan firefly species + brand palette).
+    // Slight variation per LED to feel organic.
     for (let i = 0; i < COUNT; i++) {
-      colors[i * 3] = 1.0
-      colors[i * 3 + 1] = 0.72 + Math.random() * 0.1
-      colors[i * 3 + 2] = 0.2 + Math.random() * 0.1
+      colors[i * 3] = 0.30 + Math.random() * 0.20         // R: 0.30-0.50
+      colors[i * 3 + 1] = 0.95 + Math.random() * 0.05     // G: 0.95-1.00
+      colors[i * 3 + 2] = 0.25 + Math.random() * 0.20     // B: 0.25-0.45
       basePhases[i] = Math.random() * Math.PI * 2
     }
 

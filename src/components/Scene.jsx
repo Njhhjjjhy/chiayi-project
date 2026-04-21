@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import { useVariant } from '../hooks/useVariant.jsx'
 import { useLightingState } from '../hooks/useLightingState.jsx'
 import Room from './Room'
-import WallSystem from './walls/WallSystem.jsx'
+import WallCoveringSystem from './wallCoverings/WallCoveringSystem.jsx'
 import FireflySystem from './fireflies/FireflySystem.jsx'
 import DimensionLabels from './DimensionLabels.jsx'
 import Seating from './Seating.jsx'
@@ -189,8 +189,8 @@ export default function Scene({ roomWidth = 8.83, roomDepth = 10, roomHeight = 3
       {/* Room shell */}
       <Room width={roomWidth} depth={roomDepth} height={roomHeight} />
 
-      {/* The big wall */}
-      <WallSystem />
+      {/* Wall covering proposal (toggable variant) */}
+      <WallCoveringSystem />
 
       {/* Fireflies */}
       <FireflySystem />

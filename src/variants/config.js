@@ -1,20 +1,11 @@
-import { wallVariantList } from './wall.js'
-import { lightingVariantList } from './lighting.js'
 import { fireflyVariantList } from './fireflies.js'
 import { ceilingVariantList, floorVariantList } from './room.js'
+import { wallCoveringVariantList } from './wallCovering.js'
 
 export const variantCategories = {
-  wall: {
-    label: 'The big wall',
-    variants: wallVariantList,
-  },
-  lighting: {
-    label: 'Lighting',
-    variants: lightingVariantList,
-  },
-  fireflies: {
-    label: 'Fireflies',
-    variants: fireflyVariantList,
+  wallCovering: {
+    label: 'Wall covering',
+    variants: wallCoveringVariantList,
   },
   ceiling: {
     label: 'Ceiling',
@@ -23,6 +14,10 @@ export const variantCategories = {
   floor: {
     label: 'Floor',
     variants: floorVariantList,
+  },
+  fireflies: {
+    label: 'Fireflies',
+    variants: fireflyVariantList,
   },
 }
 

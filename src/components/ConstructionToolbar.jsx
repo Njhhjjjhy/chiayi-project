@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useVariant } from '../hooks/useVariant.jsx'
 import { variantCategories } from '../variants/config.js'
-import { wallVariants } from '../variants/wall.js'
-import { BLUEPRINT_VIEW_LIST } from './BlueprintMode.jsx'
 
 function captureScreenshot(name) {
   const canvas = document.querySelector('canvas')
@@ -15,28 +13,20 @@ function captureScreenshot(name) {
   return canvas.toDataURL('image/png')
 }
 
-function generateMaterialSchedule(selections) {
-  const wallId = selections.wall || 'livingMoss'
-  const wall = wallVariants[wallId] || wallVariants.livingMoss
-
+function generateMaterialSchedule() {
   return [
     'MATERIAL SCHEDULE',
     '='.repeat(50),
     `Generated: ${new Date().toISOString().split('T')[0]}`,
     '',
-    'THE BIG WALL (front-wall)',
-    `  Treatment: ${wall.label}`,
+    'FRONT WALL (the big wall — feature-wall position)',
+    `  Treatment: TBD (cleared — new ideas pending)`,
     `  Width: 8.83m (full front-wall width)`,
-    `  Height: 3.52m (usable height after beams)`,
-    `  Complexity: ${wall.complexity}`,
-    `  Cost range: ${wall.cost}`,
+    `  Height: 3.52m`,
     '',
     'CEILING',
-    `  Panels: 120 x 120cm modular`,
-    `  Grid: ${Math.floor(8.83 / 1.2)} x ${Math.floor(10 / 1.2)} panels`,
-    `  Material: lightweight composite or fabric-wrapped frame`,
-    `  LEDs: 18 per module (greenish tone)`,
-    `  IR sensors: 1 per module`,
+    `  Existing: structural — white plaster, cross-beams, cage pendant lights`,
+    `  Covering: mountain topology (sculptural sub-ceiling at y=3.4m)`,
     '',
     'FLOOR',
     `  Existing: grey marble porcelain, ~80cm tiles, heavy white veining`,
@@ -46,11 +36,11 @@ function generateMaterialSchedule(selections) {
     'SIDE WALLS (entrance-wall + window-wall)',
     `  Height: 3.52m`,
     `  Total surface: 2 x (10 x 3.52) = 70.4m²`,
-    `  Entrance-wall (10m): visitor entrance 45cm from front-wall corner;`,
+    `  Entrance-wall (10m): visitor entrance 45cm from front-wall corner, 240×352 full-height opening;`,
     `    long open span to adjacent bistro past the entrance — modelled as continuous wall.`,
     `    Infill / column treatment TBD (pending covering strategy).`,
     `  Window-wall (10m): multi-pane interior glass partition (570×233) + small window in`,
-    `    stepped notch (59×178) + silver service door (~80×200) + HVAC plenum in front-wall corner.`,
+    `    stepped notch (59×178) + silver service door (99×207) + HVAC plenum.`,
     `    Covering TBD (pending covering strategy).`,
     '',
     'BACK WALL (piano wall)',
@@ -69,31 +59,21 @@ function generateMaterialSchedule(selections) {
   ].join('\n')
 }
 
-function generateComponentList(selections) {
-  const wallId = selections.wall || 'livingMoss'
-  const wall = wallVariants[wallId] || wallVariants.livingMoss
-
+function generateComponentList() {
   return [
     'COMPONENT LIST',
     '='.repeat(50),
     `Generated: ${new Date().toISOString().split('T')[0]}`,
     '',
     'STRUCTURAL',
-    `  Big wall: ${wall.label} (8.83m x 3.52m)`,
-    `  Ceiling grid frame: 7 x 8 T-bar grid`,
-    `  Ceiling panels: ${Math.floor(8.83 / 1.2) * Math.floor(10 / 1.2)} panels (120x120cm)`,
+    `  Big wall: TBD (8.83m x 3.52m — new treatment pending)`,
+    `  Ceiling: mountain topology sculptural covering (at y=3.4m)`,
     `  Curtains/dividers: sectioning from retail area`,
     '',
-    'LIGHTING',
-    `  Ceiling LED modules: 18 LEDs per module`,
-    `  IR sensors: 1 per module`,
-    `  LED controller: Arduino-based`,
-    `  IR flashlights: 30 units (one per visitor)`,
-    '',
     'FIREFLY SYSTEM',
-    `  Micro-LEDs: greenish tone, 2700K`,
+    `  Micro-LEDs: GREEN, 2700K equivalent`,
     `  Controller: Arduino with PWM`,
-    `  Algorithm: 3 states (idle, motion, flashlight)`,
+    `  Behaviour: TBD (cleared — new ideas pending)`,
     '',
     'SOUND',
     `  Speakers: 4 minimum (corner placement)`,
@@ -166,8 +146,8 @@ async function downloadBlueprintPackage(selections) {
   }
 
   // Generate text documents
-  folder.file('material-schedule.txt', generateMaterialSchedule(selections))
-  folder.file('component-list.txt', generateComponentList(selections))
+  folder.file('material-schedule.txt', generateMaterialSchedule())
+  folder.file('component-list.txt', generateComponentList())
   folder.file('spec-summary.txt', generateSpecSummary(selections))
 
   // Generate and download ZIP

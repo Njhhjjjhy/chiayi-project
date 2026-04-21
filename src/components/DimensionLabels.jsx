@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Html } from '@react-three/drei'
 import { useVariant } from '../hooks/useVariant.jsx'
-import { wallVariants } from '../variants/wall.js'
 import DimensionLine from './DimensionLine.jsx'
 
 function MaterialNote({ position, children }) {
@@ -73,21 +72,17 @@ function DimensionToggles({ categories, activeCategories, onToggle }) {
 
 const DIM_CATEGORIES = [
   { id: 'room', label: 'Room' },
-  { id: 'wall', label: 'The big wall' },
   { id: 'seating', label: 'Seating' },
   { id: 'human', label: 'Human reference' },
   { id: 'materials', label: 'Materials' },
 ]
 
 export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
-  const { selections, showSeating } = useVariant()
-  const [activeCategories, setActiveCategories] = useState(['room', 'wall', 'materials'])
+  const { showSeating } = useVariant()
+  const [activeCategories, setActiveCategories] = useState(['room', 'materials'])
 
   const halfW = roomWidth / 2
   const halfD = roomDepth / 2
-
-  const wallId = selections.wall || 'livingMoss'
-  const wall = wallVariants[wallId] || wallVariants.livingMoss
 
   const toggleCategory = (id) => {
     setActiveCategories((prev) =>
@@ -135,24 +130,6 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
             start={[halfW - 1, 0.02, halfD - 0.3]}
             end={[halfW, 0.02, halfD - 0.3]}
             label="1m"
-          />
-        </>
-      )}
-
-      {/* === THE BIG WALL === */}
-      {has('wall') && (
-        <>
-          <InfoLabel position={[0, roomHeight + 0.4, -halfD]}>
-            Wall: {wall.label}
-          </InfoLabel>
-          {/* Wall width */}
-          <DimensionLine
-            start={[-halfW, roomHeight * 0.5, -halfD]}
-            end={[halfW, roomHeight * 0.5, -halfD]}
-            label="8.83m (full width)"
-            offset={0.3}
-            offsetDirection={[0, 0, -1]}
-            color="#2a7a2a"
           />
         </>
       )}
@@ -229,12 +206,6 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
       {/* === MATERIALS === */}
       {has('materials') && (
         <>
-          <MaterialNote position={[0, roomHeight * 0.6, -halfD + 0.3]}>
-            Big wall: {wall.label}
-          </MaterialNote>
-          <MaterialNote position={[0, roomHeight * 0.8, -halfD + 0.6]}>
-            Ceiling LED modules: 18 LEDs + 1 IR sensor each
-          </MaterialNote>
           <MaterialNote position={[-halfW + 0.5, roomHeight * 0.5, 0]}>
             Entrance-wall: visitor entrance + long open span to bistro; infill TBD (covering strategy pending)
           </MaterialNote>
@@ -245,18 +216,8 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
             Floor: existing grey marble porcelain; covering TBD
           </MaterialNote>
           <MaterialNote position={[0, roomHeight - 0.2, 0]}>
-            Ceiling: dropped panel grid at 3.4m (120x120cm panels); structural beams + HVAC + sprinklers above
+            Ceiling: existing structural — white plaster + cross-beams + cage pendants; covering TBD
           </MaterialNote>
-          {selections.fireflies === 'canopyGrid' && (
-            <MaterialNote position={[0, roomHeight - 0.5, 0]}>
-              Hanging: ramie fiber, paper mulberry — 2700K micro-LED, Arduino
-            </MaterialNote>
-          )}
-          {selections.fireflies === 'theVeil' && (
-            <MaterialNote position={[0, roomHeight * 0.5, halfD - 0.3]}>
-              Fiber veil: ramie with embedded micro-LEDs, 3-5 depth levels
-            </MaterialNote>
-          )}
         </>
       )}
 
