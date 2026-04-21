@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { useVariant } from '../../hooks/useVariant.jsx'
 
-const WALL_WIDTH = 10
+const WALL_WIDTH = 8.83
 const WALL_HEIGHT = 3.52
 const WALL_Z = -5
 

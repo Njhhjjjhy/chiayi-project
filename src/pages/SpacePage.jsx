@@ -73,7 +73,7 @@ const CONSTRAINTS = [
 
 // --- Ceiling module calculations ---
 
-function calcOptionA(roomW = 10, roomH = 10) {
+function calcOptionA(roomW = 8.83, roomH = 10) {
   const squaresPerRow = Math.floor(roomW / 0.6)
   const squaresPerCol = Math.floor(roomH / 0.6)
   const totalSquares = squaresPerRow * squaresPerCol
@@ -101,7 +101,7 @@ function calcOptionA(roomW = 10, roomH = 10) {
   }
 }
 
-function calcOptionB(roomW = 10, roomH = 10) {
+function calcOptionB(roomW = 8.83, roomH = 10) {
   const modulesPerRow = Math.floor(roomW / 1.2)
   const modulesPerCol = Math.floor(roomH / 1.2)
   const totalModules = modulesPerRow * modulesPerCol

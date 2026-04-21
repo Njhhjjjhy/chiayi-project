@@ -96,12 +96,6 @@ export function useCeilingPanelTexture() {
   })
 }
 
-export function useMountainPanelTexture() {
-  return usePBRTexture('Plywood001', {
-    repeat: [2, 1],
-  })
-}
-
 export function useSideWallTexture() {
   return usePBRTexture('Concrete015', {
     repeat: [3, 2],

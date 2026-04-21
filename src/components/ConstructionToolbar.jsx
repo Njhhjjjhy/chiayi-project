@@ -16,37 +16,49 @@ function captureScreenshot(name) {
 }
 
 function generateMaterialSchedule(selections) {
-  const wallId = selections.wall || 'layeredMountain'
-  const wall = wallVariants[wallId] || wallVariants.layeredMountain
+  const wallId = selections.wall || 'livingMoss'
+  const wall = wallVariants[wallId] || wallVariants.livingMoss
 
   return [
     'MATERIAL SCHEDULE',
     '='.repeat(50),
     `Generated: ${new Date().toISOString().split('T')[0]}`,
     '',
-    'THE BIG WALL',
+    'THE BIG WALL (front-wall)',
     `  Treatment: ${wall.label}`,
-    `  Width: 10m (full room width)`,
+    `  Width: 8.83m (full front-wall width)`,
     `  Height: 3.52m (usable height after beams)`,
     `  Complexity: ${wall.complexity}`,
     `  Cost range: ${wall.cost}`,
     '',
     'CEILING',
     `  Panels: 120 x 120cm modular`,
-    `  Grid: ${Math.floor(10 / 1.2)} x ${Math.floor(10 / 1.2)} panels`,
+    `  Grid: ${Math.floor(8.83 / 1.2)} x ${Math.floor(10 / 1.2)} panels`,
     `  Material: lightweight composite or fabric-wrapped frame`,
     `  LEDs: 18 per module (greenish tone)`,
     `  IR sensors: 1 per module`,
     '',
     'FLOOR',
-    `  Material: artificial turf / dried grass mats`,
-    `  Finish: matte, non-reflective, forest feel`,
-    `  Area: 10 x 10m = 100m²`,
+    `  Existing: grey marble porcelain, ~80cm tiles, heavy white veining`,
+    `  Covering: TBD (pending covering strategy)`,
+    `  Area: 8.83 x 10m = 88.3m²`,
     '',
-    'SIDE WALLS',
-    `  Material: matte black fabric or paint`,
+    'SIDE WALLS (entrance-wall + window-wall)',
     `  Height: 3.52m`,
     `  Total surface: 2 x (10 x 3.52) = 70.4m²`,
+    `  Entrance-wall (10m): visitor entrance 45cm from front-wall corner;`,
+    `    long open span to adjacent bistro past the entrance — modelled as continuous wall.`,
+    `    Infill / column treatment TBD (pending covering strategy).`,
+    `  Window-wall (10m): multi-pane interior glass partition (570×233) + small window in`,
+    `    stepped notch (59×178) + silver service door (~80×200) + HVAC plenum in front-wall corner.`,
+    `    Covering TBD (pending covering strategy).`,
+    '',
+    'BACK WALL (piano wall)',
+    `  Width: 8.83m`,
+    `  Height: 3.52m`,
+    `  Openings: D1 (96×236) at 437cm from window-wall corner; D2 (90×236) at 793cm`,
+    `  Existing: 2 A/C heads high on wall + red sprinkler pipe along the top`,
+    `  Covering: TBD (pending covering strategy)`,
     '',
     'SEATING',
     `  Bench material: wood or metal frame`,
@@ -58,8 +70,8 @@ function generateMaterialSchedule(selections) {
 }
 
 function generateComponentList(selections) {
-  const wallId = selections.wall || 'layeredMountain'
-  const wall = wallVariants[wallId] || wallVariants.layeredMountain
+  const wallId = selections.wall || 'livingMoss'
+  const wall = wallVariants[wallId] || wallVariants.livingMoss
 
   return [
     'COMPONENT LIST',
@@ -67,9 +79,9 @@ function generateComponentList(selections) {
     `Generated: ${new Date().toISOString().split('T')[0]}`,
     '',
     'STRUCTURAL',
-    `  Big wall: ${wall.label} (10m x 3.52m)`,
-    `  Ceiling grid frame: 8 x 8 T-bar grid`,
-    `  Ceiling panels: ${Math.floor(10 / 1.2) * Math.floor(10 / 1.2)} panels (120x120cm)`,
+    `  Big wall: ${wall.label} (8.83m x 3.52m)`,
+    `  Ceiling grid frame: 7 x 8 T-bar grid`,
+    `  Ceiling panels: ${Math.floor(8.83 / 1.2) * Math.floor(10 / 1.2)} panels (120x120cm)`,
     `  Curtains/dividers: sectioning from retail area`,
     '',
     'LIGHTING',
@@ -94,9 +106,7 @@ function generateComponentList(selections) {
     '',
     'MISC',
     `  Benches: 2 rows, 4 bench segments`,
-    `  Floor: modular mat system + scattered natural elements`,
-    `  Paint: matte black (walls)`,
-    `  Fabric: matte black, fire-rated (curtains)`,
+    `  Floor covering + wall covering: TBD (pending covering strategy)`,
   ].join('\n')
 }
 
@@ -119,11 +129,11 @@ function generateSpecSummary(selections) {
   lines.push('')
   lines.push('ROOM DIMENSIONS')
   lines.push('-'.repeat(30))
-  lines.push('  Width: 10m')
-  lines.push('  Depth: 10m')
+  lines.push('  Width: 8.83m (front-wall to back-wall)')
+  lines.push('  Depth: 10m (window-wall to entrance-wall)')
   lines.push('  Height: 3.52m')
-  lines.push('  Floor area: 100m²')
-  lines.push('  Volume: 350m³')
+  lines.push('  Floor area: 88.3m²')
+  lines.push('  Volume: 311m³')
   lines.push('')
   lines.push('LOCATION')
   lines.push('-'.repeat(30))

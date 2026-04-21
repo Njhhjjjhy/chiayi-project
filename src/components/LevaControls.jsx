@@ -4,7 +4,7 @@ export function useLevaControls() {
   const controls = useControls({
     room: folder(
       {
-        width: { value: 10, min: 4, max: 20, step: 0.5 },
+        width: { value: 8.83, min: 4, max: 20, step: 0.01 },
         depth: { value: 10, min: 4, max: 20, step: 0.5 },
         height: { value: 3.52, min: 2.5, max: 6, step: 0.01 },
       },

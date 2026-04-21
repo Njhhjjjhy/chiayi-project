@@ -2,9 +2,14 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { useVariant } from '../../hooks/useVariant.jsx'
 
-const WALL_WIDTH = 10
+const WALL_WIDTH = 8.83
 const WALL_HEIGHT = 3.52
 const WALL_Z = -5
+// Wainscot on the front-wall occupies the bottom 0.90 m + 0.03 m cap + 0.005 m seam.
+// The moss wall must NEVER overlap the panelling — start the plane above the cap.
+const WAINSCOT_TOP = 0.935
+const USABLE_H = WALL_HEIGHT - WAINSCOT_TOP            // 2.585
+const USABLE_Y = WAINSCOT_TOP + USABLE_H / 2           // vertical centre of the moss panel
 
 // Living moss wall: a dense green surface of moss clumps on wire mesh.
 // Rendered as a displaced plane with vertex colors creating patches of
@@ -23,7 +28,7 @@ export default function LivingMossWall() {
   const { isConstruction, isLight } = useVariant()
 
   const geometry = useMemo(() => {
-    const geo = new THREE.PlaneGeometry(WALL_WIDTH, WALL_HEIGHT, 80, 56)
+    const geo = new THREE.PlaneGeometry(WALL_WIDTH, USABLE_H, 80, 44)
     const pos = geo.attributes.position
     const colors = new Float32Array(pos.count * 3)
     const rand = seededRandom(42)
@@ -73,14 +78,14 @@ export default function LivingMossWall() {
 
   if (isConstruction) {
     return (
-      <mesh position={[0, WALL_HEIGHT / 2, WALL_Z]} geometry={geometry}>
+      <mesh position={[0, USABLE_Y, WALL_Z]} geometry={geometry}>
         <meshStandardMaterial wireframe color="#4a4" side={THREE.DoubleSide} />
       </mesh>
     )
   }
 
   return (
-    <mesh position={[0, WALL_HEIGHT / 2, WALL_Z]} geometry={geometry}>
+    <mesh position={[0, USABLE_Y, WALL_Z]} geometry={geometry}>
       <meshStandardMaterial
         vertexColors
         roughness={1}

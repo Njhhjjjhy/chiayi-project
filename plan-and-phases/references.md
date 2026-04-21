@@ -67,10 +67,6 @@ Detailed tutorial on building scroll-driven 3d with React Three Fiber. Covers sh
 https://wawasensei.hashnode.dev/scroll-animations-with-react-three-fiber-and-gsap
 Tutorial on combining React Three Fiber with GSAP ScrollTrigger. Practical patterns for scroll-driven camera movement and scene transitions.
 
-**Scroll-driven Three.js with GSAP — Medium**
-https://medium.com/@pablobandinopla/scroll-driven-presentation-in-threejs-with-gsap-a2be523e430a
-A cinematic scroll-driven WebGL experience tutorial. Covers camera choreography and scene transitions tied to scroll position.
-
 **@14islands/r3f-scroll-rig**
 https://github.com/14islands/r3f-scroll-rig
 A React Three Fiber library for syncing 3d objects with scrolling dom elements. Handles dom tracking, viewport rendering, and smooth scrolling.
