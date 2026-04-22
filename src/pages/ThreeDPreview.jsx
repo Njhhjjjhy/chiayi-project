@@ -1,10 +1,10 @@
 import { Canvas } from '@react-three/fiber'
 import { Leva } from 'leva'
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { Link } from 'react-router-dom'
-import { VariantProvider } from '../hooks/useVariant.jsx'
-import { TimelineProvider } from '../hooks/useTimeline.jsx'
-import { TourProvider } from '../hooks/useTour.jsx'
+import { VariantProvider } from '../hooks/VariantProvider.jsx'
+import { TimelineProvider } from '../hooks/TimelineProvider.jsx'
+import { TourProvider } from '../hooks/TourProvider.jsx'
 import { useLevaControls } from '../components/LevaControls'
 import Scene from '../components/Scene'
 import VariantSwitcher from '../components/VariantSwitcher'
@@ -13,9 +13,8 @@ import ConstructionToolbar from '../components/ConstructionToolbar'
 import PhaseOverlay from '../components/PhaseOverlay'
 import { GuidedTourOverlay } from '../components/GuidedTour.jsx'
 import ViewModeLabel from '../components/ViewModeLabel.jsx'
-import MeasureToolbar from '../components/MeasureToolbar.jsx'
-import { useTour } from '../hooks/useTour.jsx'
-import { MeasureProvider } from '../hooks/useMeasure.jsx'
+import { useTour } from '../hooks/useTour.js'
+import { MeasureProvider } from '../hooks/MeasureProvider.jsx'
 
 function Loader() {
   return (
@@ -103,7 +102,6 @@ function PreviewInner() {
           <VariantSwitcher onCameraPreset={setActiveCameraPreset} />
           <TimelineController />
           <ConstructionToolbar />
-          <MeasureToolbar />
           <SkipToFireflies />
         </>
       )}
