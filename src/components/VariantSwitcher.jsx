@@ -1,27 +1,28 @@
 import { useState } from 'react'
 import { variantCategories, viewModes, cameraPresets } from '../variants/config'
-import { useVariant } from '../hooks/useVariant.jsx'
-import { useTour } from '../hooks/useTour.jsx'
+import { useVariant } from '../hooks/useVariant.js'
+import { useTour } from '../hooks/useTour.js'
+import { useMeasure } from '../hooks/useMeasure.js'
 
 function VariantDescription({ variant, onClose }) {
   if (!variant?.description) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/40" />
       <div
-        className="relative bg-black/90 border border-white/15 rounded-xl max-w-sm w-full p-5 shadow-2xl"
+        className="relative bg-white border border-gray-200 rounded-xl max-w-sm w-full p-5 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-white/80 text-sm font-medium tracking-wide mb-2">
+        <div className="text-black text-sm font-medium mb-2">
           {variant.label}
         </div>
-        <div className="text-white/50 text-xs leading-relaxed">
+        <div className="text-black text-sm leading-relaxed">
           {variant.description}
         </div>
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-white/20 hover:text-white/50 text-xs cursor-pointer transition-colors"
+          className="absolute top-3 right-3 text-gray-400 hover:text-black text-sm cursor-pointer transition-colors"
         >
           ✕
         </button>
@@ -37,20 +38,20 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
   const activeId = selections[categoryKey]
 
   return (
-    <div className="border-b border-white/10 last:border-b-0">
+    <div className="border-b border-gray-200 last:border-b-0">
       <button
         onClick={() => hasVariants && setOpen(!open)}
         className={`w-full flex items-center justify-between px-3 py-2 text-left text-sm transition-colors ${
           hasVariants
-            ? 'hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none'
-            : 'opacity-40 cursor-default'
+            ? 'text-black hover:bg-gray-100 cursor-pointer focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none'
+            : 'text-gray-400 cursor-default'
         }`}
       >
         <span>{label}</span>
         {hasVariants ? (
-          <span className="text-xs text-white/40">{open ? '−' : '+'}</span>
+          <span className="text-sm text-gray-500">{open ? '−' : '+'}</span>
         ) : (
-          <span className="text-xs text-white/30">no variants yet</span>
+          <span className="text-sm text-gray-400">no variants yet</span>
         )}
       </button>
       {open && hasVariants && (
@@ -61,10 +62,10 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
               <div key={v.id} className="flex items-center gap-1">
                 <button
                   onClick={() => selectVariant(categoryKey, v.id)}
-                  className={`flex-1 text-left text-xs py-1.5 px-2 rounded transition-colors cursor-pointer ${
+                  className={`flex-1 text-left text-sm py-1.5 px-2 rounded transition-colors cursor-pointer ${
                     isActive
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/40 hover:text-white/60 hover:bg-white/5'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-black hover:text-black hover:bg-gray-100'
                   }`}
                 >
                   {v.label}
@@ -72,7 +73,7 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
                 {v.description && (
                   <button
                     onClick={() => onShowInfo(v)}
-                    className="text-[10px] text-white/20 hover:text-white/50 cursor-pointer transition-colors px-1 py-1"
+                    className="text-sm text-gray-400 hover:text-black cursor-pointer transition-colors px-1.5 py-1"
                     title="Info"
                   >
                     ?
@@ -88,26 +89,27 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
 }
 
 export default function VariantSwitcher({ onCameraPreset }) {
-  const { viewMode, setViewMode, showSeating, setShowSeating, randomize, favorites, saveFavorite, loadFavorite, removeFavorite } = useVariant()
+  const { viewMode, setViewMode, showSeating, setShowSeating, randomize, favorites, saveFavorite, loadFavorite, removeFavorite, isConstruction } = useVariant()
   const { active: tourActive, startTour } = useTour()
+  const { measureMode, toggleMeasure, measurements, removeMeasurement, clearMeasurements, pendingPoint } = useMeasure()
   const [collapsed, setCollapsed] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false)
   const [showFavorites, setShowFavorites] = useState(false)
   const [infoVariant, setInfoVariant] = useState(null)
 
-  // Hide switcher during guided tour
   if (tourActive) return null
 
   return (
     <div
-      className="fixed top-4 left-4 z-10 select-none max-h-[calc(100vh-120px)] overflow-y-auto"
+      className="fixed top-4 left-4 z-10 select-none max-h-[calc(100vh-140px)] overflow-y-auto"
       onPointerDown={(e) => e.stopPropagation()}
       onPointerMove={(e) => e.stopPropagation()}
     >
-      <div className="bg-black/80 backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden w-56">
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden w-64 shadow-lg">
         {/* Header */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-medium uppercase tracking-wider text-white/60 hover:bg-white/5 cursor-pointer"
+          className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-black hover:bg-gray-100 cursor-pointer"
         >
           <span>Variants</span>
           <span>{collapsed ? '+' : '−'}</span>
@@ -116,16 +118,16 @@ export default function VariantSwitcher({ onCameraPreset }) {
         {!collapsed && (
           <>
             {/* View mode toggle */}
-            <div className="px-3 py-2 border-t border-white/10">
-              <div className="flex rounded bg-white/5 p-0.5">
+            <div className="px-3 py-2 border-t border-gray-200">
+              <div className="flex rounded bg-gray-100 p-0.5">
                 {Object.entries(viewModes).map(([key, label]) => (
                   <button
                     key={key}
                     onClick={() => setViewMode(key)}
-                    className={`flex-1 text-xs py-1.5 rounded transition-colors cursor-pointer ${
+                    className={`flex-1 text-sm py-1.5 rounded transition-colors cursor-pointer ${
                       viewMode === key
-                        ? 'bg-white/15 text-white'
-                        : 'text-white/40 hover:text-white/60'
+                        ? 'bg-gray-900 text-white'
+                        : 'text-black hover:text-black hover:bg-gray-200'
                     }`}
                   >
                     {label}
@@ -135,33 +137,41 @@ export default function VariantSwitcher({ onCameraPreset }) {
             </div>
 
             {/* Present button */}
-            <div className="px-3 py-2 border-t border-white/10">
+            <div className="px-3 py-2 border-t border-gray-200">
               <button
                 onClick={() => startTour({ viewMode, showSeating })}
-                className="w-full text-[10px] py-1.5 rounded bg-white/5 text-white/50 hover:text-white/80 hover:bg-white/10 cursor-pointer transition-colors uppercase tracking-wider"
+                className="w-full text-sm py-1.5 rounded bg-gray-100 text-black hover:text-black hover:bg-gray-200 cursor-pointer transition-colors"
               >
                 Present
               </button>
             </div>
 
-            {/* Camera presets */}
-            <div className="px-3 py-2 border-t border-white/10">
-              <div className="text-[10px] uppercase tracking-wider text-white/30 mb-1.5">Camera</div>
-              <div className="flex flex-wrap gap-1">
-                {Object.entries(cameraPresets).map(([key, preset]) => (
-                  <button
-                    key={key}
-                    onClick={() => onCameraPreset && onCameraPreset(preset)}
-                    className="text-[10px] px-1.5 py-1 rounded bg-white/5 text-white/40 hover:text-white/60 hover:bg-white/10 cursor-pointer transition-colors"
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
+            {/* Camera presets — collapsible */}
+            <div className="border-t border-gray-200">
+              <button
+                onClick={() => setCameraOpen(!cameraOpen)}
+                className="w-full flex items-center justify-between px-3 py-2 text-sm text-black hover:bg-gray-100 cursor-pointer"
+              >
+                <span>Camera</span>
+                <span className="text-sm text-gray-500">{cameraOpen ? '−' : '+'}</span>
+              </button>
+              {cameraOpen && (
+                <div className="px-3 pb-2 flex flex-wrap gap-1">
+                  {Object.entries(cameraPresets).map(([key, preset]) => (
+                    <button
+                      key={key}
+                      onClick={() => onCameraPreset && onCameraPreset(preset)}
+                      className="text-sm px-2 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 cursor-pointer transition-colors"
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Category sections */}
-            <div className="border-t border-white/10">
+            <div className="border-t border-gray-200">
               {Object.entries(variantCategories).map(([key, cat]) => (
                 <CategorySection
                   key={key}
@@ -174,30 +184,82 @@ export default function VariantSwitcher({ onCameraPreset }) {
             </div>
 
             {/* Seating toggle */}
-            <div className="px-3 py-2 border-t border-white/10">
+            <div className="px-3 py-2 border-t border-gray-200">
               <button
                 onClick={() => setShowSeating(!showSeating)}
-                className={`w-full text-[10px] py-1.5 rounded transition-colors cursor-pointer ${
+                className={`w-full text-sm py-1.5 rounded transition-colors cursor-pointer ${
                   showSeating
-                    ? 'bg-white/15 text-white'
-                    : 'bg-white/5 text-white/40 hover:text-white/60 hover:bg-white/10'
+                    ? 'bg-black text-white'
+                    : 'bg-gray-100 text-black hover:bg-gray-200'
                 }`}
               >
                 {showSeating ? 'Seating visible' : 'Show seating'}
               </button>
             </div>
 
+            {/* Ruler — construction mode only */}
+            {isConstruction && (
+            <div className="px-3 py-2 border-t border-gray-200">
+              <button
+                onClick={toggleMeasure}
+                className={`w-full flex items-center justify-between text-sm py-1.5 px-2 rounded transition-colors cursor-pointer ${
+                  measureMode
+                    ? 'bg-red-600 text-white'
+                    : 'bg-gray-100 text-black hover:bg-gray-200'
+                }`}
+              >
+                <span>{measureMode ? 'Measuring...' : 'Ruler'}</span>
+                <span className="text-sm">{measureMode ? 'ON' : 'OFF'}</span>
+              </button>
+              {measureMode && (
+                <div className="mt-1.5 text-sm text-gray-500">
+                  {pendingPoint ? 'Click second point' : 'Click first point'}
+                </div>
+              )}
+              {measurements.length > 0 && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-gray-500">
+                      Measurements ({measurements.length})
+                    </span>
+                    <button
+                      onClick={clearMeasurements}
+                      className="text-sm text-gray-500 hover:text-black cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <div className="space-y-0.5 max-h-32 overflow-y-auto">
+                    {measurements.map((m) => (
+                      <div key={m.id} className="flex items-center justify-between px-2 py-1 rounded bg-gray-100">
+                        <span className="text-sm text-red-600 font-mono">
+                          {m.distance.toFixed(2)}m
+                        </span>
+                        <button
+                          onClick={() => removeMeasurement(m.id)}
+                          className="text-sm text-gray-400 hover:text-black cursor-pointer px-1"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            )}
+
             {/* Actions */}
-            <div className="px-3 py-2 border-t border-white/10 flex gap-2">
+            <div className="px-3 py-2 border-t border-gray-200 flex gap-2">
               <button
                 onClick={randomize}
-                className="flex-1 text-[10px] py-1.5 rounded bg-white/5 text-white/40 hover:text-white/60 hover:bg-white/10 cursor-pointer transition-colors"
+                className="flex-1 text-sm py-1.5 rounded bg-gray-100 text-black hover:text-black hover:bg-gray-200 cursor-pointer transition-colors"
               >
                 Randomize
               </button>
               <button
                 onClick={saveFavorite}
-                className="flex-1 text-[10px] py-1.5 rounded bg-white/5 text-white/40 hover:text-white/60 hover:bg-white/10 cursor-pointer transition-colors"
+                className="flex-1 text-sm py-1.5 rounded bg-gray-100 text-black hover:text-black hover:bg-gray-200 cursor-pointer transition-colors"
               >
                 Save combo
               </button>
@@ -205,10 +267,10 @@ export default function VariantSwitcher({ onCameraPreset }) {
 
             {/* Favorites */}
             {favorites.length > 0 && (
-              <div className="px-3 py-2 border-t border-white/10">
+              <div className="px-3 py-2 border-t border-gray-200">
                 <button
                   onClick={() => setShowFavorites(!showFavorites)}
-                  className="w-full flex items-center justify-between text-[10px] uppercase tracking-wider text-white/30 cursor-pointer"
+                  className="w-full flex items-center justify-between text-sm text-black hover:text-black cursor-pointer"
                 >
                   <span>Saved ({favorites.length})</span>
                   <span>{showFavorites ? '−' : '+'}</span>
@@ -219,15 +281,15 @@ export default function VariantSwitcher({ onCameraPreset }) {
                       <div key={i} className="flex items-center gap-1">
                         <button
                           onClick={() => loadFavorite(i)}
-                          className="flex-1 text-left text-[10px] py-1 px-1.5 rounded bg-white/5 text-white/35 hover:text-white/60 hover:bg-white/10 cursor-pointer truncate transition-colors"
+                          className="flex-1 text-left text-sm py-1 px-1.5 rounded bg-gray-100 text-black hover:text-black hover:bg-gray-200 cursor-pointer truncate transition-colors"
                         >
                           #{i + 1}
                         </button>
                         <button
                           onClick={() => removeFavorite(i)}
-                          className="text-[10px] px-1 text-white/20 hover:text-white/50 cursor-pointer"
+                          className="text-sm px-1 text-gray-400 hover:text-black cursor-pointer"
                         >
-                          x
+                          ×
                         </button>
                       </div>
                     ))}
