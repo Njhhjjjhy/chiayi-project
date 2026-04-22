@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useVariant } from '../hooks/useVariant.js'
 
 const BENCH_HEIGHT = 0.45
 const BENCH_DEPTH = 0.4
@@ -93,9 +93,6 @@ export default function Seating() {
   // Generate figure geometry once
   const figureGeometry = useMemo(() => createFigureGeometry(), [])
 
-  // Count total figures and build their transforms
-  const totalFigures = ROWS.reduce((sum, row) => sum + row.seats, 0)
-
   const figureTransforms = useMemo(() => {
     const rand = seededRandom(42)
     const transforms = []
@@ -125,11 +122,11 @@ export default function Seating() {
     return transforms
   }, [])
 
-  // Set instance matrices
-  useMemo(() => {
-    if (!meshRef.current) return
+  // Set instance matrices on first frame once the ref is attached.
+  const initialized = useRef(false)
+  useFrame(() => {
+    if (initialized.current || !meshRef.current) return
     const dummy = new THREE.Object3D()
-
     figureTransforms.forEach((t, i) => {
       dummy.position.set(t.x, BENCH_HEIGHT, t.z)
       dummy.rotation.set(0, 0, t.lean)
@@ -137,25 +134,8 @@ export default function Seating() {
       dummy.updateMatrix()
       meshRef.current.setMatrixAt(i, dummy.matrix)
     })
-
     meshRef.current.instanceMatrix.needsUpdate = true
-  }, [figureTransforms])
-
-  // Update instance matrices on first frame (ref may not be ready in useMemo)
-  const initialized = useRef(false)
-  useFrame(() => {
-    if (!initialized.current && meshRef.current) {
-      const dummy = new THREE.Object3D()
-      figureTransforms.forEach((t, i) => {
-        dummy.position.set(t.x, BENCH_HEIGHT, t.z)
-        dummy.rotation.set(0, 0, t.lean)
-        dummy.scale.setScalar(t.scale)
-        dummy.updateMatrix()
-        meshRef.current.setMatrixAt(i, dummy.matrix)
-      })
-      meshRef.current.instanceMatrix.needsUpdate = true
-      initialized.current = true
-    }
+    initialized.current = true
   })
 
   return (

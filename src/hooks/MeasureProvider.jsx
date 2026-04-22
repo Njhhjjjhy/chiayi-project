@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useCallback } from 'react'
-
-const MeasureContext = createContext(null)
+import { useState, useCallback } from 'react'
+import { MeasureContext } from './useMeasure.js'
 
 let measureId = 0
 
@@ -29,10 +28,8 @@ export function MeasureProvider({ children }) {
   const addPoint = useCallback((point) => {
     setPendingPoint((prev) => {
       if (!prev) {
-        // First point
         return point
       }
-      // Second point — save measurement
       const dist = Math.sqrt(
         (point[0] - prev[0]) ** 2 +
         (point[1] - prev[1]) ** 2 +
@@ -42,7 +39,7 @@ export function MeasureProvider({ children }) {
         ...ms,
         { id: ++measureId, start: prev, end: point, distance: dist },
       ])
-      return null // reset for next measurement
+      return null
     })
   }, [])
 
@@ -72,10 +69,4 @@ export function MeasureProvider({ children }) {
       {children}
     </MeasureContext.Provider>
   )
-}
-
-export function useMeasure() {
-  const ctx = useContext(MeasureContext)
-  if (!ctx) throw new Error('useMeasure must be used within MeasureProvider')
-  return ctx
 }

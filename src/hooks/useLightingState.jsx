@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { useTimeline } from './useTimeline.jsx'
-import { useVariant } from './useVariant.jsx'
+import { useTimeline } from './useTimeline.js'
+import { useVariant } from './useVariant.js'
 
 const PHASE_KEYS = ['golden', 'twilight', 'blue', 'darkness']
 

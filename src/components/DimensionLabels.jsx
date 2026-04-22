@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Html } from '@react-three/drei'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useVariant } from '../hooks/useVariant.js'
 import DimensionLine from './DimensionLine.jsx'
 
 function MaterialNote({ position, children }) {

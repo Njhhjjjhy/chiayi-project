@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useVariant } from '../hooks/useVariant.js'
 import { DEFAULT_VARIANTS } from '../variants/defaults.js'
+import { ROOM } from '../geometry/dimensions.js'
 
-const ROOM = { w: 8.83, d: 10 }
 const MARBLE_TILE = 0.80     // approx tile size observed in cam 1/2/3 frames
 
 // Procedurally draw a grey-marble tile texture into a canvas, including wavy
@@ -100,14 +100,14 @@ function GreyMarbleFloor({ isConstruction }) {
   const marbleTex = useMemo(() => {
     const tex = buildMarbleTexture()
     const tileCoverage = MARBLE_TILE * TILES_PER_CANVAS   // 3.2 m per canvas repeat
-    tex.repeat.set(ROOM.w / tileCoverage, ROOM.d / tileCoverage)
+    tex.repeat.set(ROOM.W / tileCoverage, ROOM.D / tileCoverage)
     return tex
   }, [])
 
   if (isConstruction) {
     return (
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[ROOM.w, ROOM.d]} />
+        <planeGeometry args={[ROOM.W, ROOM.D]} />
         <meshStandardMaterial wireframe color="#888" />
       </mesh>
     )
@@ -118,7 +118,7 @@ function GreyMarbleFloor({ isConstruction }) {
   // the tile visible regardless of view mode.
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-      <planeGeometry args={[ROOM.w, ROOM.d]} />
+      <planeGeometry args={[ROOM.W, ROOM.D]} />
       <meshStandardMaterial
         map={marbleTex}
         color="#ffffff"

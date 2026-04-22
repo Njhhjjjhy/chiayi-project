@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useTimeline, PHASES } from '../hooks/useTimeline.jsx'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useTimeline, PHASES } from '../hooks/useTimeline.js'
+import { useVariant } from '../hooks/useVariant.js'
 
 const PHASE_DESCRIPTIONS = {
   golden: 'Golden hour',
@@ -20,7 +20,6 @@ export default function PhaseOverlay() {
   const { time } = useTimeline()
   const { isExperience } = useVariant()
   const [showLabel, setShowLabel] = useState(false)
-  const [currentPhase, setCurrentPhase] = useState('')
   const lastPhaseRef = useRef('')
   const timerRef = useRef(null)
 
@@ -29,13 +28,17 @@ export default function PhaseOverlay() {
 
   useEffect(() => {
     if (!isExperience) return
-    if (phaseKey !== lastPhaseRef.current) {
-      lastPhaseRef.current = phaseKey
-      setCurrentPhase(phaseKey)
-      setShowLabel(true)
+    if (phaseKey === lastPhaseRef.current) return
+    lastPhaseRef.current = phaseKey
 
+    if (timerRef.current) clearTimeout(timerRef.current)
+    // Decouple the state change from the effect body so cascading renders
+    // don't fire synchronously.
+    const show = setTimeout(() => setShowLabel(true), 0)
+    timerRef.current = setTimeout(() => setShowLabel(false), 3000)
+    return () => {
+      clearTimeout(show)
       if (timerRef.current) clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => setShowLabel(false), 3000)
     }
   }, [phaseKey, isExperience])
 
@@ -52,13 +55,13 @@ export default function PhaseOverlay() {
         className="text-white/70 text-lg font-light tracking-widest uppercase mb-1"
         style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7)' }}
       >
-        {PHASE_DESCRIPTIONS[currentPhase]}
+        {PHASE_DESCRIPTIONS[phaseKey]}
       </div>
       <div
         className="text-white/40 text-xs tracking-wide"
         style={{ textShadow: '0 0 15px rgba(0,0,0,0.9)' }}
       >
-        {PHASE_SUBTITLES[currentPhase]}
+        {PHASE_SUBTITLES[phaseKey]}
       </div>
     </div>
   )

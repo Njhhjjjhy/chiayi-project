@@ -1,8 +1,7 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
+import { VariantContext } from './useVariant.js'
 import { variantCategories } from '../variants/config.js'
 import { DEFAULT_VARIANTS } from '../variants/defaults.js'
-
-const VariantContext = createContext(null)
 
 export function VariantProvider({ children }) {
   const [selections, setSelections] = useState({ ...DEFAULT_VARIANTS })
@@ -32,6 +31,7 @@ export function VariantProvider({ children }) {
   const loadFavorite = useCallback((index) => {
     const fav = favorites[index]
     if (fav) {
+      // eslint-disable-next-line no-unused-vars -- strip savedAt from stored favorite
       const { savedAt, ...rest } = fav
       setSelections((prev) => ({ ...prev, ...rest }))
     }
@@ -55,10 +55,4 @@ export function VariantProvider({ children }) {
       {children}
     </VariantContext.Provider>
   )
-}
-
-export function useVariant() {
-  const ctx = useContext(VariantContext)
-  if (!ctx) throw new Error('useVariant must be used within VariantProvider')
-  return ctx
 }

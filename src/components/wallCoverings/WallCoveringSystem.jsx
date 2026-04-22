@@ -1,4 +1,4 @@
-import { useVariant } from '../../hooks/useVariant.jsx'
+import { useVariant } from '../../hooks/useVariant.js'
 import { DEFAULT_VARIANTS } from '../../variants/defaults.js'
 import BambooLattice from './BambooLattice.jsx'
 
