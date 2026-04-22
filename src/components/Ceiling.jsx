@@ -1,10 +1,8 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useVariant } from '../hooks/useVariant.js'
 import { DEFAULT_VARIANTS } from '../variants/defaults.js'
-
-const ROOM = { w: 8.83, d: 10 }
-const DROPPED_H = 3.4
+import { ROOM, DROPPED_CEILING_Y } from '../geometry/dimensions.js'
 
 function MountainTopologyCeiling({ isConstruction, ceilingOpacity }) {
   function seededRandom(seed) {
@@ -17,21 +15,24 @@ function MountainTopologyCeiling({ isConstruction, ceilingOpacity }) {
 
   const geometry = useMemo(() => {
     const rand = seededRandom(42)
-    const gridX = 14
-    const gridZ = 14
+    const gridX = 18
+    const gridZ = 18
     const vertices = []
 
     for (let iz = 0; iz <= gridZ; iz++) {
       for (let ix = 0; ix <= gridX; ix++) {
-        const x = (ix / gridX - 0.5) * ROOM.w
-        const z = (iz / gridZ - 0.5) * ROOM.d
+        const x = (ix / gridX - 0.5) * ROOM.W
+        const z = (iz / gridZ - 0.5) * ROOM.D
         let h = 0
-        h += Math.sin(x * 0.8 + 1.2) * Math.cos(z * 0.6 + 0.8) * 0.12
-        h += Math.sin(x * 1.5 + z * 1.0) * 0.08
-        h += Math.cos(x * 0.5 - z * 1.3 + 2.0) * 0.06
-        h += Math.sin(x * 2.2 - z * 0.7) * 0.04
+        h += Math.sin(x * 0.8 + 1.2) * Math.cos(z * 0.6 + 0.8) * 0.18
+        h += Math.sin(x * 1.5 + z * 1.0) * 0.12
+        h += Math.cos(x * 0.5 - z * 1.3 + 2.0) * 0.08
+        h += Math.sin(x * 2.2 - z * 0.7) * 0.06
         h += (rand() - 0.5) * 0.08
-        const edgeFade = Math.min(1, Math.min(ix, gridX - ix) / 2, Math.min(iz, gridZ - iz) / 2)
+        // Soft edge fade across ~1 grid cell only (was 2) — keeps relief
+        // right up to the wall line so the ceiling reads as topology,
+        // not a drooping tablecloth.
+        const edgeFade = Math.min(1, Math.min(ix, gridX - ix), Math.min(iz, gridZ - iz))
         h *= edgeFade
         vertices.push([x, h, z])
       }
@@ -77,7 +78,7 @@ function MountainTopologyCeiling({ isConstruction, ceilingOpacity }) {
   const edges = useMemo(() => new THREE.EdgesGeometry(geometry, 5), [geometry])
 
   return (
-    <group position={[0, DROPPED_H, 0]}>
+    <group position={[0, DROPPED_CEILING_Y, 0]}>
       <mesh geometry={geometry}>
         <meshStandardMaterial
           vertexColors
