@@ -1,6 +1,21 @@
 import { useState } from 'react'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useVariant } from '../hooks/useVariant.js'
 import { variantCategories } from '../variants/config.js'
+import {
+  ROOM, HW,
+  ENT_W, ENT_H,
+  D1_W, D1_H, D1_END_X,
+  D2_W, D2_H, D2_END_X,
+  SMALL_WIN_W, SMALL_WIN_H,
+  STEEL_DOOR_W, STEEL_DOOR_H,
+  MAIN_WIN_W, MAIN_WIN_TOP,
+  DROPPED_CEILING_Y,
+} from '../geometry/dimensions.js'
+
+const cm = (m) => Math.round(m * 100)
+const area = () => (ROOM.W * ROOM.D).toFixed(1)
+const volume = () => (ROOM.W * ROOM.D * ROOM.H).toFixed(0)
+const sideArea = () => (2 * ROOM.D * ROOM.H).toFixed(1)
 
 function captureScreenshot(name) {
   const canvas = document.querySelector('canvas')
@@ -21,32 +36,32 @@ function generateMaterialSchedule() {
     '',
     'FRONT WALL (the big wall — feature-wall position)',
     `  Treatment: TBD (cleared — new ideas pending)`,
-    `  Width: 8.83m (full front-wall width)`,
-    `  Height: 3.52m`,
+    `  Width: ${ROOM.W}m (full front-wall width)`,
+    `  Height: ${ROOM.H}m`,
     '',
     'CEILING',
     `  Existing: structural — white plaster, cross-beams, cage pendant lights`,
-    `  Covering: mountain topology (sculptural sub-ceiling at y=3.4m)`,
+    `  Covering: mountain topology (sculptural sub-ceiling at y=${DROPPED_CEILING_Y}m)`,
     '',
     'FLOOR',
     `  Existing: grey marble porcelain, ~80cm tiles, heavy white veining`,
     `  Covering: TBD (pending covering strategy)`,
-    `  Area: 8.83 x 10m = 88.3m²`,
+    `  Area: ${ROOM.W} x ${ROOM.D}m = ${area()}m²`,
     '',
     'SIDE WALLS (entrance-wall + window-wall)',
-    `  Height: 3.52m`,
-    `  Total surface: 2 x (10 x 3.52) = 70.4m²`,
-    `  Entrance-wall (10m): visitor entrance 45cm from front-wall corner, 240×352 full-height opening;`,
+    `  Height: ${ROOM.H}m`,
+    `  Total surface: 2 x (${ROOM.D} x ${ROOM.H}) = ${sideArea()}m²`,
+    `  Entrance-wall (${ROOM.D}m): visitor entrance 45cm from front-wall corner, ${cm(ENT_W)}×${cm(ENT_H)} full-height opening;`,
     `    long open span to adjacent bistro past the entrance — modelled as continuous wall.`,
     `    Infill / column treatment TBD (pending covering strategy).`,
-    `  Window-wall (10m): multi-pane interior glass partition (570×233) + small window in`,
-    `    stepped notch (59×178) + silver service door (99×207) + HVAC plenum.`,
+    `  Window-wall (${ROOM.D}m): multi-pane interior glass partition (${cm(MAIN_WIN_W)}×${cm(MAIN_WIN_TOP)}) + small window in`,
+    `    stepped notch (${cm(SMALL_WIN_W)}×${cm(SMALL_WIN_H)}) + silver service door (${cm(STEEL_DOOR_W)}×${cm(STEEL_DOOR_H)}) + HVAC plenum.`,
     `    Covering TBD (pending covering strategy).`,
     '',
     'BACK WALL (piano wall)',
-    `  Width: 8.83m`,
-    `  Height: 3.52m`,
-    `  Openings: D1 (96×236) at 437cm from window-wall corner; D2 (90×236) at 793cm`,
+    `  Width: ${ROOM.W}m`,
+    `  Height: ${ROOM.H}m`,
+    `  Openings: D1 (${cm(D1_W)}×${cm(D1_H)}) at ${cm(HW - D1_END_X)}cm from window-wall corner; D2 (${cm(D2_W)}×${cm(D2_H)}) at ${cm(HW - D2_END_X)}cm`,
     `  Existing: 2 A/C heads high on wall + red sprinkler pipe along the top`,
     `  Covering: TBD (pending covering strategy)`,
     '',
@@ -66,8 +81,8 @@ function generateComponentList() {
     `Generated: ${new Date().toISOString().split('T')[0]}`,
     '',
     'STRUCTURAL',
-    `  Big wall: TBD (8.83m x 3.52m — new treatment pending)`,
-    `  Ceiling: mountain topology sculptural covering (at y=3.4m)`,
+    `  Big wall: TBD (${ROOM.W}m x ${ROOM.H}m — new treatment pending)`,
+    `  Ceiling: mountain topology sculptural covering (at y=${DROPPED_CEILING_Y}m)`,
     `  Curtains/dividers: sectioning from retail area`,
     '',
     'FIREFLY SYSTEM',
@@ -109,11 +124,11 @@ function generateSpecSummary(selections) {
   lines.push('')
   lines.push('ROOM DIMENSIONS')
   lines.push('-'.repeat(30))
-  lines.push('  Width: 8.83m (front-wall to back-wall)')
-  lines.push('  Depth: 10m (window-wall to entrance-wall)')
-  lines.push('  Height: 3.52m')
-  lines.push('  Floor area: 88.3m²')
-  lines.push('  Volume: 311m³')
+  lines.push(`  Width: ${ROOM.W}m (front-wall to back-wall)`)
+  lines.push(`  Depth: ${ROOM.D}m (window-wall to entrance-wall)`)
+  lines.push(`  Height: ${ROOM.H}m`)
+  lines.push(`  Floor area: ${area()}m²`)
+  lines.push(`  Volume: ${volume()}m³`)
   lines.push('')
   lines.push('LOCATION')
   lines.push('-'.repeat(30))

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useTour, TOUR_STEPS } from '../hooks/useTour.jsx'
-import { useTimeline } from '../hooks/useTimeline.jsx'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useTour } from '../hooks/useTour.js'
+import { useTimeline } from '../hooks/useTimeline.js'
+import { useVariant } from '../hooks/useVariant.js'
 
 // 3D camera controller — runs inside Canvas (must be child of Scene)
 export function GuidedTourCamera({ controlsRef }) {
@@ -83,10 +83,14 @@ export function GuidedTourOverlay() {
 
   useEffect(() => {
     if (!active) return
-    setOpacity(0)
     if (fadeRef.current) clearTimeout(fadeRef.current)
+    // Reset to 0, then fade to 1 on next tick — decoupled from render via timeout.
+    const reset = setTimeout(() => setOpacity(0), 0)
     fadeRef.current = setTimeout(() => setOpacity(1), 200)
-    return () => { if (fadeRef.current) clearTimeout(fadeRef.current) }
+    return () => {
+      clearTimeout(reset)
+      if (fadeRef.current) clearTimeout(fadeRef.current)
+    }
   }, [active, currentStep])
 
   const handleStop = () => {

@@ -1,13 +1,8 @@
-import { useRef } from 'react'
-import { useThree } from '@react-three/fiber'
-import * as THREE from 'three'
-import { useMeasure } from '../hooks/useMeasure.jsx'
+import { useMeasure } from '../hooks/useMeasure.js'
 import DimensionLine from './DimensionLine.jsx'
 
 // Invisible click plane that fills the room for raycasting
 function ClickPlane({ onPoint }) {
-  const meshRef = useRef()
-
   const handleClick = (e) => {
     e.stopPropagation()
     const point = e.point
@@ -95,7 +90,7 @@ function PointMarker({ position }) {
 }
 
 export default function MeasureTool() {
-  const { measureMode, pendingPoint, measurements, addPoint, removeMeasurement } = useMeasure()
+  const { measureMode, pendingPoint, measurements, addPoint } = useMeasure()
 
   if (!measureMode && measurements.length === 0) return null
 

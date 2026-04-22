@@ -1,16 +1,6 @@
-import { useVariant } from '../../hooks/useVariant.jsx'
-import { useTimeline } from '../../hooks/useTimeline.jsx'
-import Blinking from './Blinking.jsx'
-import Motion from './Motion.jsx'
-import Interaction from './Interaction.jsx'
-import TheWave from './TheWave.jsx'
-
-const VARIANT_COMPONENTS = {
-  blinking: Blinking,
-  motion: Motion,
-  interaction: Interaction,
-  theWave: TheWave,
-}
+import { useVariant } from '../../hooks/useVariant.js'
+import { useTimeline } from '../../hooks/useTimeline.js'
+import { fireflyComponentMap, defaultFireflyId } from '../../variants/fireflies.js'
 
 export default function FireflySystem() {
   const { selections, isExperience } = useVariant()
@@ -23,8 +13,8 @@ export default function FireflySystem() {
 
   if (masterOpacity <= 0) return null
 
-  const variantId = selections.fireflies || 'blinking'
-  const VariantComponent = VARIANT_COMPONENTS[variantId] || Blinking
+  const variantId = selections.fireflies || defaultFireflyId
+  const VariantComponent = fireflyComponentMap[variantId] || fireflyComponentMap[defaultFireflyId]
 
   return <VariantComponent masterOpacity={masterOpacity} />
 }

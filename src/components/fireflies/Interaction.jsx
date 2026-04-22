@@ -1,8 +1,9 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import FireflyParticles from './FireflyParticles.jsx'
-import { distributeUnits } from './surfacePositions.js'
+import { distributeUnits, makeRng } from './surfacePositions.js'
+import { ROOM, HW, HD, INSET } from '../../geometry/dimensions.js'
 
 // Phase 2 — flashlight. The camera-through-mouse ray is cast at the four
 // firefly surfaces (ceiling + back wall + two side walls) and the reticle
@@ -10,7 +11,7 @@ import { distributeUnits } from './surfacePositions.js'
 // on/off. Because the reticle is always ON a surface, its SPOT_RADIUS
 // actually overlaps unit centers and the toggle fires reliably.
 const SPOT_RADIUS = 0.9
-const HW = 4.415, HD = 5.0, ROOM_H = 3.52, INSET = 0.05
+const ROOM_H = ROOM.H
 
 const _raycaster = new THREE.Raycaster()
 const _target = new THREE.Vector3()
@@ -49,12 +50,12 @@ function raycastToSurfaces(origin, dir, out) {
 }
 
 export default function Interaction({ masterOpacity }) {
-  const state = useRef(null)
   const reticleRef = useRef()
   const reticleRingRef = useRef()
 
-  if (!state.current) {
+  const state = useMemo(() => {
     const dist = distributeUnits({ seed: 77 })
+    const rng = makeRng(202)
     const n = dist.count
     const phases = new Float32Array(n)
     const rates = new Float32Array(n)
@@ -62,24 +63,26 @@ export default function Interaction({ masterOpacity }) {
     const opacities = new Float32Array(n)
 
     for (let i = 0; i < n; i++) {
-      phases[i] = Math.random() * Math.PI * 2
-      rates[i] = 0.25 + Math.random() * 0.7
-      colors[i * 3]     = 0.30 + Math.random() * 0.20
-      colors[i * 3 + 1] = 0.95 + Math.random() * 0.05
-      colors[i * 3 + 2] = 0.25 + Math.random() * 0.20
+      phases[i] = rng() * Math.PI * 2
+      rates[i] = 0.25 + rng() * 0.7
+      colors[i * 3]     = 0.30 + rng() * 0.20
+      colors[i * 3 + 1] = 0.95 + rng() * 0.05
+      colors[i * 3 + 2] = 0.25 + rng() * 0.20
     }
 
     const unitState = new Uint8Array(dist.unitCount)
     const prevInside = new Uint8Array(dist.unitCount)
     for (let u = 0; u < dist.unitCount; u++) {
-      unitState[u] = Math.random() < 0.2 ? 1 : 0
+      unitState[u] = rng() < 0.2 ? 1 : 0
     }
 
-    state.current = { dist, phases, rates, colors, opacities, unitState, prevInside }
-  }
+    return { dist, phases, rates, colors, opacities, unitState, prevInside }
+  }, [])
 
+  // Per-frame mutation of typed-array buffers is the @react-three/fiber pattern.
+  /* eslint-disable react-hooks/immutability */
   useFrame(({ camera, pointer }) => {
-    const s = state.current
+    const s = state
     const t = Date.now() / 1000
 
     _raycaster.setFromCamera(pointer, camera)
@@ -116,14 +119,15 @@ export default function Interaction({ masterOpacity }) {
       s.opacities[i] = blink * masterOpacity
     }
   })
+  /* eslint-enable react-hooks/immutability */
 
   return (
     <>
       <FireflyParticles
-        count={state.current.dist.count}
-        positions={state.current.dist.positions}
-        opacities={state.current.opacities}
-        colors={state.current.colors}
+        count={state.dist.count}
+        positions={state.dist.positions}
+        opacities={state.opacities}
+        colors={state.colors}
         size={0.025}
       />
 

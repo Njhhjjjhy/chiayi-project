@@ -1,20 +1,5 @@
-import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react'
-
-const TimelineContext = createContext(null)
-
-const SPEEDS = {
-  '30s': 1 / 30,
-  '60s': 1 / 60,
-  '2min': 1 / 120,
-  '5min': 1 / 300,
-}
-
-const PHASES = [
-  { id: 'golden', label: 'Golden hour', start: 0.0 },
-  { id: 'twilight', label: 'Twilight', start: 0.25 },
-  { id: 'blue', label: 'Blue hour', start: 0.5 },
-  { id: 'darkness', label: 'Darkness', start: 0.75 },
-]
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { TimelineContext, PHASES, SPEEDS } from './useTimeline.js'
 
 export function TimelineProvider({ children }) {
   const [time, setTime] = useState(0)
@@ -77,11 +62,3 @@ export function TimelineProvider({ children }) {
     </TimelineContext.Provider>
   )
 }
-
-export function useTimeline() {
-  const ctx = useContext(TimelineContext)
-  if (!ctx) throw new Error('useTimeline must be used within TimelineProvider')
-  return ctx
-}
-
-export { PHASES, SPEEDS }

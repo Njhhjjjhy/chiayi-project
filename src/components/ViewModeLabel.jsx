@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useVariant } from '../hooks/useVariant.jsx'
-import { useTour } from '../hooks/useTour.jsx'
+import { useVariant } from '../hooks/useVariant.js'
+import { useTour } from '../hooks/useTour.js'
 
 const MODE_INFO = {
   light: {
@@ -25,17 +25,17 @@ export default function ViewModeLabel() {
   const timerRef = useRef(null)
 
   useEffect(() => {
-    // Don't show during tour or on initial load
     if (tourActive) return
     if (viewMode === lastModeRef.current) return
-
     lastModeRef.current = viewMode
-    setShow(true)
 
     if (timerRef.current) clearTimeout(timerRef.current)
+    // Decouple state update from effect body to avoid cascading renders.
+    const show = setTimeout(() => setShow(true), 0)
     timerRef.current = setTimeout(() => setShow(false), 2500)
 
     return () => {
+      clearTimeout(show)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [viewMode, tourActive])

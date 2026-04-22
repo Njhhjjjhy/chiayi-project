@@ -1,17 +1,28 @@
 import { useState } from 'react'
 import { Html } from '@react-three/drei'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useVariant } from '../hooks/useVariant.js'
+import {
+  ROOM,
+  ENT_W, ENT_H,
+  D1_W, D1_H, D2_W, D2_H,
+  SMALL_WIN_W, SMALL_WIN_H,
+  STEEL_DOOR_W, STEEL_DOOR_H,
+} from '../geometry/dimensions.js'
 
-// Labels positioned INWARD from walls so they float in the room, not on surfaces.
-// Updated for post-site-visit geometry (8.83 × 10 × 3.52 room).
+// Convert a metre float to a whole-cm integer string.
+const cm = (m) => Math.round(m * 100)
+
+// Labels positioned INWARD from walls so they float in the room, not on
+// surfaces. Label text is templated from canonical dimensions — change a
+// number in `dimensions.js` and the label updates with it.
 const LABELS = [
   {
-    name: 'Visitor entrance (240×352 full-height, 45cm from front-wall corner; currently shown with dark curtain)',
+    name: `Visitor entrance (${cm(ENT_W)}×${cm(ENT_H)} full-height, 45cm from front-wall corner; currently shown with dark curtain)`,
     position: [-4.3, 1.76, -3.35],
     color: '#e53935',
   },
   {
-    name: 'Front-wall (8.83m, feature-wall position)',
+    name: `Front-wall (${ROOM.W}m, feature-wall position)`,
     position: [0, 1.76, -4.5],
     color: '#6a1b9a',
   },
@@ -21,12 +32,12 @@ const LABELS = [
     color: '#1565c0',
   },
   {
-    name: 'Small window in stepped notch (59×178 — existing)',
+    name: `Small window in stepped notch (${cm(SMALL_WIN_W)}×${cm(SMALL_WIN_H)} — existing)`,
     position: [4.3, 1.24, -3.515],
     color: '#1565c0',
   },
   {
-    name: 'Silver service door on window-wall (99×207, between small window and main glass)',
+    name: `Silver service door on window-wall (${cm(STEEL_DOOR_W)}×${cm(STEEL_DOOR_H)}, between small window and main glass)`,
     position: [4.3, 1.0, -2.72],
     color: '#90a4ae',
   },
@@ -51,12 +62,12 @@ const LABELS = [
     color: '#1565c0',
   },
   {
-    name: 'D1 swing door (96×236; currently shown with dark curtain)',
+    name: `D1 swing door (${cm(D1_W)}×${cm(D1_H)}; currently shown with dark curtain)`,
     position: [-0.435, 1.18, 4.3],
     color: '#ef6c00',
   },
   {
-    name: 'D2 swing door (90×236, flush with entrance-wall corner; currently shown with dark curtain)',
+    name: `D2 swing door (${cm(D2_W)}×${cm(D2_H)}, flush with entrance-wall corner; currently shown with dark curtain)`,
     position: [-3.965, 1.18, 4.3],
     color: '#ef6c00',
   },
@@ -122,9 +133,8 @@ function Label({ name, position, color }) {
 }
 
 export default function RoomLabels() {
-  const { isConstruction, isLight } = useVariant()
+  const { isConstruction } = useVariant()
 
-  // Only show in construction mode
   if (!isConstruction) return null
 
   return (
