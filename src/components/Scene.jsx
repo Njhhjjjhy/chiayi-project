@@ -1,18 +1,19 @@
-import { useRef, useEffect, Suspense } from 'react'
+import { useRef, useEffect } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import * as THREE from 'three'
-import { useVariant } from '../hooks/useVariant.jsx'
+import { useVariant } from '../hooks/useVariant.js'
 import { useLightingState } from '../hooks/useLightingState.jsx'
+import { ROOM } from '../geometry/dimensions.js'
 import Room from './Room'
 import WallCoveringSystem from './wallCoverings/WallCoveringSystem.jsx'
 import FireflySystem from './fireflies/FireflySystem.jsx'
 import DimensionLabels from './DimensionLabels.jsx'
 import Seating from './Seating.jsx'
 import { GuidedTourCamera } from './GuidedTour.jsx'
-import { useTour } from '../hooks/useTour.jsx'
+import { useTour } from '../hooks/useTour.js'
 import MeasureTool from './MeasureTool.jsx'
 import RoomLabels from './RoomLabels.jsx'
 
@@ -34,6 +35,7 @@ function CameraBoundsEnforcer({ roomWidth, roomDepth, roomHeight }) {
   const halfD = roomDepth / 2 - 0.3
 
   useFrame(() => {
+    // eslint-disable-next-line react-hooks/immutability -- @react-three/fiber pattern: per-frame camera constraint needs direct property write
     camera.position.x = Math.max(-halfW, Math.min(halfW, camera.position.x))
     camera.position.z = Math.max(-halfD, Math.min(halfD, camera.position.z))
     camera.position.y = Math.max(0.3, Math.min(roomHeight - 0.2, camera.position.y))
@@ -42,17 +44,21 @@ function CameraBoundsEnforcer({ roomWidth, roomDepth, roomHeight }) {
   return null
 }
 
-export default function Scene({ roomWidth = 8.83, roomDepth = 10, roomHeight = 3.52, showGrid = true, cameraPreset }) {
-  const controlsRef = useRef()
-  const { viewMode, isConstruction, isLight, isExperience, showSeating } = useVariant()
-  const { active: tourActive } = useTour()
-  const lighting = useLightingState()
-  const { camera, scene, gl } = useThree()
+// gl + shadow-map setup. These are imperative Three.js configurations that
+// can't be expressed declaratively inside <Canvas>. They run once, so the
+// strict-mode immutability rule is suppressed here with intent.
+function RendererSetup({ isConstruction, isLight }) {
+  const { gl } = useThree()
 
-  const maxOrbitRadius = Math.min(roomWidth, roomDepth) / 2 - 0.5
-
-  // H5: Tone mapping per view mode
   useEffect(() => {
+    /* eslint-disable react-hooks/immutability */
+    gl.shadowMap.enabled = true
+    gl.shadowMap.type = THREE.PCFSoftShadowMap
+    /* eslint-enable react-hooks/immutability */
+  }, [gl])
+
+  useEffect(() => {
+    /* eslint-disable react-hooks/immutability */
     if (isConstruction) {
       gl.toneMapping = THREE.NoToneMapping
       gl.toneMappingExposure = 1.0
@@ -63,22 +69,22 @@ export default function Scene({ roomWidth = 8.83, roomDepth = 10, roomHeight = 3
       gl.toneMapping = THREE.ACESFilmicToneMapping
       gl.toneMappingExposure = 0.9
     }
+    /* eslint-enable react-hooks/immutability */
   }, [gl, isConstruction, isLight])
 
-  // Background per view mode
-  useEffect(() => {
-    const bg = isConstruction ? '#e8e8e8' : isLight ? '#f5f2ed' : '#000000'
-    scene.background = new THREE.Color(bg)
-  }, [isConstruction, isLight, scene])
+  return null
+}
 
-  // C2: Fog — driven by timeline in experience mode, none in light/construction
-  useEffect(() => {
-    if (isExperience) {
-      scene.fog = new THREE.FogExp2('#000000', 0.08)
-    } else {
-      scene.fog = null
-    }
-  }, [isExperience, lighting.ambientColor, scene])
+export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeight = ROOM.H, cameraPreset }) {
+  const controlsRef = useRef()
+  const { isConstruction, isLight, isExperience, showSeating } = useVariant()
+  const { active: tourActive } = useTour()
+  const lighting = useLightingState()
+  const { camera } = useThree()
+
+  const maxOrbitRadius = Math.min(roomWidth, roomDepth) / 2 - 0.5
+
+  const bg = isConstruction ? '#e8e8e8' : isLight ? '#f5f2ed' : '#000000'
 
   // Apply camera preset
   useEffect(() => {
@@ -89,14 +95,17 @@ export default function Scene({ roomWidth = 8.83, roomDepth = 10, roomHeight = 3
     }
   }, [cameraPreset, camera])
 
-  // H1: Enable shadow maps
-  useEffect(() => {
-    gl.shadowMap.enabled = true
-    gl.shadowMap.type = THREE.PCFSoftShadowMap
-  }, [gl])
-
   return (
     <>
+      {/* Renderer setup — tone mapping + shadows */}
+      <RendererSetup isConstruction={isConstruction} isLight={isLight} />
+
+      {/* Scene background (declarative — replaces scene.background mutation) */}
+      <color attach="background" args={[bg]} />
+
+      {/* Fog — only in experience mode */}
+      {isExperience && <fogExp2 attach="fog" args={['#000000', 0.08]} />}
+
       {/* Camera controls */}
       <OrbitControls
         ref={controlsRef}
@@ -204,8 +213,8 @@ export default function Scene({ roomWidth = 8.83, roomDepth = 10, roomHeight = 3
           <Bloom
             luminanceThreshold={0.3}
             luminanceSmoothing={0.9}
-            intensity={0.8}
-            radius={0.4}
+            intensity={0.3}
+            radius={0.15}
             mipmapBlur
           />
           <Vignette

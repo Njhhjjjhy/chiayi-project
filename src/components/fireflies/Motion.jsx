@@ -1,34 +1,40 @@
-import { useRef } from 'react'
+import { useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
-import { distributeUnits } from './surfacePositions.js'
+import { distributeUnits, makeRng } from './surfacePositions.js'
+import { ROOM, HW, HD } from '../../geometry/dimensions.js'
 
 // Phase 3 — fireflies come alive and move. The LEDs themselves are fixed,
-// but five drifting "swarm" points wander through the room. LEDs within a
-// swarm's radius light up, so visually the lit set of fireflies flows
-// across the ceiling and walls as the swarm drifts past. Swarms bounce
-// off the room walls and vary their speed and radius.
-const SWARM_COUNT = 5
-const SWARM_RADIUS = 1.9
-const HW = 4.415, HD = 5.0, ROOM_H = 3.52
+// but ten small drifting "swarm" points wander through the room. LEDs
+// within a swarm's radius light up; when a swarm moves away, the LEDs
+// fade out slowly, leaving a visible afterglow trail. That trail is what
+// reads as motion on the fixed grid.
+const SWARM_COUNT = 10
+const SWARM_RADIUS = 1.1
+const ROOM_H = ROOM.H
+// Rise/fall smoothing rates per second. Rise fast, fall slow = trails.
+const RISE_RATE = 8.0
+const FALL_RATE = 1.5
 
 function makeSwarm(rand) {
+  // Mix of fast-darting and slow-meandering swarms — varied speed keeps
+  // the room feeling alive instead of a uniform drift.
+  const speedScale = rand() < 0.3 ? 1.8 : 0.7
   return {
     x: (rand() - 0.5) * (2 * HW * 0.8),
     y: 0.6 + rand() * (ROOM_H - 0.8),
     z: (rand() - 0.5) * (2 * HD * 0.8),
-    vx: (rand() - 0.5) * 0.9,
-    vy: (rand() - 0.5) * 0.35,
-    vz: (rand() - 0.5) * 0.9,
-    radius: SWARM_RADIUS * (0.85 + rand() * 0.35),
+    vx: (rand() - 0.5) * 0.9 * speedScale,
+    vy: (rand() - 0.5) * 0.3 * speedScale,
+    vz: (rand() - 0.5) * 0.9 * speedScale,
+    radius: SWARM_RADIUS * (0.75 + rand() * 0.5),
   }
 }
 
 export default function Motion({ masterOpacity }) {
-  const state = useRef(null)
-
-  if (!state.current) {
+  const state = useMemo(() => {
     const dist = distributeUnits({ seed: 77 })
+    const rng = makeRng(303)
     const n = dist.count
     const phases = new Float32Array(n)
     const rates = new Float32Array(n)
@@ -36,27 +42,25 @@ export default function Motion({ masterOpacity }) {
     const opacities = new Float32Array(n)
 
     for (let i = 0; i < n; i++) {
-      phases[i] = Math.random() * Math.PI * 2
-      rates[i] = 0.5 + Math.random() * 1.3
-      colors[i * 3]     = 0.30 + Math.random() * 0.20
-      colors[i * 3 + 1] = 0.95 + Math.random() * 0.05
-      colors[i * 3 + 2] = 0.25 + Math.random() * 0.20
+      phases[i] = rng() * Math.PI * 2
+      rates[i] = 0.5 + rng() * 1.3
+      colors[i * 3]     = 0.30 + rng() * 0.20
+      colors[i * 3 + 1] = 0.95 + rng() * 0.05
+      colors[i * 3 + 2] = 0.25 + rng() * 0.20
     }
 
-    let seed = 321
-    const rand = () => {
-      seed = (seed * 16807 + 0) % 2147483647
-      return (seed - 1) / 2147483646
-    }
-
+    const swarmRng = makeRng(321)
     const swarms = []
-    for (let i = 0; i < SWARM_COUNT; i++) swarms.push(makeSwarm(rand))
+    for (let i = 0; i < SWARM_COUNT; i++) swarms.push(makeSwarm(swarmRng))
 
-    state.current = { dist, phases, rates, colors, opacities, swarms, lastTime: null }
-  }
+    return { dist, phases, rates, colors, opacities, swarms, lastTime: null }
+  }, [])
 
+  // Per-frame mutation of typed-array buffers + swarm objects held inside
+  // state — standard @react-three/fiber pattern.
+  /* eslint-disable react-hooks/immutability */
   useFrame(() => {
-    const s = state.current
+    const s = state
     const now = Date.now() / 1000
     if (s.lastTime === null) s.lastTime = now
     const dt = Math.min(0.08, now - s.lastTime)
@@ -89,16 +93,21 @@ export default function Motion({ masterOpacity }) {
         if (act > maxAct) maxAct = act
       }
       const blink = Math.sin(t * s.rates[i] * 2 * Math.PI + s.phases[i]) * 0.35 + 0.65
-      s.opacities[i] = maxAct * blink * masterOpacity
+      const target = maxAct * blink * masterOpacity
+      // Asymmetric smoothing: snap on when a swarm arrives, fade slowly
+      // when it leaves. The lingering fade is the visible trail.
+      const rate = target > s.opacities[i] ? RISE_RATE : FALL_RATE
+      s.opacities[i] += (target - s.opacities[i]) * Math.min(1, rate * dt)
     }
   })
+  /* eslint-enable react-hooks/immutability */
 
   return (
     <FireflyParticles
-      count={state.current.dist.count}
-      positions={state.current.dist.positions}
-      opacities={state.current.opacities}
-      colors={state.current.colors}
+      count={state.dist.count}
+      positions={state.dist.positions}
+      opacities={state.opacities}
+      colors={state.colors}
       size={0.028}
     />
   )
