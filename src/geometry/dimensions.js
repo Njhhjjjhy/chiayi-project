@@ -30,8 +30,7 @@ export const WAINSCOT_H = {
   window: 0.30,
   entrance: 0,
 }
-export const WAINSCOT_T = 0.04
-export const DOOR_CLEAR = 0.08   // clearance each side of any door
+const DOOR_CLEAR = 0.08   // clearance each side of any door
 
 // --- Dropped ceiling ---
 export const DROPPED_CEILING_Y = 3.4
@@ -64,14 +63,14 @@ export const MAIN_WIN_W = 5.70
 export const MAIN_WIN_SILL = 0.32
 export const MAIN_WIN_TOP = 2.33
 export const MAIN_WIN_H = MAIN_WIN_TOP - MAIN_WIN_SILL               // 2.01
-export const MAIN_WIN_START_Z = HD - MAIN_WIN_W                       // -0.70
+const MAIN_WIN_START_Z = HD - MAIN_WIN_W                              // -0.70
 export const MAIN_WIN_Z = MAIN_WIN_START_Z + MAIN_WIN_W / 2           // +2.15
 
 // Small window in stepped notch — 59 × 178 cm.
 // Sill kept at 35 cm so window top (213 cm) stays below the HVAC plenum.
 export const SMALL_WIN_W = 0.59
 export const SMALL_WIN_SILL = 0.35
-export const SMALL_WIN_TOP = 2.13
+const SMALL_WIN_TOP = 2.13
 export const SMALL_WIN_H = SMALL_WIN_TOP - SMALL_WIN_SILL             // 1.78
 export const SMALL_WIN_Z = -HD + 1.19 + SMALL_WIN_W / 2               // -3.515
 
