@@ -30,6 +30,7 @@ export function GuidedTourCamera({ controlsRef }) {
     }
 
     elapsedRef.current = 0
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-apply on step change; setters and `step` are derived from currentStep
   }, [active, currentStep])
 
   useFrame((_, delta) => {
