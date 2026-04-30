@@ -43,7 +43,7 @@ Fireflies represent the delicate balance between humans and nature. Their biolum
 - Three.js via @react-three/fiber + drei + postprocessing
 - Leva for debug controls
 - React Router for multi-page structure
-- No design token system yet — all styling is inline Tailwind utilities
+- Design tokens live as CSS variables in `src/styles/index.css` (`--color-bg`, `--color-text`, `--color-muted`, `--color-dim`, `--color-rule`, `--color-red`, `--color-blue`, `--color-amber`, `--font-serif`, `--font-mono`). Use them via `var(--token)` rather than hardcoded values. Layout/spacing still uses Tailwind utilities inline.
 
 
 ## Obsidian vault
