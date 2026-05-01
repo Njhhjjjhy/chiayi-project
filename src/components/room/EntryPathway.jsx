@@ -3,23 +3,22 @@ import {
   CORRIDOR_WIDTH, PARTITION_HEIGHT, SEG2_FACE_X,
 } from '../../geometry/dimensions.js'
 import { useVariant } from '../../hooks/useVariant.js'
+import ArchEdges from './ArchEdges.jsx'
 
-// Three-segment guided corridor wrapping the front, window, and back
-// walls. Visitors enter at the entrance wall, walk along the front
-// wall (segment 1), turn right at the front/window corner into segment 2
-// along the window wall, turn right at the window/back corner into
-// segment 3 along the back wall, then turn right through an opening
-// at door D1 to enter the dark forest interior. A short perpendicular
-// stub (segment 4) continues the path past D1 before releasing them
-// into the open forest.
+// L-shaped guided corridor (per blueprint firefly-room-partition.webp).
+// Visitors enter at the entrance wall, walk along the front wall
+// (segment 1), turn right at the front/window corner into segment 2
+// along the window wall, then exit into the open forest at the
+// south-east corner.
+//
+// Two segments only — front wall + window wall. No partition along
+// the back wall, no perpendicular stub, no entrance seal.
 //
 // Partitions are 12 cm thick (matching the project's WALL_T) — modelled
 // as plywood-on-stud interior partitions, the standard for exhibition
 // build-outs. The plywood is finished in matte black paint — same paint
 // colour as the existing concrete walls, so the room reads as one
-// continuous dark surface. Forest is sealed off from the unused part
-// of the entrance opening by an additional partition on the
-// entrance-wall side.
+// continuous dark surface.
 //
 // Always rendered — no toggles, no left/right variants.
 
@@ -41,13 +40,13 @@ const CARD_LIFT     = 0.01          // distance off the partition surface so car
 // reads consistently with the wireframe walls.
 function partitionMaterial(isConstruction) {
   return isConstruction
-    ? { wireframe: true, color: '#888' }
+    ? { color: '#dcdcdc', roughness: 0.9, metalness: 0 }
     : { color: '#1c1c1c', roughness: 0.55, metalness: 0 }
 }
 
 function cardMaterial(isConstruction) {
   return isConstruction
-    ? { wireframe: true, color: '#4a8fcc' }
+    ? { color: '#cfd8e3', roughness: 0.9, metalness: 0 }
     : {
         color: '#0a1628',
         emissive: '#4a8fcc',
@@ -129,7 +128,6 @@ export default function EntryPathway() {
 
   const seg1Cards = makeCardPositions(-HW + 1.5, HW - 1.5, CARDS_PER_SEG)
   const seg2Cards = makeCardPositions(SEG2_Z_START + 1.0, SEG2_Z_END - 1.0, CARDS_PER_SEG)
-  const seg3Cards = makeCardPositions(HW - 1.0, OPENING_X_NEAR + 0.5, CARDS_PER_SEG)
 
   return (
     <group>
@@ -141,6 +139,7 @@ export default function EntryPathway() {
       >
         <boxGeometry args={[ROOM.W, PARTITION_HEIGHT, PARTITION_THICKNESS]} />
         <meshStandardMaterial {...partition} />
+        <ArchEdges color="#0a8c5b" />
       </mesh>
       {seg1Cards.map((x, i) => (
         <mesh
@@ -163,6 +162,7 @@ export default function EntryPathway() {
       >
         <boxGeometry args={[PARTITION_THICKNESS, PARTITION_HEIGHT, SEG2_LENGTH]} />
         <meshStandardMaterial {...partition} />
+        <ArchEdges color="#0a8c5b" />
       </mesh>
       {seg2Cards.map((z, i) => (
         <mesh
@@ -176,48 +176,6 @@ export default function EntryPathway() {
       ))}
       <pointLight position={[(SEG2_FACE_X + HW) / 2, LIGHT_Y, SEG2_Z_START + 1.5]} {...LIGHT_PROPS} />
       <pointLight position={[(SEG2_FACE_X + HW) / 2, LIGHT_Y, SEG2_Z_END - 1.5]} {...LIGHT_PROPS} />
-
-      {/* === Segment 3 — along back wall, ends at the D1 opening === */}
-      <mesh
-        position={[SEG3_PIECE_X, PARTITION_HEIGHT / 2, SEG3_CENTER]}
-        castShadow
-        receiveShadow
-      >
-        <boxGeometry args={[SEG3_PIECE_LENGTH, PARTITION_HEIGHT, PARTITION_THICKNESS]} />
-        <meshStandardMaterial {...partition} />
-      </mesh>
-      {seg3Cards.map((x, i) => (
-        <mesh
-          key={`s3-card-${i}`}
-          position={[x, CARD_Y, SEG3_FACE + CARD_LIFT]}
-        >
-          <planeGeometry args={[CARD_W, CARD_H]} />
-          <meshStandardMaterial {...card} />
-        </mesh>
-      ))}
-      <pointLight position={[HW - 1.5, LIGHT_Y, HD - CORRIDOR_WIDTH / 2]} {...LIGHT_PROPS} />
-      <pointLight position={[OPENING_X_NEAR + 1.0, LIGHT_Y, HD - CORRIDOR_WIDTH / 2]} {...LIGHT_PROPS} />
-
-      {/* === Segment 4 — perpendicular finish stub past D1 into the forest === */}
-      <mesh
-        position={[SEG4_CENTER_X, PARTITION_HEIGHT / 2, SEG4_CENTER_Z]}
-        castShadow
-        receiveShadow
-      >
-        <boxGeometry args={[PARTITION_THICKNESS, PARTITION_HEIGHT, SEG4_LENGTH]} />
-        <meshStandardMaterial {...partition} />
-      </mesh>
-      <pointLight position={[OPENING_X_FAR - 0.5, LIGHT_Y, SEG4_CENTER_Z]} {...LIGHT_PROPS} />
-
-      {/* === Entrance-wall side forest seal === */}
-      <mesh
-        position={[ENTRANCE_SEAL_CENTER_X, PARTITION_HEIGHT / 2, ENTRANCE_SEAL_CENTER_Z]}
-        castShadow
-        receiveShadow
-      >
-        <boxGeometry args={[PARTITION_THICKNESS, PARTITION_HEIGHT, ENTRANCE_SEAL_LENGTH]} />
-        <meshStandardMaterial {...partition} />
-      </mesh>
     </group>
   )
 }

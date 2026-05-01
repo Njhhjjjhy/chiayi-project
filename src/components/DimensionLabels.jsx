@@ -255,13 +255,17 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
         </>
       )}
 
-      {/* Category toggles (HTML overlay) */}
-      <Html fullscreen>
-        <DimensionToggles
-          categories={DIM_CATEGORIES}
-          activeCategories={activeCategories}
-          onToggle={toggleCategory}
-        />
+      {/* Category toggles (HTML overlay). pointer-events:none on the
+          fullscreen wrapper so clicks pass through to side panels;
+          DimensionToggles itself re-enables pointer events. */}
+      <Html fullscreen style={{ pointerEvents: 'none' }}>
+        <div style={{ pointerEvents: 'auto' }}>
+          <DimensionToggles
+            categories={DIM_CATEGORIES}
+            activeCategories={activeCategories}
+            onToggle={toggleCategory}
+          />
+        </div>
       </Html>
     </group>
   )

@@ -1,5 +1,6 @@
 import { useVariant } from '../../hooks/useVariant.js'
 import { wallMaterial } from './roomMaterials.js'
+import ArchEdges from './ArchEdges.jsx'
 import {
   ROOM, HW, HD, WALL_T,
   INSIDE,
@@ -35,41 +36,49 @@ export default function Walls({ width = ROOM.W, depth = ROOM.D, height = ROOM.H 
       <mesh position={[INSIDE.entrance - WALL_T / 2, height / 2, leftA_z]} receiveShadow>
         <boxGeometry args={[WALL_T, height, leftA_len]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
       <mesh position={[INSIDE.entrance - WALL_T / 2, height / 2, leftB_z]} receiveShadow>
         <boxGeometry args={[WALL_T, height, leftB_len]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
 
       {/* window-wall (x = +HW) — continuous */}
       <mesh position={[INSIDE.window + WALL_T / 2, height / 2, 0]} receiveShadow>
         <boxGeometry args={[WALL_T, height, depth]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
 
       {/* front-wall (z = -HD) — continuous */}
       <mesh position={[0, height / 2, INSIDE.front - WALL_T / 2]} receiveShadow>
         <boxGeometry args={[width, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
 
       {/* back-wall (z = +HD) sections */}
       <mesh position={[backA_x, height / 2, INSIDE.back + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[backA_len, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
       <mesh position={[backB_x, height / 2, INSIDE.back + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[backB_len, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
       {/* walls above D1 + D2 (from door top to ceiling) */}
       <mesh position={[D1_X, (D1_H + height) / 2, INSIDE.back + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[D1_W, height - D1_H, WALL_T]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
       <mesh position={[D2_X, (D2_H + height) / 2, INSIDE.back + WALL_T / 2]} receiveShadow>
         <boxGeometry args={[D2_W, height - D2_H, WALL_T]} />
         <meshStandardMaterial {...wall} />
+        <ArchEdges />
       </mesh>
     </group>
   )

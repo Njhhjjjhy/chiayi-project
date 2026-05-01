@@ -27,34 +27,32 @@ export const viewModes = {
   construction: 'Construction',
 }
 
-// Architectural review angles. Wall names map to dimensions.js:
-// front (z=-HD), back (z=+HD), entrance (x=-HW), window (x=+HW).
+// Each wall preset stands in the forest centre and looks head-on
+// at the named wall, like an architectural elevation. Anything in
+// front of that wall that would block the view is hidden for that
+// preset only — and only while not walking the space.
 //
-// All elevation presets are INSIDE the room — the user reviews the
-// space, not its exterior. Each elevation puts the camera in the
-// corridor that hugs the named wall, so the wall is visible without
-// the seg-1/2/3 partitions getting between camera and wall.
-//
-//   - front, back: stand at one end of the corridor, look lengthwise
-//     down it. Front-wall corridor has no features. Back-wall corridor
-//     passes the D1 opening at far end — visible as a gap in seg-3.
-//   - entrance: stand in seg-1 corridor at z=-4, look head-on at the
-//     entrance wall. Visitor entrance opening fills most of the view.
-//     Camera z=-4 is in the open part of the entrance opening (seal
-//     partition only covers z = -3.65 to -2.15).
-//   - window: stand in seg-2 corridor at z=-2.5, look head-on at the
-//     window wall. Silver door + small window + HVAC plenum visible.
-//     Main glass partition is hidden by the theatrical curtain (by
-//     design — curtain is a permanent installation fixture).
+//   - front: nothing on the front wall, but seg-1 partition is in
+//     the way. Hidden.
+//   - back: D1 + D2 visible, seg-3 + seg-4 don't block from this
+//     camera position. Nothing hidden.
+//   - entrance: visitor entrance opening visible head-on, seal
+//     partition hidden so the opening reads through.
+//   - window: silver door + small window + main glass + plenum
+//     visible. Seg-2 partition + theatrical curtain hidden.
+//     Windows switch to a visible glass material in this preset.
 //   - ceiling: forest centre, looking up at dropped ceiling.
-//   - top-down: bird's-eye plan view from above the room.
-//   - standing: forest centre, eye-level visitor POV.
+//   - standing: forest centre, eye-level visitor POV (full
+//     installation visible — partitions + curtain + everything).
 export const cameraPresets = {
-  ceiling:  { label: 'Ceiling',       position: [0, 0.3, 0.3],     target: [0, 3.4, 0] },
-  front:    { label: 'Front wall',    position: [-3.7, 1.6, -4.3], target: [3.7, 1.6, -4.3] },
-  back:     { label: 'Back wall',     position: [3.7, 1.6, 4.3],   target: [-3.7, 1.6, 4.3] },
-  entrance: { label: 'Entrance wall', position: [-2.5, 1.6, -4.0], target: [-4.4, 1.6, -4.0] },
-  window:   { label: 'Window wall',   position: [2.7, 1.6, -2.5],  target: [4.4, 1.6, -2.5] },
-  topDown:  { label: 'Top-down',      position: [0.5, 9, 0.5],     target: [0, 0, 0] },
+  ceiling:  { label: 'Ceiling',       position: [0.5, 8, 0.5],     target: [0, 0, 0] },
+  front:    { label: 'Front wall',    position: [0, 1.6, -2],      target: [0, 1.6, -5] },
+  back:     { label: 'Back wall',     position: [0, 1.6, 2],       target: [0, 1.6, 5] },
+  entrance: { label: 'Entrance wall', position: [0, 1.6, -3.35],   target: [-4.4, 1.6, -3.35] },
+  window:   { label: 'Window wall',   position: [0, 1.6, 0],       target: [4.4, 1.6, 0] },
   standing: { label: 'Standing',      position: [0, 1.6, 0],       target: [0, 1.6, -2] },
 }
+
+// Window preset hides the theatrical curtain (so the main glass +
+// door + small window are visible). Other presets keep it.
+export const ELEVATION_PRESET_KEYS = new Set(['window'])
