@@ -15,6 +15,7 @@ import { GuidedTourCamera } from './GuidedTour.jsx'
 import { useTour } from '../hooks/useTour.js'
 import MeasureTool from './MeasureTool.jsx'
 import RoomLabels from './RoomLabels.jsx'
+import WalkMode from './WalkMode.jsx'
 
 function CameraBreathing({ controlsRef }) {
   useFrame(({ clock }) => {
@@ -23,21 +24,6 @@ function CameraBreathing({ controlsRef }) {
     // Subtle breathing via orbit target offset — doesn't fight OrbitControls
     const target = controlsRef.current.target
     target.y = 1.6 + Math.sin(t * 0.3) * 0.01
-  })
-
-  return null
-}
-
-function CameraBoundsEnforcer({ roomWidth, roomDepth, roomHeight }) {
-  const { camera } = useThree()
-  const halfW = roomWidth / 2 - 0.3
-  const halfD = roomDepth / 2 - 0.3
-
-  useFrame(() => {
-    // eslint-disable-next-line react-hooks/immutability -- @react-three/fiber pattern: per-frame camera constraint needs direct property write
-    camera.position.x = Math.max(-halfW, Math.min(halfW, camera.position.x))
-    camera.position.z = Math.max(-halfD, Math.min(halfD, camera.position.z))
-    camera.position.y = Math.max(0.3, Math.min(roomHeight - 0.2, camera.position.y))
   })
 
   return null
@@ -76,12 +62,10 @@ function RendererSetup({ isConstruction, isLight }) {
 
 export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeight = ROOM.H, cameraPreset }) {
   const controlsRef = useRef()
-  const { isConstruction, isLight, isExperience } = useVariant()
+  const { isConstruction, isLight, isExperience, walkMode, setWalkMode } = useVariant()
   const { active: tourActive } = useTour()
   const lighting = useLightingState()
   const { camera } = useThree()
-
-  const maxOrbitRadius = Math.min(roomWidth, roomDepth) / 2 - 0.5
 
   const bg = isConstruction ? '#e8e8e8' : isLight ? '#f5f2ed' : '#000000'
 
@@ -105,33 +89,33 @@ export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeig
       {/* Fog — only in experience mode */}
       {isExperience && <fogExp2 attach="fog" args={['#000000', 0.08]} />}
 
-      {/* Camera controls */}
-      <OrbitControls
-        ref={controlsRef}
-        target={[0, 1.6, -2]}
-        maxDistance={isConstruction ? 15 : maxOrbitRadius}
-        minDistance={0.5}
-        maxPolarAngle={Math.PI * 0.85}
-        minPolarAngle={Math.PI * 0.1}
-        enablePan={!tourActive}
-        enableRotate={!tourActive}
-        enableZoom={!tourActive}
-        panSpeed={0.5}
-        rotateSpeed={0.5}
-        enableDamping
-        dampingFactor={0.05}
-      />
-
-      {/* Guided tour camera controller */}
-      {tourActive && <GuidedTourCamera controlsRef={controlsRef} />}
-
-      {/* M2: Camera bounds enforcement in experience/light mode */}
-      {!isConstruction && (
-        <CameraBoundsEnforcer roomWidth={roomWidth} roomDepth={roomDepth} roomHeight={roomHeight} />
+      {/* Camera controls — orbit (default) or first-person walk */}
+      {walkMode ? (
+        <WalkMode onExit={() => setWalkMode(false)} />
+      ) : (
+        <OrbitControls
+          ref={controlsRef}
+          target={[0, 1.6, -2]}
+          maxDistance={20}
+          minDistance={0.3}
+          maxPolarAngle={Math.PI - 0.05}
+          minPolarAngle={0.05}
+          enablePan={!tourActive}
+          enableRotate={!tourActive}
+          enableZoom={!tourActive}
+          panSpeed={0.25}
+          rotateSpeed={0.2}
+          zoomSpeed={0.4}
+          enableDamping
+          dampingFactor={0.08}
+        />
       )}
 
-      {/* Subtle camera breathing in experience mode only (disabled during tour) */}
-      {isExperience && !tourActive && <CameraBreathing controlsRef={controlsRef} />}
+      {/* Guided tour camera controller */}
+      {tourActive && !walkMode && <GuidedTourCamera controlsRef={controlsRef} />}
+
+      {/* Subtle camera breathing in experience mode only (disabled during tour or walk) */}
+      {isExperience && !tourActive && !walkMode && <CameraBreathing controlsRef={controlsRef} />}
 
       {/* Lighting */}
       {isConstruction ? (

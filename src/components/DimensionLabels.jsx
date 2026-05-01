@@ -85,7 +85,7 @@ const DIM_CATEGORIES = [
 ]
 
 export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
-  const [activeCategories, setActiveCategories] = useState(['room', 'partitions', 'materials'])
+  const [activeCategories, setActiveCategories] = useState(['room'])
 
   const halfW = roomWidth / 2
   const halfD = roomDepth / 2

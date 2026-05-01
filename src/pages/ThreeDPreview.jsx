@@ -1,18 +1,16 @@
 import { Canvas } from '@react-three/fiber'
 import { Leva } from 'leva'
 import { useState, useEffect, Suspense } from 'react'
-import { Link } from 'react-router-dom'
 import { VariantProvider } from '../hooks/VariantProvider.jsx'
 import { TimelineProvider } from '../hooks/TimelineProvider.jsx'
 import { TourProvider } from '../hooks/TourProvider.jsx'
 import { useLevaControls } from '../components/LevaControls'
 import Scene from '../components/Scene'
 import VariantSwitcher from '../components/VariantSwitcher'
+import ScenePicker from '../components/ScenePicker'
 import TimelineController from '../components/TimelineController'
 import ConstructionToolbar from '../components/ConstructionToolbar'
-import PhaseOverlay from '../components/PhaseOverlay'
 import { GuidedTourOverlay } from '../components/GuidedTour.jsx'
-import ViewModeLabel from '../components/ViewModeLabel.jsx'
 import { useTour } from '../hooks/useTour.js'
 import { MeasureProvider } from '../hooks/MeasureProvider.jsx'
 
@@ -35,7 +33,7 @@ function SkipToFireflies() {
         window.dispatchEvent(new CustomEvent('skipToFireflies'))
         setVisible(false)
       }}
-      className="fixed bottom-20 right-4 z-10 text-[10px] text-white/25 hover:text-white/50 cursor-pointer transition-colors border border-white/10 px-3 py-1.5 rounded hover:border-white/20 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
+      className="fixed bottom-20 right-4 z-10 text-sm text-white/70 hover:text-white cursor-pointer transition-colors border border-white/30 px-3 py-1.5 rounded hover:border-white/50 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:outline-none"
     >
       Skip to fireflies
     </button>
@@ -67,14 +65,6 @@ function PreviewInner() {
     <div className="relative h-screen w-screen bg-black">
       <Leva hidden={levaHidden} collapsed={false} />
 
-      {/* Back to site link */}
-      <Link
-        to="/"
-        className="fixed top-4 right-4 z-20 text-[10px] text-white/25 hover:text-white/50 cursor-pointer transition-colors border border-white/10 px-3 py-1.5 rounded hover:border-white/20"
-      >
-        Back to site
-      </Link>
-
       <Suspense fallback={<Loader />}>
         <Canvas
           camera={{
@@ -99,15 +89,14 @@ function PreviewInner() {
       {/* UI overlays */}
       {!uiHidden && !tourActive && (
         <>
-          <VariantSwitcher onCameraPreset={setActiveCameraPreset} />
+          <ScenePicker onSelect={setActiveCameraPreset} />
+          <VariantSwitcher />
           <TimelineController />
           <ConstructionToolbar />
           <SkipToFireflies />
         </>
       )}
 
-      <PhaseOverlay />
-      <ViewModeLabel />
       <GuidedTourOverlay />
 
       {uiHidden && (

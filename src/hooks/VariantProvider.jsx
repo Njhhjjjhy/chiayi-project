@@ -5,8 +5,9 @@ import { DEFAULT_VARIANTS } from '../variants/defaults.js'
 
 export function VariantProvider({ children }) {
   const [selections, setSelections] = useState({ ...DEFAULT_VARIANTS })
-  const [viewMode, setViewMode] = useState('experience')
+  const [viewMode, setViewMode] = useState('light')
   const [favorites, setFavorites] = useState([])
+  const [walkMode, setWalkMode] = useState(false)
 
   const selectVariant = useCallback((category, variantId) => {
     setSelections((prev) => ({ ...prev, [category]: variantId }))
@@ -48,6 +49,7 @@ export function VariantProvider({ children }) {
         isConstruction: viewMode === 'construction',
         isLight: viewMode === 'light',
         randomize, favorites, saveFavorite, loadFavorite, removeFavorite,
+        walkMode, setWalkMode,
       }}
     >
       {children}
