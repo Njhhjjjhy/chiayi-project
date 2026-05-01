@@ -22,24 +22,6 @@ function Loader() {
   )
 }
 
-function SkipToFireflies() {
-  const [visible, setVisible] = useState(true)
-
-  if (!visible) return null
-
-  return (
-    <button
-      onClick={() => {
-        window.dispatchEvent(new CustomEvent('skipToFireflies'))
-        setVisible(false)
-      }}
-      className="fixed bottom-20 right-4 z-10 text-sm text-white/70 hover:text-white cursor-pointer transition-colors border border-white/30 px-3 py-1.5 rounded hover:border-white/50 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:outline-none"
-    >
-      Skip to fireflies
-    </button>
-  )
-}
-
 function PreviewInner() {
   const { roomWidth, roomDepth, roomHeight, showGrid } =
     useLevaControls()
@@ -93,7 +75,6 @@ function PreviewInner() {
           <VariantSwitcher />
           <TimelineController />
           <ConstructionToolbar />
-          <SkipToFireflies />
         </>
       )}
 
