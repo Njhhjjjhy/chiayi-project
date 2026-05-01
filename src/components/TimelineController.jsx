@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTimeline, PHASES, SPEEDS } from '../hooks/useTimeline.js'
+import Glass, { EASE_OUT, PlayGlyph, PauseGlyph } from './Glass'
 
 const COLLAPSED_KEY = 'timeline.collapsed'
 
@@ -15,8 +16,13 @@ function writeCollapsed(value) {
   try {
     localStorage.setItem(COLLAPSED_KEY, value ? '1' : '0')
   } catch {
-    // Storage unavailable — fine, just won't persist.
+    // Storage unavailable.
   }
+}
+
+const TRANSITION = {
+  transitionDuration: '280ms',
+  transitionTimingFunction: EASE_OUT,
 }
 
 export default function TimelineController() {
@@ -37,30 +43,34 @@ export default function TimelineController() {
         role="region"
         aria-label="Timeline (collapsed)"
       >
-        <button
+        <Glass
+          as="button"
           type="button"
           onClick={() => setCollapsedAndStore(false)}
-          className="pointer-events-auto inline-flex min-h-[44px] items-center gap-3 rounded-t-lg bg-gray-900 px-5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-black focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
           aria-label="Show timeline"
+          style={TRANSITION}
+          className="pointer-events-auto inline-flex min-h-[44px] items-center gap-3 rounded-t-2xl px-5 cursor-pointer hover:bg-black/55 transition-colors"
         >
-          <span className="text-white/70 font-normal">{PHASES[currentPhase].label}</span>
-          Show timeline ▴
-        </button>
+          <span className="text-[12px] uppercase tracking-[0.08em] text-[#a1a1a6]">
+            {PHASES[currentPhase].label}
+          </span>
+          <span className="text-[15px]">Show timeline</span>
+        </Glass>
       </div>
     )
   }
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-10 select-none"
+      className="fixed bottom-0 left-0 right-0 z-10 select-none p-3"
       role="region"
       aria-label="Timeline controls"
       onPointerDown={(e) => e.stopPropagation()}
       onPointerMove={(e) => e.stopPropagation()}
     >
-      <div className="bg-white border-t border-gray-200 px-4 py-3 shadow-[0_-2px_8px_rgba(0,0,0,0.1)]">
-        {/* Phase labels row */}
-        <div className="flex mb-2 items-center gap-1">
+      <Glass className="rounded-2xl px-3 py-3">
+        {/* Phase labels */}
+        <div className="flex items-center gap-1 mb-2">
           {PHASES.map((phase, i) => {
             const active = currentPhase === i
             return (
@@ -69,10 +79,11 @@ export default function TimelineController() {
                 onClick={() => jumpToPhase(i)}
                 aria-label={`Jump to ${phase.label}`}
                 aria-pressed={active}
-                className={`flex-1 inline-flex items-center justify-center min-h-[44px] text-sm transition-colors rounded-lg focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none ${
+                style={TRANSITION}
+                className={`flex-1 inline-flex items-center justify-center min-h-[44px] rounded-full text-[12px] uppercase tracking-[0.08em] cursor-pointer transition-colors ${
                   active
-                    ? 'text-gray-900 font-semibold bg-gray-100'
-                    : 'text-gray-800 hover:text-gray-900 hover:bg-gray-50 font-medium'
+                    ? 'bg-white/15 text-white'
+                    : 'text-white/65 hover:text-white hover:bg-white/[0.08]'
                 }`}
               >
                 {phase.label}
@@ -82,11 +93,11 @@ export default function TimelineController() {
           <button
             type="button"
             onClick={() => setCollapsedAndStore(true)}
-            className="ml-1 inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none"
             aria-label="Hide timeline"
-            title="Hide timeline"
+            style={TRANSITION}
+            className="ml-1 inline-flex min-h-[44px] items-center px-4 rounded-full text-[15px] text-white/85 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
           >
-            Hide ▾
+            Hide
           </button>
         </div>
 
@@ -96,7 +107,7 @@ export default function TimelineController() {
             {[0.25, 0.5, 0.75].map((mark) => (
               <div
                 key={mark}
-                className="absolute top-0 bottom-0 w-px bg-gray-300"
+                className="absolute top-0 bottom-0 w-px bg-white/15"
                 style={{ left: `${mark * 100}%` }}
               />
             ))}
@@ -113,15 +124,15 @@ export default function TimelineController() {
             aria-valuemax={1}
             aria-valuenow={time}
             aria-valuetext={PHASES[currentPhase].label}
-            className="w-full h-2 appearance-none bg-gray-200 rounded-full cursor-pointer
+            className="w-full h-1.5 appearance-none bg-white/15 rounded-full cursor-pointer
               [&::-webkit-slider-thumb]:appearance-none
-              [&::-webkit-slider-thumb]:w-6
-              [&::-webkit-slider-thumb]:h-6
+              [&::-webkit-slider-thumb]:w-5
+              [&::-webkit-slider-thumb]:h-5
               [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:bg-gray-900
+              [&::-webkit-slider-thumb]:bg-white
               [&::-webkit-slider-thumb]:cursor-pointer
-              [&::-webkit-slider-thumb]:shadow-md
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
+              [&::-webkit-slider-thumb]:shadow-lg
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           />
         </div>
 
@@ -132,13 +143,14 @@ export default function TimelineController() {
               type="button"
               onClick={toggle}
               aria-label={playing ? 'Pause' : 'Play'}
-              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-black transition-colors focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none"
+              style={TRANSITION}
+              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white text-black hover:bg-white/90 transition-colors cursor-pointer"
             >
-              {playing ? '⏸' : '▶'}
+              {playing ? <PauseGlyph size={14} /> : <PlayGlyph size={14} />}
             </button>
 
             <div
-              className="flex items-center gap-1 rounded-lg bg-gray-100 p-1"
+              className="flex items-center gap-0.5 rounded-full p-0.5 border border-white/15"
               role="group"
               aria-label="Playback speed"
             >
@@ -148,12 +160,13 @@ export default function TimelineController() {
                   <button
                     key={s}
                     onClick={() => setSpeed(s)}
-                    aria-label={`${s} cycle`}
+                    aria-label={`Speed ${s}`}
                     aria-pressed={active}
-                    className={`inline-flex min-h-[36px] items-center justify-center rounded-md px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none ${
+                    style={TRANSITION}
+                    className={`inline-flex min-h-[40px] min-w-[44px] items-center justify-center rounded-full px-3 text-[13px] cursor-pointer transition-colors ${
                       active
-                        ? 'bg-white text-gray-900 font-semibold shadow-sm'
-                        : 'text-gray-800 hover:text-gray-900 font-medium'
+                        ? 'bg-white/15 text-white'
+                        : 'text-white/65 hover:text-white'
                     }`}
                   >
                     {s}
@@ -164,13 +177,13 @@ export default function TimelineController() {
           </div>
 
           <span
-            className="text-sm font-medium text-gray-900"
+            className="text-[12px] uppercase tracking-[0.08em] text-[#a1a1a6]"
             aria-live="polite"
           >
             {PHASES[currentPhase].label}
           </span>
         </div>
-      </div>
+      </Glass>
     </div>
   )
 }

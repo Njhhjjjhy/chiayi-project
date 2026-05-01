@@ -11,6 +11,7 @@ import {
   MAIN_WIN_W, MAIN_WIN_TOP,
   DROPPED_CEILING_Y,
 } from '../geometry/dimensions.js'
+import Glass, { EASE_OUT } from './Glass'
 
 const cm = (m) => Math.round(m * 100)
 const area = () => (ROOM.W * ROOM.D).toFixed(1)
@@ -131,12 +132,10 @@ function generateSpecSummary(selections) {
 }
 
 async function downloadBlueprintPackage(selections) {
-  // Dynamic import JSZip
   let JSZip
   try {
     JSZip = (await import('jszip')).default
   } catch {
-    alert('JSZip not installed. Run: npm install jszip')
     return
   }
 
@@ -144,7 +143,6 @@ async function downloadBlueprintPackage(selections) {
   const date = new Date().toISOString().split('T')[0]
   const folder = zip.folder(`firefly-blueprint-${date}`)
 
-  // Capture current view as construction screenshot
   const canvas = document.querySelector('canvas')
   if (canvas) {
     const dataUrl = canvas.toDataURL('image/png')
@@ -152,12 +150,10 @@ async function downloadBlueprintPackage(selections) {
     folder.file('construction-view.png', base64, { base64: true })
   }
 
-  // Generate text documents
   folder.file('material-schedule.txt', generateMaterialSchedule())
   folder.file('component-list.txt', generateComponentList())
   folder.file('spec-summary.txt', generateSpecSummary(selections))
 
-  // Generate and download ZIP
   const blob = await zip.generateAsync({ type: 'blob' })
   const link = document.createElement('a')
   link.download = `firefly-blueprint-${date}.zip`
@@ -181,28 +177,33 @@ export default function ConstructionToolbar() {
     }
   }
 
+  const transitionStyle = {
+    transitionDuration: '280ms',
+    transitionTimingFunction: EASE_OUT,
+  }
+
   return (
-    <div className="fixed top-4 right-4 z-10 select-none">
-      <div className="bg-white/95 border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-        <div className="px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-gray-500 border-b border-gray-200">
-          Construction tools
-        </div>
-        <div className="p-2 flex flex-col gap-1.5">
-          <button
-            onClick={() => captureScreenshot()}
-            className="text-xs px-3 py-1.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer transition-colors text-left"
-          >
-            Screenshot (PNG)
-          </button>
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="text-xs px-3 py-1.5 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 cursor-pointer transition-colors text-left disabled:opacity-50"
-          >
-            {exporting ? 'Exporting...' : 'Download blueprint package'}
-          </button>
-        </div>
+    <Glass className="fixed top-4 right-4 z-10 select-none rounded-2xl overflow-hidden w-64">
+      <div className="px-4 py-3 text-[12px] font-medium uppercase tracking-[0.08em] text-white/55 border-b border-white/10">
+        Construction tools
       </div>
-    </div>
+      <div className="p-3 flex flex-col gap-2">
+        <button
+          onClick={() => captureScreenshot()}
+          style={transitionStyle}
+          className="min-h-[44px] px-4 rounded-full text-[15px] text-white/85 border border-white/20 hover:border-white/40 hover:text-white transition-colors cursor-pointer text-left"
+        >
+          Screenshot (PNG)
+        </button>
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          style={transitionStyle}
+          className="min-h-[44px] px-4 rounded-full text-[15px] font-medium bg-white text-black hover:bg-white/90 transition-colors cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {exporting ? 'Exporting…' : 'Download blueprint package'}
+        </button>
+      </div>
+    </Glass>
   )
 }

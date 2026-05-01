@@ -11,22 +11,30 @@ import {
   uploadScreenshot,
 } from './api'
 import { CATEGORIES, ROOM_LOCATIONS } from './locations'
+import Glass, { EASE_OUT, CloseGlyph } from '../Glass'
 
-// Button style classes per HIG hierarchy:
-// Filled = primary action (highest emphasis)
-// Tinted = secondary action (medium emphasis)
-// Plain  = tertiary action (low emphasis), still has 44pt hit target
-const BTN_FILLED =
-  'inline-flex min-h-[44px] items-center justify-center rounded-lg bg-gray-900 px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-black disabled:bg-gray-400 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none'
-const BTN_TINTED =
-  'inline-flex min-h-[44px] items-center justify-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none'
+const TRANSITION = {
+  transitionDuration: '280ms',
+  transitionTimingFunction: EASE_OUT,
+}
+
+// Quiet button: text + thin border. Default for secondary actions.
+const BTN_BORDER =
+  'inline-flex min-h-[44px] items-center justify-center rounded-full px-5 text-[15px] text-white/85 border border-white/20 hover:text-white hover:border-white/40 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+
+// Plain text button: lowest emphasis. Still 44px hit area.
 const BTN_PLAIN =
-  'inline-flex min-h-[44px] items-center justify-center rounded-lg px-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none'
-const BTN_PLAIN_DESTRUCTIVE =
-  'inline-flex min-h-[44px] items-center justify-center rounded-lg px-3 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:outline-none'
+  'inline-flex min-h-[44px] items-center justify-center rounded-full px-4 text-[15px] text-white/85 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer'
+
+// Single primary CTA per screen — solid white.
+const BTN_FILLED =
+  'inline-flex min-h-[44px] items-center justify-center rounded-full px-5 text-[15px] font-medium bg-white text-black hover:bg-white/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+
+const BTN_DESTRUCTIVE =
+  'inline-flex min-h-[44px] items-center justify-center rounded-full px-4 text-[15px] text-white/65 hover:text-white hover:bg-white/[0.12] transition-colors cursor-pointer'
 
 const FIELD =
-  'w-full rounded-lg border border-gray-300 bg-white px-4 min-h-[44px] py-2 text-sm text-gray-900 placeholder:text-gray-600 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400'
+  'w-full rounded-xl bg-white/[0.06] border border-white/15 px-4 py-3 text-[15px] text-white placeholder:text-white/55 focus:border-white/40 focus:outline-none focus:ring-1 focus:ring-white/30 transition-colors'
 
 const FILTERS = [
   { value: 'open', label: 'Open' },
@@ -133,19 +141,22 @@ export default function QAPanel() {
 
   return (
     <>
-      <button
+      {/* Floating trigger — quiet glass pill so it sits beside other tools */}
+      <Glass
+        as="button"
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-32 right-4 z-40 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-gray-900 px-5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-black focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
-        aria-label="Open QA notes"
+        aria-label="Open notes"
+        style={TRANSITION}
+        className="fixed bottom-32 right-4 z-40 inline-flex min-h-[44px] items-center gap-2 rounded-full px-5 cursor-pointer hover:bg-black/55 transition-colors"
       >
-        Notes
+        <span className="text-[15px]">Notes</span>
         {openCount > 0 && (
-          <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-white px-2 text-xs font-semibold text-gray-900">
+          <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-white px-2 text-[12px] font-medium text-black">
             {openCount}
           </span>
         )}
-      </button>
+      </Glass>
 
       {open && (
         <div className="fixed inset-0 z-50 flex justify-end">
@@ -153,11 +164,11 @@ export default function QAPanel() {
             type="button"
             aria-label="Close panel backdrop"
             onClick={() => setOpen(false)}
-            className="absolute inset-0 bg-black/40"
+            className="absolute inset-0 bg-black/60 cursor-default"
           />
-          <aside
-            className="relative h-full w-full max-w-md overflow-y-auto bg-white shadow-xl"
-            style={{ borderLeft: '1px solid rgb(229, 231, 235)' }}
+          <Glass
+            as="aside"
+            className="relative h-full w-full max-w-md overflow-y-auto rounded-l-2xl border-r-0"
           >
             <PanelHeader
               onClose={() => setOpen(false)}
@@ -192,20 +203,20 @@ export default function QAPanel() {
                   }}
                 />
                 {error && (
-                  <p className="mt-4 text-sm text-red-700">{error}</p>
+                  <p className="mt-4 text-[13px] text-white">{error}</p>
                 )}
                 {loading && notes.length === 0 ? (
-                  <p className="mt-6 text-sm text-gray-700">Loading…</p>
+                  <p className="mt-6 text-[15px] text-white/65">Loading…</p>
                 ) : visibleNotes.length === 0 ? (
-                  <p className="mt-6 text-sm text-gray-700">
+                  <p className="mt-6 text-[15px] text-white/65">
                     {filter === 'open' && 'No open notes.'}
                     {filter === 'done' && 'No notes marked done yet.'}
                     {filter === 'all' && 'No notes yet.'}
                   </p>
                 ) : (
-                  <ul className="mt-4 space-y-3">
+                  <ul className="mt-2 divide-y divide-white/10">
                     {visibleNotes.map((note) => (
-                      <NoteCard
+                      <NoteRow
                         key={note.id}
                         note={note}
                         onToggle={() => handleToggleDone(note)}
@@ -218,6 +229,7 @@ export default function QAPanel() {
                   <button
                     type="button"
                     onClick={() => refresh()}
+                    style={TRANSITION}
                     className={BTN_PLAIN}
                   >
                     Refresh
@@ -225,7 +237,7 @@ export default function QAPanel() {
                 </div>
               </div>
             )}
-          </aside>
+          </Glass>
         </div>
       )}
     </>
@@ -234,21 +246,29 @@ export default function QAPanel() {
 
 function PanelHeader({ onClose, onSignOut }) {
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between bg-white px-4 py-3 border-b border-gray-200">
-      <h2 className="text-base font-semibold text-gray-900 px-2">Notes</h2>
+    <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
+      <h2 className="text-[12px] uppercase tracking-[0.08em] text-white/55 px-2">
+        Notes
+      </h2>
       <div className="flex items-center gap-1">
         {onSignOut && (
-          <button type="button" onClick={onSignOut} className={BTN_PLAIN}>
+          <button
+            type="button"
+            onClick={onSignOut}
+            style={TRANSITION}
+            className={BTN_PLAIN}
+          >
             Lock
           </button>
         )}
         <button
           type="button"
           onClick={onClose}
-          className={BTN_PLAIN}
           aria-label="Close notes panel"
+          style={TRANSITION}
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-white/75 hover:text-white hover:bg-white/[0.08] cursor-pointer transition-colors"
         >
-          Close
+          <CloseGlyph size={12} />
         </button>
       </div>
     </header>
@@ -259,14 +279,14 @@ function PassphraseGate({ onUnlock, loading, error }) {
   const [value, setValue] = useState('')
   return (
     <form
-      className="px-6 pt-8"
+      className="px-6 pt-10"
       onSubmit={(e) => {
         e.preventDefault()
         if (!value.trim()) return
         onUnlock(value.trim())
       }}
     >
-      <p className="text-sm text-gray-700">
+      <p className="text-[15px] text-white/80 leading-relaxed">
         Enter the shared passphrase to view and add notes.
       </p>
       <input
@@ -275,14 +295,15 @@ function PassphraseGate({ onUnlock, loading, error }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Passphrase"
-        className={`mt-4 ${FIELD}`}
+        className={`mt-5 ${FIELD}`}
         aria-label="Passphrase"
       />
-      {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
+      {error && <p className="mt-3 text-[13px] text-white">{error}</p>}
       <button
         type="submit"
         disabled={loading || !value.trim()}
-        className={`mt-4 ${BTN_FILLED}`}
+        style={TRANSITION}
+        className={`mt-5 ${BTN_FILLED}`}
       >
         {loading ? 'Checking…' : 'Unlock'}
       </button>
@@ -362,10 +383,10 @@ function NewNoteForm({ passphrase, onCreate }) {
   return (
     <form className="pt-6" onSubmit={handleSubmit}>
       <fieldset>
-        <legend className="text-sm font-medium text-gray-900 mb-2">
+        <legend className="text-[12px] uppercase tracking-[0.08em] text-white/55 mb-2">
           Category
         </legend>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {CATEGORIES.map((c) => {
             const active = category === c.value
             return (
@@ -374,10 +395,11 @@ function NewNoteForm({ passphrase, onCreate }) {
                 type="button"
                 onClick={() => setCategory(c.value)}
                 aria-pressed={active}
-                className={`inline-flex min-h-[40px] items-center rounded-full border px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none ${
+                style={TRANSITION}
+                className={`inline-flex min-h-[40px] items-center rounded-full px-4 text-[13px] cursor-pointer transition-colors ${
                   active
-                    ? 'bg-gray-900 border-gray-900 text-white'
-                    : 'bg-white border-gray-300 text-gray-800 hover:bg-gray-100'
+                    ? 'bg-white/15 text-white border border-white/30'
+                    : 'border border-white/15 text-white/75 hover:text-white hover:border-white/30'
                 }`}
               >
                 {c.label}
@@ -387,12 +409,15 @@ function NewNoteForm({ passphrase, onCreate }) {
         </div>
       </fieldset>
 
-      <label className="block mt-4">
-        <span className="text-sm font-medium text-gray-900">Where in the room?</span>
+      <label className="block mt-5">
+        <span className="block text-[12px] uppercase tracking-[0.08em] text-white/55 mb-2">
+          Where in the room?
+        </span>
         <select
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className={`mt-2 ${FIELD}`}
+          className={FIELD}
+          style={{ colorScheme: 'dark' }}
         >
           <option value="">Optional — leave blank if general</option>
           {ROOM_LOCATIONS.map((l) => (
@@ -403,14 +428,16 @@ function NewNoteForm({ passphrase, onCreate }) {
         </select>
       </label>
 
-      <label className="block mt-4">
-        <span className="text-sm font-medium text-gray-900">Note</span>
+      <label className="block mt-5">
+        <span className="block text-[12px] uppercase tracking-[0.08em] text-white/55 mb-2">
+          Note
+        </span>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="What's the note?"
           rows={3}
-          className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-600 resize-y focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          className={`${FIELD} resize-y`}
         />
       </label>
 
@@ -418,11 +445,12 @@ function NewNoteForm({ passphrase, onCreate }) {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className={BTN_TINTED}
+          style={TRANSITION}
+          className={BTN_BORDER}
         >
           {screenshot ? 'Replace screenshot' : 'Attach screenshot'}
         </button>
-        <span className="text-sm text-gray-700">or paste from clipboard</span>
+        <span className="text-[13px] text-white/55">or paste from clipboard</span>
         <input
           ref={fileInputRef}
           type="file"
@@ -441,11 +469,11 @@ function NewNoteForm({ passphrase, onCreate }) {
           <img
             src={screenshot.previewUrl || screenshot.url}
             alt=""
-            className="max-h-32 rounded-lg border border-gray-300"
+            className="max-h-32 rounded-xl border border-white/15"
           />
           <div className="flex flex-col items-start gap-2">
             {screenshot.uploading && (
-              <span className="text-sm text-gray-700">Uploading…</span>
+              <span className="text-[13px] text-white/65">Uploading…</span>
             )}
             <button
               type="button"
@@ -454,6 +482,7 @@ function NewNoteForm({ passphrase, onCreate }) {
                   URL.revokeObjectURL(screenshot.previewUrl)
                 setScreenshot(null)
               }}
+              style={TRANSITION}
               className={BTN_PLAIN}
             >
               Remove
@@ -463,12 +492,13 @@ function NewNoteForm({ passphrase, onCreate }) {
       )}
 
       {uploadError && (
-        <p className="mt-2 text-sm text-red-700">{uploadError}</p>
+        <p className="mt-2 text-[13px] text-white">{uploadError}</p>
       )}
 
       <button
         type="submit"
         disabled={!canSubmit}
+        style={TRANSITION}
         className={`mt-6 ${BTN_FILLED}`}
       >
         {submitting ? 'Saving…' : 'Add note'}
@@ -480,7 +510,7 @@ function NewNoteForm({ passphrase, onCreate }) {
 function FilterTabs({ value, onChange, counts }) {
   return (
     <div
-      className="mt-8 flex gap-1 border-b border-gray-200"
+      className="mt-8 flex gap-0.5 rounded-full p-0.5 border border-white/10"
       role="tablist"
       aria-label="Note filter"
     >
@@ -493,14 +523,15 @@ function FilterTabs({ value, onChange, counts }) {
             role="tab"
             aria-selected={active}
             onClick={() => onChange(f.value)}
-            className={`-mb-px inline-flex min-h-[44px] items-center px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none ${
+            style={TRANSITION}
+            className={`flex-1 inline-flex items-center justify-center gap-2 min-h-[40px] rounded-full text-[13px] cursor-pointer transition-colors ${
               active
-                ? 'text-gray-900 border-b-2 border-gray-900 font-semibold'
-                : 'text-gray-700 hover:text-gray-900 border-b-2 border-transparent font-medium'
+                ? 'bg-white/15 text-white'
+                : 'text-white/65 hover:text-white'
             }`}
           >
             {f.label}
-            <span className="ml-2 text-gray-700 font-normal">
+            <span className={`text-[12px] ${active ? 'text-white/70' : 'text-white/45'}`}>
               {counts[f.value]}
             </span>
           </button>
@@ -510,34 +541,21 @@ function FilterTabs({ value, onChange, counts }) {
   )
 }
 
-function NoteCard({ note, onToggle, onDelete }) {
+function NoteRow({ note, onToggle, onDelete }) {
   const cat = CATEGORIES.find((c) => c.value === note.category)
   const loc = ROOM_LOCATIONS.find((l) => l.value === note.location)
   return (
-    <li
-      className={`rounded-lg p-4 border ${
-        note.done ? 'bg-gray-50 border-gray-200' : 'bg-white border-gray-300'
-      }`}
-    >
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        {cat && (
-          <span className="inline-flex h-6 items-center rounded-full border border-gray-300 px-2 text-gray-800 font-medium">
-            {cat.label}
-          </span>
-        )}
-        {loc && (
-          <span className="text-gray-700 font-medium">{loc.label}</span>
-        )}
-        <span
-          className="ml-auto text-gray-700"
-          style={{ fontFamily: 'var(--font-mono)' }}
-        >
+    <li className={`py-4 ${note.done ? 'opacity-55' : ''}`}>
+      <div className="flex flex-wrap items-center gap-3 text-[12px] uppercase tracking-[0.08em]">
+        {cat && <span className="text-white/85">{cat.label}</span>}
+        {loc && <span className="text-white/55">{loc.label}</span>}
+        <span className="ml-auto text-white/55 normal-case tracking-normal">
           {relativeTime(note.createdAt)}
         </span>
       </div>
       <p
-        className={`mt-3 text-sm whitespace-pre-wrap ${
-          note.done ? 'text-gray-700 line-through' : 'text-gray-900'
+        className={`mt-2 text-[15px] leading-relaxed whitespace-pre-wrap ${
+          note.done ? 'text-white/70 line-through' : 'text-white/95'
         }`}
       >
         {note.text}
@@ -547,24 +565,20 @@ function NoteCard({ note, onToggle, onDelete }) {
           href={note.screenshotUrl}
           target="_blank"
           rel="noreferrer"
-          className="mt-3 inline-block focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none rounded-lg"
+          className="mt-3 inline-block rounded-xl focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
         >
           <img
             src={note.screenshotUrl}
             alt=""
-            className="max-h-40 rounded-lg border border-gray-300"
+            className="max-h-40 rounded-xl border border-white/15"
           />
         </a>
       )}
       <div className="mt-3 flex items-center gap-1">
-        <button type="button" onClick={onToggle} className={BTN_PLAIN}>
+        <button type="button" onClick={onToggle} style={TRANSITION} className={BTN_PLAIN}>
           {note.done ? 'Reopen' : 'Mark done'}
         </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          className={BTN_PLAIN_DESTRUCTIVE}
-        >
+        <button type="button" onClick={onDelete} style={TRANSITION} className={BTN_DESTRUCTIVE}>
           Delete
         </button>
       </div>
