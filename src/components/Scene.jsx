@@ -11,7 +11,6 @@ import Room from './Room'
 import WallCoveringSystem from './wallCoverings/WallCoveringSystem.jsx'
 import FireflySystem from './fireflies/FireflySystem.jsx'
 import DimensionLabels from './DimensionLabels.jsx'
-import Seating from './Seating.jsx'
 import { GuidedTourCamera } from './GuidedTour.jsx'
 import { useTour } from '../hooks/useTour.js'
 import MeasureTool from './MeasureTool.jsx'
@@ -77,7 +76,7 @@ function RendererSetup({ isConstruction, isLight }) {
 
 export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeight = ROOM.H, cameraPreset }) {
   const controlsRef = useRef()
-  const { isConstruction, isLight, isExperience, showSeating } = useVariant()
+  const { isConstruction, isLight, isExperience } = useVariant()
   const { active: tourActive } = useTour()
   const lighting = useLightingState()
   const { camera } = useThree()
@@ -203,9 +202,6 @@ export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeig
 
       {/* Fireflies */}
       <FireflySystem />
-
-      {/* Seating — toggled via UI */}
-      {showSeating && <Seating />}
 
       {/* Post-processing — experience mode only */}
       {isExperience && (

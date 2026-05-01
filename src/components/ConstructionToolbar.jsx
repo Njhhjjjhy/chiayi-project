@@ -64,13 +64,6 @@ function generateMaterialSchedule() {
     `  Openings: D1 (${cm(D1_W)}×${cm(D1_H)}) at ${cm(HW - D1_END_X)}cm from window-wall corner; D2 (${cm(D2_W)}×${cm(D2_H)}) at ${cm(HW - D2_END_X)}cm`,
     `  Existing: 2 A/C heads high on wall + red sprinkler pipe along the top`,
     `  Covering: TBD (pending covering strategy)`,
-    '',
-    'SEATING',
-    `  Bench material: wood or metal frame`,
-    `  Bench height: 0.45m`,
-    `  Bench depth: 0.4m`,
-    `  Rows: 2`,
-    `  Seating capacity: ~20-25`,
   ].join('\n')
 }
 
@@ -100,7 +93,6 @@ function generateComponentList() {
     `  Control signal: DMX-512 or I2C`,
     '',
     'MISC',
-    `  Benches: 2 rows, 4 bench segments`,
     `  Floor covering + wall covering: TBD (pending covering strategy)`,
   ].join('\n')
 }

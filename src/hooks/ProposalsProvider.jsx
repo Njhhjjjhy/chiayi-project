@@ -4,9 +4,6 @@ import {
   DEFAULT_PROPOSAL_VARIANT_ID,
   DEFAULT_FIREFLY_COUNT,
   DEFAULT_HAZE_LEVEL,
-  DEFAULT_SHOW_CURTAIN,
-  DEFAULT_SHOW_PATHWAY,
-  DEFAULT_SHOW_PATHWAY_LEFT,
 } from '../proposals/defaults.js'
 
 // Central state for the proposals review page: currently selected
@@ -21,9 +18,6 @@ export function ProposalsProvider({ children }) {
   const [abPair, setAbPair] = useState([null, null])
   const [fireflyCount, setFireflyCount] = useState(DEFAULT_FIREFLY_COUNT)
   const [hazeOverride, setHazeOverride] = useState(DEFAULT_HAZE_LEVEL)
-  const [showCurtain, setShowCurtain] = useState(DEFAULT_SHOW_CURTAIN)
-  const [showPathway, setShowPathway] = useState(DEFAULT_SHOW_PATHWAY)
-  const [showPathwayLeft, setShowPathwayLeft] = useState(DEFAULT_SHOW_PATHWAY_LEFT)
 
   return (
     <ProposalsContext.Provider
@@ -32,9 +26,6 @@ export function ProposalsProvider({ children }) {
         abPair, setAbPair,
         fireflyCount, setFireflyCount,
         hazeOverride, setHazeOverride,
-        showCurtain, setShowCurtain,
-        showPathway, setShowPathway,
-        showPathwayLeft, setShowPathwayLeft,
       }}
     >
       {children}

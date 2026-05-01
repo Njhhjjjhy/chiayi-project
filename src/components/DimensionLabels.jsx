@@ -1,7 +1,15 @@
 import { useState } from 'react'
 import { Html } from '@react-three/drei'
-import { useVariant } from '../hooks/useVariant.js'
 import DimensionLine from './DimensionLine.jsx'
+import { HW, HD, D1_X, WALL_T } from '../geometry/dimensions.js'
+
+// Partition system constants — must stay in sync with src/components/room/EntryPathway.jsx
+const CORRIDOR_WIDTH      = 1.35
+const PARTITION_HEIGHT    = 3.4
+const PARTITION_THICKNESS = WALL_T // 0.12 m
+const SEG2_FACE           = 2.5    // window-wall corridor partition (plenum-cleared)
+const OPENING_HALF        = CORRIDOR_WIDTH / 2
+const PARTITION_COLOR     = '#0a8c5b' // green — distinct from room blue / human orange
 
 function MaterialNote({ position, children }) {
   return (
@@ -72,14 +80,13 @@ function DimensionToggles({ categories, activeCategories, onToggle }) {
 
 const DIM_CATEGORIES = [
   { id: 'room', label: 'Room' },
-  { id: 'seating', label: 'Seating' },
+  { id: 'partitions', label: 'Partitions' },
   { id: 'human', label: 'Human reference' },
   { id: 'materials', label: 'Materials' },
 ]
 
 export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
-  const { showSeating } = useVariant()
-  const [activeCategories, setActiveCategories] = useState(['room', 'materials'])
+  const [activeCategories, setActiveCategories] = useState(['room', 'partitions', 'materials'])
 
   const halfW = roomWidth / 2
   const halfD = roomDepth / 2
@@ -134,36 +141,73 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
         </>
       )}
 
-      {/* === SEATING === */}
-      {has('seating') && showSeating && (
+      {/* === PARTITIONS === */}
+      {has('partitions') && (
         <>
-          {/* Bench height */}
+          {/* Segment 1 corridor width — between front wall and seg-1 partition */}
           <DimensionLine
-            start={[2, 0, 2.0]}
-            end={[2, 0.45, 2.0]}
-            label="0.45m"
+            start={[-2, 0.02, -HD]}
+            end={[-2, 0.02, -HD + CORRIDOR_WIDTH]}
+            label={`${CORRIDOR_WIDTH}m`}
+            offset={0.3}
+            offsetDirection={[-1, 0, 0]}
+            color={PARTITION_COLOR}
+          />
+          {/* Segment 2 corridor width — between window wall and seg-2 partition (plenum-cleared) */}
+          <DimensionLine
+            start={[SEG2_FACE, 0.02, 0]}
+            end={[HW, 0.02, 0]}
+            label={`${(HW - SEG2_FACE).toFixed(2)}m`}
+            offset={0.3}
+            offsetDirection={[0, 0, 1]}
+            color={PARTITION_COLOR}
+          />
+          {/* Segment 3 corridor width — between back wall and seg-3 partition */}
+          <DimensionLine
+            start={[2, 0.02, HD - CORRIDOR_WIDTH]}
+            end={[2, 0.02, HD]}
+            label={`${CORRIDOR_WIDTH}m`}
             offset={0.3}
             offsetDirection={[1, 0, 0]}
-            color="#8844aa"
+            color={PARTITION_COLOR}
           />
-          {/* Row 1 position */}
+          {/* D1 corridor opening — visitors exit corridor through this gap into the forest */}
           <DimensionLine
-            start={[0, 0.02, 0]}
-            end={[0, 0.02, 2.0]}
-            label="Row 1: 2.0m"
-            offset={0.5}
-            offsetDirection={[1, 0, 0]}
-            color="#8844aa"
+            start={[D1_X - OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH]}
+            end={[D1_X + OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH]}
+            label={`opening ${CORRIDOR_WIDTH}m`}
+            offset={0.3}
+            offsetDirection={[0, 0, -1]}
+            color={PARTITION_COLOR}
             fontSize="8px"
           />
-          {/* Row 2 position */}
+          {/* Partition height — measured at the segment 1 partition near front-wall corner */}
           <DimensionLine
-            start={[0, 0.02, 0]}
-            end={[0, 0.02, 3.5]}
-            label="Row 2: 3.5m"
-            offset={0.8}
-            offsetDirection={[1, 0, 0]}
-            color="#8844aa"
+            start={[-HW + 0.5, 0, -HD + CORRIDOR_WIDTH]}
+            end={[-HW + 0.5, PARTITION_HEIGHT, -HD + CORRIDOR_WIDTH]}
+            label={`${PARTITION_HEIGHT}m`}
+            offset={0.3}
+            offsetDirection={[-1, 0, 0]}
+            color={PARTITION_COLOR}
+          />
+          {/* Partition thickness — across segment 1's body */}
+          <DimensionLine
+            start={[3, 0.02, -HD + CORRIDOR_WIDTH]}
+            end={[3, 0.02, -HD + CORRIDOR_WIDTH + PARTITION_THICKNESS]}
+            label={`${(PARTITION_THICKNESS * 100).toFixed(0)}cm`}
+            offset={0.4}
+            offsetDirection={[0, 0, 1]}
+            color={PARTITION_COLOR}
+            fontSize="8px"
+          />
+          {/* Segment 4 stub length — perpendicular finish past D1 into the forest */}
+          <DimensionLine
+            start={[D1_X - OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH]}
+            end={[D1_X - OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH - CORRIDOR_WIDTH]}
+            label={`stub ${CORRIDOR_WIDTH}m`}
+            offset={0.3}
+            offsetDirection={[-1, 0, 0]}
+            color={PARTITION_COLOR}
             fontSize="8px"
           />
         </>
@@ -177,15 +221,6 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
             start={[halfW - 0.8, 0, halfD - 0.5]}
             end={[halfW - 0.8, 1.7, halfD - 0.5]}
             label="Standing: 1.7m"
-            offset={0.25}
-            offsetDirection={[1, 0, 0]}
-            color="#cc6600"
-          />
-          {/* Seated eye height */}
-          <DimensionLine
-            start={[halfW - 0.8, 0, halfD - 1.2]}
-            end={[halfW - 0.8, 1.1, halfD - 1.2]}
-            label="Seated eye: 1.1m"
             offset={0.25}
             offsetDirection={[1, 0, 0]}
             color="#cc6600"

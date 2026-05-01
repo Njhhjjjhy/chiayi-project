@@ -1,10 +1,13 @@
 // Material specs for Room sub-components. One source of truth so the
 // look stays consistent across Walls, Doors, Windows, HVAC, Wainscot.
 
+// Existing concrete walls, painted matte black. Very rough, dead-flat
+// finish — paint settles into the rough concrete substrate so the
+// surface barely picks up reflections.
 export function wallMaterial(isConstruction) {
   return isConstruction
     ? { wireframe: true, color: '#666' }
-    : { color: '#f0ece5', roughness: 0.85, metalness: 0 }
+    : { color: '#0f0f0f', roughness: 0.95, metalness: 0 }
 }
 
 export function blackoutMaterial(isConstruction) {

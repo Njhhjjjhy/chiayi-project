@@ -10,7 +10,7 @@ import {
 } from '../../geometry/dimensions.js'
 
 // Existing venue infrastructure on the window-wall + back-wall:
-//   - wall A/C heads (window-wall × 1, back-wall × 2)
+//   - wall A/C heads (back-wall × 2)
 //   - L-shaped HVAC plenum + stepped-drop (window-wall, above silver door)
 //   - control / electrical panel above silver door
 //   - red sprinkler pipe run (back-wall, horizontal + entrance-corner drop)
@@ -22,12 +22,6 @@ export default function HVAC({ width = ROOM.W, height = ROOM.H }) {
 
   return (
     <group>
-      {/* Wall A/C unit on upper window-wall, near back-wall corner */}
-      <mesh position={[INSIDE.window - 0.15, 2.85, INSIDE.back - 1.2]} castShadow receiveShadow>
-        <boxGeometry args={[0.28, 0.36, 0.95]} />
-        <meshStandardMaterial {...acUnit} />
-      </mesh>
-
       {/* HVAC plenum L-shape — main horizontal duct flush with structural ceiling */}
       <mesh position={[PLENUM_MAIN_X, PLENUM_MAIN_Y, PLENUM_MAIN_Z]} castShadow receiveShadow>
         <boxGeometry args={[PLENUM_MAIN_WIDTH_X, PLENUM_MAIN_HEIGHT_Y, PLENUM_MAIN_DEPTH_Z]} />
