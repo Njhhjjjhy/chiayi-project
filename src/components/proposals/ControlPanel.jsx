@@ -19,9 +19,6 @@ export default function ControlPanel() {
   const {
     hazeOverride, setHazeOverride,
     fireflyCount, setFireflyCount,
-    showCurtain, setShowCurtain,
-    showPathway, setShowPathway,
-    showPathwayLeft, setShowPathwayLeft,
   } = useProposals()
   const { selections, selectVariant } = useVariant()
   const { time } = useTimeline()
@@ -121,36 +118,6 @@ export default function ControlPanel() {
         <div className="text-white/70">{currentPhase.label}</div>
       </div>
 
-      <div>
-        <PanelLabel>Add-ons</PanelLabel>
-        <label className="flex items-center gap-2 text-white/70 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showCurtain}
-            onChange={(e) => setShowCurtain(e.target.checked)}
-            className="accent-white/40"
-          />
-          {' '}Blackout curtain
-        </label>
-        <label className="flex items-center gap-2 text-white/70 cursor-pointer mt-1">
-          <input
-            type="checkbox"
-            checked={showPathway}
-            onChange={(e) => setShowPathway(e.target.checked)}
-            className="accent-white/40"
-          />
-          {' '}Entry pathway (right)
-        </label>
-        <label className="flex items-center gap-2 text-white/70 cursor-pointer mt-1">
-          <input
-            type="checkbox"
-            checked={showPathwayLeft}
-            onChange={(e) => setShowPathwayLeft(e.target.checked)}
-            className="accent-white/40"
-          />
-          {' '}Entry pathway (left)
-        </label>
-      </div>
     </div>
   )
 }

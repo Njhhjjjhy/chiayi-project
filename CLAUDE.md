@@ -38,6 +38,9 @@ Fireflies represent the delicate balance between humans and nature. Their biolum
 4. **Accessible wonder.** No art-world gatekeeping. Families and casual visitors should feel the experience without explanation. Support web accessibility (WCAG AA), motion sensitivity (reduced motion options), and bilingual Chinese/English parity.
 5. **Nature sets the palette.** Colors, timing, and rhythm come from the real Alishan sunset cycle and firefly behavior — golden hour → twilight → blue hour → darkness. The 4-phase lighting transition is the backbone of the experience.
 
+### Attribution policy
+No designer, artist, studio, or specific-artwork names appear anywhere in this codebase: not in comments, not in UI, not in plan documents, not in commit messages, not in asset filenames. The form carries the reference.
+
 ### Tech Stack
 - React 19 + Vite 8 + Tailwind CSS 4
 - Three.js via @react-three/fiber + drei + postprocessing

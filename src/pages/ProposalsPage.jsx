@@ -34,8 +34,6 @@ import ABToggle from '../components/proposals/ABToggle.jsx'
 import TimeScrubber from '../components/proposals/TimeScrubber.jsx'
 import ControlPanel from '../components/proposals/ControlPanel.jsx'
 import HazePass from '../components/proposals/HazePass.jsx'
-import TheatricalCurtain from '../components/proposals/TheatricalCurtain.jsx'
-import EntryPathway from '../components/proposals/EntryPathway.jsx'
 
 function Loader() {
   return (
@@ -162,10 +160,7 @@ function Lighting() {
 }
 
 function SceneContents({ captureMode }) {
-  const {
-    fireflyCount, hazeOverride,
-    showCurtain, showPathway, showPathwayLeft,
-  } = useProposals()
+  const { fireflyCount, hazeOverride } = useProposals()
 
   // Apply the firefly count override during render so FireflySystem's
   // remount (via key={fireflyCount} below) picks it up synchronously —
@@ -187,9 +182,6 @@ function SceneContents({ captureMode }) {
       {/* key forces a remount on count change so variant useMemo reruns */}
       <FireflySystem key={fireflyCount} />
       <VariantRenderer />
-      {showCurtain && <TheatricalCurtain />}
-      <EntryPathway side="right" />
-      <EntryPathway side="left" />
       {captureMode && <CaptureReadySignal />}
       <EffectComposer>
         <Bloom

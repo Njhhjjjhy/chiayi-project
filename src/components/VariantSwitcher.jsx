@@ -89,7 +89,7 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
 }
 
 export default function VariantSwitcher({ onCameraPreset }) {
-  const { viewMode, setViewMode, showSeating, setShowSeating, randomize, favorites, saveFavorite, loadFavorite, removeFavorite, isConstruction } = useVariant()
+  const { viewMode, setViewMode, randomize, favorites, saveFavorite, loadFavorite, removeFavorite, isConstruction } = useVariant()
   const { active: tourActive, startTour } = useTour()
   const { measureMode, toggleMeasure, measurements, removeMeasurement, clearMeasurements, pendingPoint } = useMeasure()
   const [collapsed, setCollapsed] = useState(false)
@@ -139,7 +139,7 @@ export default function VariantSwitcher({ onCameraPreset }) {
             {/* Present button */}
             <div className="px-3 py-2 border-t border-gray-200">
               <button
-                onClick={() => startTour({ viewMode, showSeating })}
+                onClick={() => startTour({ viewMode })}
                 className="w-full text-sm py-1.5 rounded bg-gray-100 text-black hover:text-black hover:bg-gray-200 cursor-pointer transition-colors"
               >
                 Present
@@ -181,20 +181,6 @@ export default function VariantSwitcher({ onCameraPreset }) {
                   onShowInfo={setInfoVariant}
                 />
               ))}
-            </div>
-
-            {/* Seating toggle */}
-            <div className="px-3 py-2 border-t border-gray-200">
-              <button
-                onClick={() => setShowSeating(!showSeating)}
-                className={`w-full text-sm py-1.5 rounded transition-colors cursor-pointer ${
-                  showSeating
-                    ? 'bg-black text-white'
-                    : 'bg-gray-100 text-black hover:bg-gray-200'
-                }`}
-              >
-                {showSeating ? 'Seating visible' : 'Show seating'}
-              </button>
             </div>
 
             {/* Ruler — construction mode only */}

@@ -8,7 +8,7 @@ import { useVariant } from '../hooks/useVariant.js'
 export function GuidedTourCamera({ controlsRef }) {
   const { active, step, currentStep, setStepProgress, advanceStep } = useTour()
   const { setTime, pause } = useTimeline()
-  const { setViewMode, setShowSeating } = useVariant()
+  const { setViewMode } = useVariant()
   const elapsedRef = useRef(0)
   const targetRef = useRef({ pos: [0, 1.6, 3], tgt: [0, 1.6, -2] })
 
@@ -19,10 +19,6 @@ export function GuidedTourCamera({ controlsRef }) {
     setViewMode(step.viewMode)
     setTime(step.timeline)
     pause()
-
-    if (step.showSeating !== undefined) {
-      setShowSeating(step.showSeating)
-    }
 
     targetRef.current = {
       pos: [...step.camera.position],
@@ -77,7 +73,7 @@ export function GuidedTourCamera({ controlsRef }) {
 // HTML overlay — captions, progress bar, exit button (renders outside Canvas)
 export function GuidedTourOverlay() {
   const { active, currentStep, totalSteps, stopTour, step } = useTour()
-  const { setViewMode, setShowSeating } = useVariant()
+  const { setViewMode } = useVariant()
   const { pause } = useTimeline()
   const [opacity, setOpacity] = useState(0)
   const fadeRef = useRef(null)
@@ -98,7 +94,6 @@ export function GuidedTourOverlay() {
     const prev = stopTour()
     if (prev) {
       setViewMode(prev.viewMode)
-      setShowSeating(prev.showSeating)
     }
     pause()
   }

@@ -10,9 +10,8 @@ export const TOUR_STEPS = [
     camera: { position: [4, 2.5, 4], target: [0, 1.2, -1] },
     timeline: 0,
     title: 'The Room',
-    caption: 'A 10-metre space in Alishan, Taiwan. Benches face a layered mountain wall.',
+    caption: 'A 10-metre space in Alishan, Taiwan, facing a layered mountain wall.',
     duration: 10,
-    showSeating: true,
   },
   {
     id: 'transition',
@@ -22,7 +21,6 @@ export const TOUR_STEPS = [
     title: 'The Show Begins',
     caption: 'House lights dim. The compressed sunset starts.',
     duration: 5,
-    showSeating: true,
   },
   {
     id: 'golden',

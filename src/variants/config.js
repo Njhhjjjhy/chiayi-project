@@ -29,10 +29,8 @@ export const viewModes = {
 
 export const cameraPresets = {
   standing: { label: 'Standing', position: [0, 1.6, 3], target: [0, 1.6, -2] },
-  seated: { label: 'Seated', position: [0, 1.1, 3], target: [0, 1.1, -2] },
   overhead: { label: 'Overhead', position: [0, 9, 0.01], target: [0, 0, 0] },
   corner: { label: 'Corner', position: [4, 2.5, 4], target: [0, 1.5, -1] },
   free: { label: 'Free orbit', position: [0, 1.6, 3], target: [0, 1.6, -2] },
-  audienceView: { label: 'Audience POV', position: [0, 1.1, 2.5], target: [0, 1.4, -3] },
   installationOverview: { label: 'Overview', position: [5, 3.5, 5], target: [0, 1.2, -1] },
 }

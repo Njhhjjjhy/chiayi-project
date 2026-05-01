@@ -102,7 +102,10 @@ export default function TheWave({ masterOpacity }) {
       positions={state.dist.positions}
       opacities={state.opacities}
       colors={state.colors}
-      size={0.025}
+      // Real-world LED is 3 mm diameter (~1.5 mm physical radius).
+      // Scaled up to 0.015 for visibility at sim camera distances.
+      // This is a display value, not a physical measurement.
+      size={0.015}
     />
   )
 }

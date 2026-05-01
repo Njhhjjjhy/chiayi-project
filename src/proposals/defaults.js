@@ -22,10 +22,3 @@ export const DEFAULT_HAZE_LEVEL = 0.2
 // the same 0.78 lands a reviewer at "fireflies have just emerged."
 export const DEFAULT_TIMELINE_T = 0.78
 
-// Optional architectural overlays. Curtain off by default; both
-// entry-pathway sides on by default so first-load shows the corridor
-// layout under review. Independent flags so either side can be toggled
-// off in the panel.
-export const DEFAULT_SHOW_CURTAIN = false
-export const DEFAULT_SHOW_PATHWAY = true
-export const DEFAULT_SHOW_PATHWAY_LEFT = true
