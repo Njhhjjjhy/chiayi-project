@@ -1,4 +1,4 @@
-# Firefly Immersive Exhibition — Chiayi Project
+# Fireflies
 
 ## Design Context
 
@@ -6,12 +6,12 @@
 Primarily non-artsy visitors: families, tourists already visiting Alishan, casual travelers. They arrive without art-world knowledge and should leave with a shifted perspective on nature. The storyline must be self-evident. Bilingual audience (Chinese/English) — both languages deserve equal design consideration.
 
 ### Brand Personality
-**Poetic, scientific, alive.** Art + science + tech. The exhibition draws on teamLab's immersive approach and Olafur Eliasson's "devices for the experience of reality." It must feel like a proper art exhibition — never a theme park, never a tech demo, never a DIY project.
+**Poetic, scientific, alive.** Art + science + tech. The exhibition draws on large-scale immersive environmental art and on atmospheric installation work that treats real-world phenomena — light, weather, perception — as the medium itself. It must feel like a proper art exhibition — never a theme park, never a tech demo, never a DIY project.
 
 ### Two Stories
 There are two narrative layers, and they must not be confused:
 - **Outer story (promotional):** Tells the story *of* the project — what it is, why it exists, why you should visit. This is the website, marketing, social media. It sells the exhibition.
-- **Inner story (the experience):** What happens *inside* the room. This is the immersive journey itself — inspired by teamLab. No text panels, no explanation needed. The room tells the story through light, darkness, and rhythm.
+- **Inner story (the experience):** What happens *inside* the room. This is the immersive journey itself — an environmental piece that visitors walk through and inhabit. No text panels, no explanation needed. The room tells the story through light, darkness, and rhythm.
 
 Both need a clear storyline because the audience is primarily non-artsy. The inner story must land without art-world knowledge.
 
@@ -27,8 +27,8 @@ Fireflies represent the delicate balance between humans and nature. Their biolum
 - **Accent colors are nature-coded:** green (moss/life), orange (warmth/sunset), purple (twilight/mystery).
 - **Typography:** System font stack, light weight for headings, tight hierarchy from text-xs to text-5xl. Uppercase micro-labels with wide tracking for navigation.
 - **Transitions:** Smooth, subtle. Backdrop blur on navigation. Hover states through opacity shifts, not color changes.
-- **References:** teamLab (immersive scale), Olafur Eliasson (scientific wonder), the physical Nanghia venue (rooted in place).
-- **Anti-references:** Theme park / Disney (no flashy spectacle), corporate / sterile (no cold minimalism), academic / dry (no lecture-hall energy), DIY (no rough, unfinished feel).
+- **References:** large-scale environmental installation (immersive scale), atmospheric and scientifically-grounded installation work (scientific wonder), the physical Nanghia venue (rooted in place).
+- **Anti-references:** Theme park (no flashy spectacle), corporate / sterile (no cold minimalism), academic / dry (no lecture-hall energy), DIY (no rough, unfinished feel).
 
 ### Design Principles
 
