@@ -3,7 +3,7 @@ import { OrbitControls } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 import { VariantProvider } from '../hooks/VariantProvider.jsx'
 import { TimelineProvider } from '../hooks/TimelineProvider.jsx'
@@ -254,15 +254,6 @@ function PageInner() {
 
   return (
     <div className="relative h-screen w-screen bg-black">
-      {!captureMode && (
-        <Link
-          to="/"
-          className="fixed top-4 right-4 z-30 text-[10px] text-white/25 hover:text-white/50 cursor-pointer transition-colors border border-white/10 px-3 py-1.5 rounded hover:border-white/20"
-        >
-          Back to site
-        </Link>
-      )}
-
       <Suspense fallback={<Loader />}>
         <Canvas
           camera={{

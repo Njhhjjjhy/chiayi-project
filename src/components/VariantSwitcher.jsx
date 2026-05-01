@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { variantCategories, viewModes, cameraPresets } from '../variants/config'
+import { variantCategories, viewModes } from '../variants/config'
 import { useVariant } from '../hooks/useVariant.js'
 import { useTour } from '../hooks/useTour.js'
 import { useMeasure } from '../hooks/useMeasure.js'
@@ -88,16 +88,39 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
   )
 }
 
-export default function VariantSwitcher({ onCameraPreset }) {
-  const { viewMode, setViewMode, randomize, favorites, saveFavorite, loadFavorite, removeFavorite, isConstruction } = useVariant()
-  const { active: tourActive, startTour } = useTour()
+export default function VariantSwitcher() {
+  const { viewMode, setViewMode, randomize, favorites, saveFavorite, loadFavorite, removeFavorite, isConstruction, walkMode, setWalkMode } = useVariant()
+  const { active: tourActive } = useTour()
   const { measureMode, toggleMeasure, measurements, removeMeasurement, clearMeasurements, pendingPoint } = useMeasure()
   const [collapsed, setCollapsed] = useState(false)
-  const [cameraOpen, setCameraOpen] = useState(false)
   const [showFavorites, setShowFavorites] = useState(false)
   const [infoVariant, setInfoVariant] = useState(null)
 
   if (tourActive) return null
+
+  if (walkMode) {
+    return (
+      <div className="fixed top-4 left-4 z-10 select-none">
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden w-72 shadow-lg">
+          <div className="px-3 py-2.5 text-sm font-medium text-black border-b border-gray-200">
+            Walk mode
+          </div>
+          <div className="px-3 py-2.5 text-sm text-gray-600 space-y-1">
+            <div className="text-black mb-1.5">Click anywhere on the scene to start.</div>
+            <div><span className="font-mono text-black">↑ ↓ ← →</span> &nbsp;walk</div>
+            <div><span className="font-mono text-black">Shift</span> &nbsp;sprint · <span className="font-mono text-black">Mouse</span> &nbsp;look</div>
+            <div><span className="font-mono text-black">Esc</span> &nbsp;exit walk mode</div>
+          </div>
+          <button
+            onClick={() => setWalkMode(false)}
+            className="w-full px-3 py-2 text-sm text-left bg-gray-100 text-black hover:bg-gray-200 cursor-pointer border-t border-gray-200"
+          >
+            Exit walk mode
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -136,38 +159,14 @@ export default function VariantSwitcher({ onCameraPreset }) {
               </div>
             </div>
 
-            {/* Present button */}
+            {/* Walk mode */}
             <div className="px-3 py-2 border-t border-gray-200">
               <button
-                onClick={() => startTour({ viewMode })}
-                className="w-full text-sm py-1.5 rounded bg-gray-100 text-black hover:text-black hover:bg-gray-200 cursor-pointer transition-colors"
+                onClick={() => setWalkMode(true)}
+                className="w-full text-sm py-1.5 rounded bg-gray-900 text-white hover:bg-gray-700 cursor-pointer transition-colors"
               >
-                Present
+                Walk
               </button>
-            </div>
-
-            {/* Camera presets — collapsible */}
-            <div className="border-t border-gray-200">
-              <button
-                onClick={() => setCameraOpen(!cameraOpen)}
-                className="w-full flex items-center justify-between px-3 py-2 text-sm text-black hover:bg-gray-100 cursor-pointer"
-              >
-                <span>Camera</span>
-                <span className="text-sm text-gray-500">{cameraOpen ? '−' : '+'}</span>
-              </button>
-              {cameraOpen && (
-                <div className="px-3 pb-2 flex flex-wrap gap-1">
-                  {Object.entries(cameraPresets).map(([key, preset]) => (
-                    <button
-                      key={key}
-                      onClick={() => onCameraPreset && onCameraPreset(preset)}
-                      className="text-sm px-2 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 cursor-pointer transition-colors"
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Category sections */}
