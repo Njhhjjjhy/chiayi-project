@@ -5,12 +5,18 @@ import FireflyParticles from './FireflyParticles.jsx'
 import { distributeUnits, makeRng } from './surfacePositions.js'
 import { ROOM, HW, HD, INSET } from '../../geometry/dimensions.js'
 
-// Phase 2 — flashlight. The camera-through-mouse ray is cast at the four
-// firefly surfaces (ceiling + back wall + two side walls) and the reticle
-// lands on the nearest hit. Sweeping the reticle across a unit toggles it
-// on/off. Because the reticle is always ON a surface, its SPOT_RADIUS
-// actually overlaps unit centers and the toggle fires reliably.
-const SPOT_RADIUS = 0.9
+// Phase 2 — IR flashlight. Spec (firefly-panels-reference):
+//   "Beam wakes a cluster over 300–600 ms, fades idle over 2–4 s after
+//    release, 15 % cascade chance to neighbouring clusters."
+// A flashlight is a small focused beam, so the reticle radius is tight
+// (0.25 m). When the beam sits on a unit's IR detector long enough the
+// unit wakes, its LEDs breathe, and there's a 15 % chance one nearby
+// sleeping unit wakes as well.
+const BEAM_RADIUS = 0.25
+const WAKE_TIME = 0.45       // seconds of dwell to fully wake a cluster
+const FADE_TIME = 3.0        // seconds to fade from awake to dormant
+const CASCADE_CHANCE = 0.15
+const CASCADE_DISTANCE = 2.4 // max unit-centre distance for "neighbour"
 const ROOM_H = ROOM.H
 
 const _raycaster = new THREE.Raycaster()
@@ -18,23 +24,19 @@ const _target = new THREE.Vector3()
 const _hit = new THREE.Vector3()
 const _lookAtHelper = new THREE.Vector3()
 
-// 4 surface planes — axis + value + in-room bounds for the other two axes
 const SURFACES = [
-  { axis: 'y', val: ROOM_H - INSET, bounds: { xMin: -HW, xMax: HW, zMin: -HD, zMax: HD } }, // ceiling
-  { axis: 'z', val: HD - INSET,     bounds: { xMin: -HW, xMax: HW, yMin: 0,   yMax: ROOM_H } }, // back wall
-  { axis: 'x', val: -HW + INSET,    bounds: { zMin: -HD, zMax: HD, yMin: 0,   yMax: ROOM_H } }, // entrance wall
-  { axis: 'x', val: HW - INSET,     bounds: { zMin: -HD, zMax: HD, yMin: 0,   yMax: ROOM_H } }, // window wall
+  { axis: 'y', val: ROOM_H - INSET, bounds: { xMin: -HW, xMax: HW, zMin: -HD, zMax: HD } },
+  { axis: 'x', val: -HW + INSET,    bounds: { zMin: -HD, zMax: HD, yMin: 0, yMax: ROOM_H } },
+  { axis: 'x', val: HW - INSET,     bounds: { zMin: -HD, zMax: HD, yMin: 0, yMax: ROOM_H } },
 ]
 
 function raycastToSurfaces(origin, dir, out) {
   let bestT = Infinity
   for (const s of SURFACES) {
-    let denom
-    if (s.axis === 'y') denom = dir.y
-    else if (s.axis === 'z') denom = dir.z
-    else denom = dir.x
-    if (Math.abs(denom) < 1e-6) continue
-    const t = (s.val - (s.axis === 'y' ? origin.y : s.axis === 'z' ? origin.z : origin.x)) / denom
+    const d = s.axis === 'y' ? dir.y : dir.x
+    if (Math.abs(d) < 1e-6) continue
+    const o = s.axis === 'y' ? origin.y : origin.x
+    const t = (s.val - o) / d
     if (t < 0.1 || t >= bestT) continue
     const hx = origin.x + t * dir.x
     const hy = origin.y + t * dir.y
@@ -52,38 +54,51 @@ function raycastToSurfaces(origin, dir, out) {
 export default function Interaction({ masterOpacity }) {
   const reticleRef = useRef()
   const reticleRingRef = useRef()
+  const lastTimeRef = useRef(null)
 
   const state = useMemo(() => {
     const dist = distributeUnits({ seed: 77 })
     const rng = makeRng(202)
     const n = dist.count
-    const phases = new Float32Array(n)
-    const rates = new Float32Array(n)
+    const u = dist.unitCount
     const colors = new Float32Array(n * 3)
     const opacities = new Float32Array(n)
+    const wake = new Float32Array(u)      // per-unit wake level, 0 = dormant, 1 = fully awake
+    const ledPhase = new Float32Array(n)  // per-LED offset for soft breathing
 
     for (let i = 0; i < n; i++) {
-      phases[i] = rng() * Math.PI * 2
-      rates[i] = 0.25 + rng() * 0.7
-      colors[i * 3]     = 0.30 + rng() * 0.20
-      colors[i * 3 + 1] = 0.95 + rng() * 0.05
-      colors[i * 3 + 2] = 0.25 + rng() * 0.20
+      ledPhase[i] = rng() * Math.PI * 2
+      colors[i * 3]     = 0.60 + rng() * 0.20
+      colors[i * 3 + 1] = 1.00
+      colors[i * 3 + 2] = 0.50 + rng() * 0.20
     }
 
-    const unitState = new Uint8Array(dist.unitCount)
-    const prevInside = new Uint8Array(dist.unitCount)
-    for (let u = 0; u < dist.unitCount; u++) {
-      unitState[u] = rng() < 0.2 ? 1 : 0
+    // Precompute each unit's neighbours (within CASCADE_DISTANCE) so the
+    // cascade roll stays fast. Typical unit has 4–8 neighbours.
+    const neighbours = Array.from({ length: u }, () => [])
+    for (let a = 0; a < u; a++) {
+      const A = dist.unitCenters[a]
+      for (let b = a + 1; b < u; b++) {
+        const B = dist.unitCenters[b]
+        const dx = A[0] - B[0], dy = A[1] - B[1], dz = A[2] - B[2]
+        if (dx * dx + dy * dy + dz * dz <= CASCADE_DISTANCE * CASCADE_DISTANCE) {
+          neighbours[a].push(b)
+          neighbours[b].push(a)
+        }
+      }
     }
 
-    return { dist, phases, rates, colors, opacities, unitState, prevInside }
+    return { dist, colors, opacities, wake, ledPhase, neighbours, rng }
   }, [])
 
-  // Per-frame mutation of typed-array buffers is the @react-three/fiber pattern.
   /* eslint-disable react-hooks/immutability */
   useFrame(({ camera, pointer }) => {
     const s = state
-    const t = Date.now() / 1000
+    const now = Date.now() / 1000
+    if (lastTimeRef.current === null) lastTimeRef.current = now
+    const dt = Math.min(0.08, now - lastTimeRef.current)
+    lastTimeRef.current = now
+    const t = now
 
     _raycaster.setFromCamera(pointer, camera)
     const hit = raycastToSurfaces(_raycaster.ray.origin, _raycaster.ray.direction, _hit)
@@ -99,24 +114,41 @@ export default function Interaction({ masterOpacity }) {
       reticleRingRef.current.lookAt(_lookAtHelper)
     }
 
+    // Advance wake levels: unit whose centre is inside the beam wakes up;
+    // others decay. On the leading edge of fully-awake, roll cascade.
+    const beamR2 = BEAM_RADIUS * BEAM_RADIUS
     for (let u = 0; u < s.dist.unitCount; u++) {
       const uc = s.dist.unitCenters[u]
       const dx = uc[0] - _target.x
       const dy = uc[1] - _target.y
       const dz = uc[2] - _target.z
-      const d = Math.sqrt(dx * dx + dy * dy + dz * dz)
-      const inside = d < SPOT_RADIUS ? 1 : 0
-      if (inside && !s.prevInside[u]) {
-        s.unitState[u] = s.unitState[u] === 1 ? 0 : 1
+      const inside = (dx * dx + dy * dy + dz * dz) < beamR2
+
+      const wasAwake = s.wake[u] >= 1
+      if (inside) {
+        s.wake[u] = Math.min(1, s.wake[u] + dt / WAKE_TIME)
+      } else {
+        s.wake[u] = Math.max(0, s.wake[u] - dt / FADE_TIME)
       }
-      s.prevInside[u] = inside
+      if (!wasAwake && s.wake[u] >= 1) {
+        // Freshly woken — 15 % chance to also wake a random neighbour.
+        if (s.rng() < CASCADE_CHANCE) {
+          const nbs = s.neighbours[u]
+          if (nbs.length > 0) {
+            const pick = nbs[Math.floor(s.rng() * nbs.length)]
+            s.wake[pick] = Math.max(s.wake[pick], 0.8)
+          }
+        }
+      }
     }
 
+    // LED opacities follow their unit's wake level, with a soft breath.
     for (let i = 0; i < s.dist.count; i++) {
-      const u = s.dist.unitIndices[i]
-      if (!s.unitState[u]) { s.opacities[i] = 0; continue }
-      const blink = Math.sin(t * s.rates[i] * 2 * Math.PI + s.phases[i]) * 0.4 + 0.55
-      s.opacities[i] = blink * masterOpacity
+      const uIdx = s.dist.unitIndices[i]
+      const w = s.wake[uIdx]
+      if (w <= 0) { s.opacities[i] = 0; continue }
+      const breath = 0.65 + Math.sin(t * 1.4 + s.ledPhase[i]) * 0.35
+      s.opacities[i] = w * breath * masterOpacity
     }
   })
   /* eslint-enable react-hooks/immutability */
@@ -131,12 +163,14 @@ export default function Interaction({ masterOpacity }) {
         size={0.025}
       />
 
+      {/* Dim warm reticle — the spec says "very dim warm #d4a54a cone at
+          5 % opacity"; a small sphere reads as the flashlight anchor. */}
       <mesh ref={reticleRef} renderOrder={999}>
-        <sphereGeometry args={[0.08, 12, 12]} />
+        <sphereGeometry args={[0.04, 12, 12]} />
         <meshBasicMaterial
-          color="#ffbb55"
+          color="#d4a54a"
           transparent
-          opacity={0.95}
+          opacity={0.4}
           blending={THREE.AdditiveBlending}
           depthTest={false}
           depthWrite={false}
@@ -144,11 +178,11 @@ export default function Interaction({ masterOpacity }) {
       </mesh>
 
       <mesh ref={reticleRingRef} renderOrder={998}>
-        <ringGeometry args={[SPOT_RADIUS - 0.03, SPOT_RADIUS, 48]} />
+        <ringGeometry args={[BEAM_RADIUS - 0.015, BEAM_RADIUS, 48]} />
         <meshBasicMaterial
-          color="#ff8833"
+          color="#d4a54a"
           transparent
-          opacity={0.6}
+          opacity={0.35}
           blending={THREE.AdditiveBlending}
           depthTest={false}
           depthWrite={false}

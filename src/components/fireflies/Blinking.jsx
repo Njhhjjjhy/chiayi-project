@@ -3,15 +3,14 @@ import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
 import { distributeUnits, makeRng } from './surfacePositions.js'
 
-// Phase 1 — appearing. When this variant mounts, no fireflies are lit. Over
-// ~30 seconds the 88 units switch on one at a time in a shuffled order, so
-// the room fills with fireflies organically. Once a unit is on, its 18 LEDs
-// flash independently in the Luciola pattern: a ~130ms pulse every 1.5–3.5s.
-// (Ho et al. 2022: L. kagiana flashes ~110ms every ~600ms; L. curtithorax
-// ~100ms every ~300ms. Stretched toward the slower end so the room isn't
-// constantly popping.)
-const BUILDUP_SECONDS = 30
-const FLASH_DURATION = 0.13    // seconds — bright half-sine pulse
+// Phase 1 — appearing. When this variant mounts, no fireflies are lit.
+// Over ~2 minutes every LED switches on one at a time in shuffled order,
+// so the room fills with fireflies gradually and magically. Once lit,
+// each LED breathes with a long, languid pulse (0.6–1.4 s) every 6–14 s —
+// matching Luciola filiformis's slow glow rather than L. cerata's quick
+// flash. Short snappy pulses read as strobing LEDs; the long half-sine
+// envelope reads as a living glow.
+const BUILDUP_SECONDS = 120
 
 export default function Blinking({ masterOpacity }) {
   const mountTime = useRef(null)
@@ -20,30 +19,37 @@ export default function Blinking({ masterOpacity }) {
     const dist = distributeUnits({ seed: 77 })
     const rng = makeRng(101)
     const n = dist.count
-    const offsets = new Float32Array(n)   // start time within own period
-    const periods = new Float32Array(n)   // seconds between this LED's flashes
+    const offsets = new Float32Array(n)        // start time within own period
+    const periods = new Float32Array(n)        // seconds between this LED's flashes
+    const flashDurations = new Float32Array(n) // each LED gets its own flash length
     const colors = new Float32Array(n * 3)
     const opacities = new Float32Array(n)
 
     for (let i = 0; i < n; i++) {
-      periods[i] = 1.5 + rng() * 2.0        // 1.5–3.5 s per LED
-      offsets[i] = rng() * periods[i]       // spread first flashes across the period
-      colors[i * 3]     = 0.30 + rng() * 0.20
-      colors[i * 3 + 1] = 0.95 + rng() * 0.05
-      colors[i * 3 + 2] = 0.25 + rng() * 0.20
+      periods[i] = 6.0 + rng() * 8.0            // 6–14 s per LED
+      offsets[i] = rng() * periods[i]
+      flashDurations[i] = 0.6 + rng() * 0.8     // 0.6–1.4 s languid breath
+      // Narrow green with per-LED variance. Instance colour modulates the
+      // base #00ff6a material — keep near-white with a greenish bias.
+      colors[i * 3]     = 0.60 + rng() * 0.20   // R
+      colors[i * 3 + 1] = 1.00                  // G
+      colors[i * 3 + 2] = 0.50 + rng() * 0.20   // B
     }
 
-    const unitAppear = new Float32Array(dist.unitCount)
-    const order = Array.from({ length: dist.unitCount }, (_, i) => i)
-    for (let i = order.length - 1; i > 0; i--) {
+    // Shuffle LED indices so each LED appears individually — not whole
+    // units at once. With 1,584 LEDs over 120 s, that's ~13 LEDs/sec.
+    const appearTime = new Float32Array(n)
+    const order = new Uint16Array(n)
+    for (let i = 0; i < n; i++) order[i] = i
+    for (let i = n - 1; i > 0; i--) {
       const j = Math.floor(rng() * (i + 1))
       ;[order[i], order[j]] = [order[j], order[i]]
     }
-    for (let i = 0; i < dist.unitCount; i++) {
-      unitAppear[order[i]] = (i / dist.unitCount) * BUILDUP_SECONDS
+    for (let i = 0; i < n; i++) {
+      appearTime[order[i]] = (i / n) * BUILDUP_SECONDS
     }
 
-    return { dist, offsets, periods, colors, opacities, unitAppear }
+    return { dist, offsets, periods, flashDurations, colors, opacities, appearTime }
   }, [])
 
   /* eslint-disable react-hooks/immutability */
@@ -55,19 +61,18 @@ export default function Blinking({ masterOpacity }) {
     const t = now
 
     for (let i = 0; i < s.dist.count; i++) {
-      const u = s.dist.unitIndices[i]
-      const appearT = s.unitAppear[u]
+      const appearT = s.appearTime[i]
       if (elapsed < appearT) {
         s.opacities[i] = 0
         continue
       }
       const fadeIn = Math.min(1, (elapsed - appearT) / 2)
-      // Discrete flash: bright for FLASH_DURATION (~130ms), dark for the
-      // rest of the LED's period. Half-sine envelope gives a soft rise
-      // and fall around the peak instead of a hard on/off.
+      // Discrete flash: bright for this LED's flashDuration, dark for the
+      // rest of its period. Half-sine envelope gives a soft rise and fall.
+      const fd = s.flashDurations[i]
       const tPhase = (t + s.offsets[i]) % s.periods[i]
-      const pulse = tPhase < FLASH_DURATION
-        ? Math.sin((tPhase / FLASH_DURATION) * Math.PI)
+      const pulse = tPhase < fd
+        ? Math.sin((tPhase / fd) * Math.PI)
         : 0
       s.opacities[i] = pulse * fadeIn * masterOpacity
     }

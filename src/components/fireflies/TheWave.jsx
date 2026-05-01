@@ -5,11 +5,13 @@ import FireflyParticles from './FireflyParticles.jsx'
 import { distributeUnits, makeRng } from './surfacePositions.js'
 
 export default function TheWave({ masterOpacity }) {
-  const { waveInterval, waveSpeed, waveWidth } = useControls('fireflies', {
+  const { waveInterval, waveSpeed, waveWidth, waveIntensity, baselineCount } = useControls('fireflies', {
     theWave: folder({
-      waveInterval: { value: 15, min: 5, max: 30, step: 1, label: 'Wave interval (s)' },
-      waveSpeed: { value: 3, min: 1, max: 8, step: 0.5, label: 'Wave speed (s)' },
-      waveWidth: { value: 2, min: 0.5, max: 5, step: 0.5, label: 'Wave width (m)' },
+      waveInterval: { value: 30, min: 10, max: 60, step: 1, label: 'Wave interval (s)' },
+      waveSpeed: { value: 5, min: 1, max: 10, step: 0.5, label: 'Wave sweep (s)' },
+      waveWidth: { value: 1.2, min: 0.3, max: 4, step: 0.1, label: 'Wave width (m)' },
+      waveIntensity: { value: 0.6, min: 0.1, max: 1, step: 0.05, label: 'Wave brightness' },
+      baselineCount: { value: 60, min: 0, max: 200, step: 10, label: 'Idle twinkles' },
     }, { collapsed: true }),
   })
 
@@ -22,15 +24,19 @@ export default function TheWave({ masterOpacity }) {
     const opacities = new Float32Array(n)
     const colors = new Float32Array(n * 3)
     const basePhases = new Float32Array(n)
+    // Only a small random subset of LEDs twinkles between waves — the
+    // full set always breathing reads as "busy ceiling", not "quiet room
+    // waiting for the wave".
+    const isBaseline = new Uint8Array(n)
 
     for (let i = 0; i < n; i++) {
-      colors[i * 3]     = 0.30 + rng() * 0.20
-      colors[i * 3 + 1] = 0.95 + rng() * 0.05
-      colors[i * 3 + 2] = 0.25 + rng() * 0.20
+      colors[i * 3]     = 0.60 + rng() * 0.20
+      colors[i * 3 + 1] = 1.00
+      colors[i * 3 + 2] = 0.50 + rng() * 0.20
       basePhases[i] = rng() * Math.PI * 2
     }
 
-    return { dist, opacities, colors, basePhases }
+    return { dist, opacities, colors, basePhases, isBaseline, lastBaselineCount: -1 }
   }, [])
 
   // Per-frame mutation of typed-array opacities — @react-three/fiber pattern.
@@ -40,6 +46,21 @@ export default function TheWave({ masterOpacity }) {
     const m = mutable.current
     const t = Date.now() / 1000
     const positions = s.dist.positions
+
+    // Re-select baseline twinkle LEDs if the count slider changed
+    if (s.lastBaselineCount !== baselineCount) {
+      s.isBaseline.fill(0)
+      const rng = makeRng(404 + baselineCount)
+      const indices = new Int32Array(s.dist.count)
+      for (let i = 0; i < s.dist.count; i++) indices[i] = i
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1))
+        ;[indices[i], indices[j]] = [indices[j], indices[i]]
+      }
+      const chosen = Math.min(baselineCount, s.dist.count)
+      for (let i = 0; i < chosen; i++) s.isBaseline[indices[i]] = 1
+      s.lastBaselineCount = baselineCount
+    }
 
     if (t - m.lastWaveTime > waveInterval) {
       m.lastWaveTime = t
@@ -51,7 +72,10 @@ export default function TheWave({ masterOpacity }) {
     const waveFront = waveActive ? -5 + (timeSinceWave / waveSpeed) * 10 : -999
 
     for (let i = 0; i < s.dist.count; i++) {
-      const indPulse = (Math.sin(t * 1.2 + s.basePhases[i]) * 0.5 + 0.5) * 0.3
+      // Quiet idle: only the small baseline subset twinkles, softly.
+      const idle = s.isBaseline[i]
+        ? (Math.sin(t * 1.2 + s.basePhases[i]) * 0.5 + 0.5) * 0.4
+        : 0
 
       let waveBrightness = 0
       if (waveActive) {
@@ -64,10 +88,10 @@ export default function TheWave({ masterOpacity }) {
           particlePos = Math.sqrt(dx * dx + dz * dz)
         }
         const dist = Math.abs(particlePos - waveFront)
-        waveBrightness = Math.max(0, 1 - dist / waveWidth)
+        waveBrightness = Math.max(0, 1 - dist / waveWidth) * waveIntensity
       }
 
-      s.opacities[i] = Math.max(indPulse, waveBrightness) * masterOpacity
+      s.opacities[i] = Math.max(idle, waveBrightness) * masterOpacity
     }
   })
   /* eslint-enable react-hooks/immutability */
