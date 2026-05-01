@@ -148,7 +148,7 @@ export default function QAPanel() {
         onClick={() => setOpen(true)}
         aria-label="Open notes"
         style={TRANSITION}
-        className="fixed bottom-32 right-4 z-40 inline-flex min-h-[44px] items-center gap-2 rounded-full px-5 cursor-pointer hover:bg-black/55 transition-colors"
+        className="fixed top-4 right-4 z-40 inline-flex min-h-[44px] items-center gap-2 rounded-full px-5 cursor-pointer hover:bg-black/55 transition-colors"
       >
         <span className="text-[15px]">Notes</span>
         {openCount > 0 && (
