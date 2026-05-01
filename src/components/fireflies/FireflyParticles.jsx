@@ -8,7 +8,7 @@ import { useFrame } from '@react-three/fiber'
 const tempObject = new THREE.Object3D()
 const tempColor = new THREE.Color()
 
-export default function FireflyParticles({ count, positions, opacities, colors, size = 0.03 }) {
+export default function FireflyParticles({ count, positions, opacities, colors, size = 0.025 }) {
   const meshRef = useRef()
 
   const geometry = useMemo(() => new THREE.SphereGeometry(1, 4, 4), [])
@@ -16,8 +16,10 @@ export default function FireflyParticles({ count, positions, opacities, colors, 
   // depthTest disabled so LEDs render "through" the mountain topology ceiling —
   // the ceiling is the fabric, the fireflies are the LEDs behind it, they bleed
   // through via additive blending.
+  // Narrow-band green 520-530nm per firefly-panels-reference spec. Matches
+  // Luciola cerata / filiformis wavelength; #66ff88 read as pale mint.
   const material = useMemo(() => new THREE.MeshBasicMaterial({
-    color: '#66ff88',
+    color: '#00ff6a',
     transparent: true,
     opacity: 1,
     blending: THREE.AdditiveBlending,

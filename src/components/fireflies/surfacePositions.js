@@ -10,48 +10,138 @@ export function makeRng(seed) {
   }
 }
 
-// Jittered sub-grid distribution for LEDs inside a single unit footprint.
-// Splits the unit into cols*rows cells (cells ≥ n), picks n cells at
-// random, places one LED near the centre of each picked cell with a small
-// jitter. Prevents the visual bunching that pure random scatter produces.
-// Returns array of [dx, dz] offsets from unit centre in the range ±unit/2.
-function jitteredOffsets(rand, n, unitSize) {
-  const cols = Math.ceil(Math.sqrt(n))
-  const rows = Math.ceil(n / cols)
-  const cellW = unitSize / cols
-  const cellH = unitSize / rows
-  const jitter = 0.4 // ±40% of cell size, leaves a gap between neighbours
+// Bridson's Poisson-disk sampling in a 2D rectangle. Produces blue-noise
+// distributed points with a minimum inter-point distance `minDist`. Uniform,
+// no visible structure — key property for making the LED layout not read
+// as a grid.
+function poissonDisk(rand, width, height, minDist, targetCount) {
+  const K = 30
+  const cellSize = minDist / Math.SQRT2
+  const gridW = Math.ceil(width / cellSize)
+  const gridH = Math.ceil(height / cellSize)
+  const grid = new Int32Array(gridW * gridH).fill(-1)
+  const points = []
+  const active = []
 
-  const indices = []
-  for (let i = 0; i < cols * rows; i++) indices.push(i)
-  for (let i = indices.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1))
-    ;[indices[i], indices[j]] = [indices[j], indices[i]]
+  const x0 = rand() * width
+  const y0 = rand() * height
+  points.push([x0, y0])
+  active.push(0)
+  grid[Math.floor(y0 / cellSize) * gridW + Math.floor(x0 / cellSize)] = 0
+
+  while (active.length > 0 && points.length < targetCount) {
+    const ai = Math.floor(rand() * active.length)
+    const p = points[active[ai]]
+    let placed = false
+
+    for (let attempt = 0; attempt < K; attempt++) {
+      const a = rand() * Math.PI * 2
+      const r = minDist * (1 + rand())
+      const cx = p[0] + Math.cos(a) * r
+      const cy = p[1] + Math.sin(a) * r
+
+      if (cx < 0 || cx >= width || cy < 0 || cy >= height) continue
+
+      const gx = Math.floor(cx / cellSize)
+      const gy = Math.floor(cy / cellSize)
+      const minD2 = minDist * minDist
+      let tooClose = false
+
+      for (let dy = -2; dy <= 2 && !tooClose; dy++) {
+        for (let dx = -2; dx <= 2 && !tooClose; dx++) {
+          const nx = gx + dx
+          const ny = gy + dy
+          if (nx < 0 || nx >= gridW || ny < 0 || ny >= gridH) continue
+          const pi = grid[ny * gridW + nx]
+          if (pi < 0) continue
+          const np = points[pi]
+          const ddx = np[0] - cx
+          const ddy = np[1] - cy
+          if (ddx * ddx + ddy * ddy < minD2) tooClose = true
+        }
+      }
+
+      if (!tooClose) {
+        points.push([cx, cy])
+        active.push(points.length - 1)
+        grid[gy * gridW + gx] = points.length - 1
+        placed = true
+        break
+      }
+    }
+
+    if (!placed) {
+      active[ai] = active[active.length - 1]
+      active.pop()
+    }
   }
 
-  const out = []
-  for (let k = 0; k < n; k++) {
-    const idx = indices[k]
-    const cx = idx % cols
-    const cy = Math.floor(idx / cols)
-    const centreU = (cx + 0.5) * cellW - unitSize / 2
-    const centreV = (cy + 0.5) * cellH - unitSize / 2
-    out.push([
-      centreU + (rand() - 0.5) * cellW * jitter,
-      centreV + (rand() - 0.5) * cellH * jitter,
-    ])
-  }
-  return out
+  return points
 }
 
-// Unit grid per installation spec:
+// --- Proposals review page: total LED count override ---
+// When set via setFireflyCountOverride(total), distributeUnits scales
+// leds-per-unit uniformly across all three surfaces so the total count
+// matches approximately. Null for all other callers (e.g. the /3d
+// page) — their behaviour is unchanged. The proposals page clears the
+// override on unmount.
+let _totalCountOverride = null
+
+export function setFireflyCountOverride(total) {
+  _totalCountOverride = total
+}
+
+// Distribute LEDs across one flat surface using global Poisson-disk
+// sampling, then assign each LED to its nearest unit for hardware-control
+// purposes. The unit grid still exists conceptually (hardware reality: one
+// IR detector per 1.2×1.2 m unit, 18 LEDs wired to that unit) but the LED
+// placement no longer reveals unit boundaries visually.
+//
+// toWorld(u, v) maps 2D surface coords (origin at surface centre, u and v
+// in [−size/2, +size/2]) to a world-space [x, y, z].
+function distributeSurface({
+  nU, nV, unitSize, ledsPerUnit,
+  toWorld, surfaceIndex,
+  unitIdStart, rand,
+  positions, unitIndices, surfaceIndices, unitCenters,
+}) {
+  // Build the unit-centre list first so the nearest-unit lookup works.
+  for (let r = 0; r < nV; r++) {
+    for (let c = 0; c < nU; c++) {
+      const u = (c + 0.5) * unitSize - (nU * unitSize) / 2
+      const v = (r + 0.5) * unitSize - (nV * unitSize) / 2
+      unitCenters.push(toWorld(u, v))
+    }
+  }
+
+  const bboxU = nU * unitSize
+  const bboxV = nV * unitSize
+  const target = nU * nV * ledsPerUnit
+  // Minimum inter-LED distance tuned to produce ~target points. Derived
+  // from Poisson-disk density (≈ 0.7 × √(area/N)).
+  const minDist = 0.7 * Math.sqrt((bboxU * bboxV) / target)
+  const pts = poissonDisk(rand, bboxU, bboxV, minDist, target)
+
+  for (const [pu, pv] of pts) {
+    const col = Math.min(nU - 1, Math.max(0, Math.floor(pu / unitSize)))
+    const row = Math.min(nV - 1, Math.max(0, Math.floor(pv / unitSize)))
+    const uIdx = unitIdStart + row * nU + col
+
+    const uCentred = pu - bboxU / 2
+    const vCentred = pv - bboxV / 2
+    const [x, y, z] = toWorld(uCentred, vCentred)
+    positions.push(x, y, z)
+    unitIndices.push(uIdx)
+    surfaceIndices.push(surfaceIndex)
+  }
+}
+
+// Firefly LEDs spec:
 //   - 60 × 60 cm squares on ceiling + 2 side walls (entrance + window)
-//     — front wall is the feature wall, back wall has doors + infrastructure
-//   - One unit = 2×2 squares = 1.2 × 1.2 m
-//   - 18 LEDs per unit, jittered within the unit footprint
-//   - One (virtual) IR detector per unit — unitIndex tags each LED so that
-//     state #2 (motion) and state #3 (interaction) can light whole units at
-//     once based on detector triggers.
+//   - One unit = 2×2 squares = 1.2 × 1.2 m with one IR detector + 18 LEDs
+//   - LEDs scattered globally per surface with Poisson-disk sampling so
+//     the physical layout looks natural, not grid-like. Each LED is still
+//     mapped to its containing unit for hardware control.
 //
 // Returns { positions, unitIndices, surfaceIndices, unitCenters, count, unitCount }
 // - positions: Float32Array of xyz flat triples
@@ -60,91 +150,68 @@ function jitteredOffsets(rand, n, unitSize) {
 // - unitCenters: plain array of [x, y, z] per unit
 export function distributeUnits({ unitSize = 1.2, ledsPerUnit = 18, seed = 77 } = {}) {
   const ROOM_W = ROOM.W, ROOM_D = ROOM.D, ROOM_H = ROOM.H
-  const WAINSCOT = {
-    back: WAINSCOT_H.back,
-    window: WAINSCOT_H.window,
-    entrance: WAINSCOT_H.entrance,
-  }
 
-  let s = seed
-  function rand() {
-    s = (s * 16807 + 0) % 2147483647
-    return (s - 1) / 2147483646
-  }
+  const rand = makeRng(seed)
+
+  // Per-surface unit counts. Pre-computed so the proposals-page total-
+  // count override can scale leds-per-unit before sampling.
+  const cNu = Math.floor(ROOM_W / unitSize)
+  const cNv = Math.floor(ROOM_D / unitSize)
+  const eNu = Math.floor(ROOM_D / unitSize)
+  const eWallH = ROOM_H - WAINSCOT_H.entrance
+  const eNv = Math.floor(eWallH / unitSize)
+  const wNu = Math.floor(ROOM_D / unitSize)
+  const wWallH = ROOM_H - WAINSCOT_H.window
+  const wNv = Math.floor(wWallH / unitSize)
+
+  const totalUnits = cNu * cNv + eNu * eNv + wNu * wNv
+
+  // Proposals-only total-count override, if any. Keeps each surface's
+  // relative density by scaling leds-per-unit uniformly.
+  const effectiveLedsPerUnit =
+    _totalCountOverride !== null && totalUnits > 0
+      ? Math.max(1, Math.round(_totalCountOverride / totalUnits))
+      : ledsPerUnit
 
   const positions = []
   const unitIndices = []
   const surfaceIndices = []
   const unitCenters = []
-  let unitId = 0
 
-  // CEILING — XZ plane at y = ROOM_H - INSET
-  {
-    const nx = Math.floor(ROOM_W / unitSize)    // 7
-    const nz = Math.floor(ROOM_D / unitSize)    // 8
-    const startX = -(nx * unitSize) / 2
-    const startZ = -(nz * unitSize) / 2
-    const y = ROOM_H - INSET
-    for (let r = 0; r < nz; r++) {
-      for (let c = 0; c < nx; c++) {
-        const ucx = startX + (c + 0.5) * unitSize
-        const ucz = startZ + (r + 0.5) * unitSize
-        unitCenters.push([ucx, y, ucz])
-        for (const [dx, dz] of jitteredOffsets(rand, ledsPerUnit, unitSize)) {
-          positions.push(ucx + dx, y, ucz + dz)
-          unitIndices.push(unitId)
-          surfaceIndices.push(0)
-        }
-        unitId++
-      }
-    }
-  }
+  // CEILING — y = ROOM.H − INSET. u along X, v along Z.
+  const cY = ROOM_H - INSET
+  distributeSurface({
+    nU: cNu, nV: cNv, unitSize, ledsPerUnit: effectiveLedsPerUnit,
+    toWorld: (u, v) => [u, cY, v],
+    surfaceIndex: 0,
+    unitIdStart: 0, rand,
+    positions, unitIndices, surfaceIndices, unitCenters,
+  })
 
-  // ENTRANCE WALL — YZ plane at x = -HW + INSET, full height (no wainscot)
-  {
-    const nz = Math.floor(ROOM_D / unitSize)
-    const wallH = ROOM_H - WAINSCOT.entrance
-    const ny = Math.floor(wallH / unitSize)
-    const startZ = -(nz * unitSize) / 2
-    const startY = WAINSCOT.entrance
-    const x = -HW + INSET
-    for (let r = 0; r < ny; r++) {
-      for (let c = 0; c < nz; c++) {
-        const ucz = startZ + (c + 0.5) * unitSize
-        const ucy = startY + (r + 0.5) * unitSize
-        unitCenters.push([x, ucy, ucz])
-        for (const [dz, dy] of jitteredOffsets(rand, ledsPerUnit, unitSize)) {
-          positions.push(x, ucy + dy, ucz + dz)
-          unitIndices.push(unitId)
-          surfaceIndices.push(1)
-        }
-        unitId++
-      }
-    }
-  }
+  // ENTRANCE WALL — x = −HW + INSET, full height (no wainscot).
+  // u along Z, v along Y (vertical).
+  const eX = -HW + INSET
+  const eYCentre = WAINSCOT_H.entrance + (eNv * unitSize) / 2
+  const entranceUnitStart = unitCenters.length
+  distributeSurface({
+    nU: eNu, nV: eNv, unitSize, ledsPerUnit: effectiveLedsPerUnit,
+    toWorld: (u, v) => [eX, eYCentre + v, u],
+    surfaceIndex: 1,
+    unitIdStart: entranceUnitStart, rand,
+    positions, unitIndices, surfaceIndices, unitCenters,
+  })
 
-  // WINDOW WALL — YZ plane at x = +HW - INSET, above short wainscot
-  {
-    const nz = Math.floor(ROOM_D / unitSize)
-    const wallH = ROOM_H - WAINSCOT.window
-    const ny = Math.floor(wallH / unitSize)
-    const startZ = -(nz * unitSize) / 2
-    const startY = WAINSCOT.window
-    const x = HW - INSET
-    for (let r = 0; r < ny; r++) {
-      for (let c = 0; c < nz; c++) {
-        const ucz = startZ + (c + 0.5) * unitSize
-        const ucy = startY + (r + 0.5) * unitSize
-        unitCenters.push([x, ucy, ucz])
-        for (const [dz, dy] of jitteredOffsets(rand, ledsPerUnit, unitSize)) {
-          positions.push(x, ucy + dy, ucz + dz)
-          unitIndices.push(unitId)
-          surfaceIndices.push(2)
-        }
-        unitId++
-      }
-    }
-  }
+  // WINDOW WALL — x = +HW − INSET, above short wainscot.
+  const wX = HW - INSET
+  const wYCentre = WAINSCOT_H.window + (wNv * unitSize) / 2
+  const windowUnitStart = unitCenters.length
+  distributeSurface({
+    nU: wNu, nV: wNv, unitSize, ledsPerUnit: effectiveLedsPerUnit,
+    toWorld: (u, v) => [wX, wYCentre + v, u],
+    surfaceIndex: 2,
+    unitIdStart: windowUnitStart, rand,
+    positions, unitIndices, surfaceIndices, unitCenters,
+  })
 
   return {
     positions: new Float32Array(positions),
@@ -152,6 +219,6 @@ export function distributeUnits({ unitSize = 1.2, ledsPerUnit = 18, seed = 77 } 
     surfaceIndices: new Uint8Array(surfaceIndices),
     unitCenters,
     count: positions.length / 3,
-    unitCount: unitId,
+    unitCount: unitCenters.length,
   }
 }

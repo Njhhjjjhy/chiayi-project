@@ -211,7 +211,7 @@ export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeig
       {isExperience && (
         <EffectComposer>
           <Bloom
-            luminanceThreshold={0.3}
+            luminanceThreshold={0.05}
             luminanceSmoothing={0.9}
             intensity={0.3}
             radius={0.15}
