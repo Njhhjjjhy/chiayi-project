@@ -32,3 +32,7 @@ public/research-trip-20260418/*.mp4
 .windsurf/
 .handoffs/
 skills-lock.json
+
+# QA panel local dev data (test notes + screenshots)
+.qa-dev-notes.json
+public/qa-dev-screenshots/
