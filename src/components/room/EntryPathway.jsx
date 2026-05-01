@@ -1,4 +1,7 @@
-import { ROOM, HW, HD, D1_X, WALL_T } from '../../geometry/dimensions.js'
+import {
+  ROOM, HW, HD, D1_X, WALL_T,
+  CORRIDOR_WIDTH, PARTITION_HEIGHT, SEG2_FACE_X,
+} from '../../geometry/dimensions.js'
 import { useVariant } from '../../hooks/useVariant.js'
 
 // Three-segment guided corridor wrapping the front, window, and back
@@ -20,8 +23,6 @@ import { useVariant } from '../../hooks/useVariant.js'
 //
 // Always rendered — no toggles, no left/right variants.
 
-const CORRIDOR_WIDTH       = 1.35   // metres, clear walking width
-const PARTITION_HEIGHT     = 3.4    // up to the underside of the dropped ceiling
 const PARTITION_THICKNESS  = WALL_T // 0.12 m, matches room walls
 const HALF_THICK           = PARTITION_THICKNESS / 2
 
@@ -75,14 +76,13 @@ const LIGHT_Y = 1.8
 // Segment 1 (parallel to front wall)
 const SEG1_FACE   = -HD + CORRIDOR_WIDTH                  // -3.65, corridor-side face
 const SEG1_CENTER = SEG1_FACE + HALF_THICK                // -3.59
-// Segment 2 (parallel to window wall) — pulled inward to clear the
-// HVAC plenum, which extends 1.8 m into the room from the window wall
-// (x range 2.615–4.415). Partition sits at x = 2.50 with 11.5 cm
-// clearance from the plenum's room-side edge. The corridor balloons
-// to ≈1.9 m wide along this segment as a result; visitors walk under
-// the plenum overhead at the silver-door area.
-const SEG2_FACE   = 2.5                                   // corridor-side face, plenum-cleared
-const SEG2_CENTER = SEG2_FACE - HALF_THICK                // +2.44
+// Segment 2 (parallel to window wall) — SEG2_FACE_X is imported from
+// dimensions.js; it's pulled inward from the wall to clear the HVAC
+// plenum (which extends 1.8 m into the room from the window wall, x
+// range 2.615–4.415). The corridor balloons to ≈1.9 m wide along this
+// segment as a result; visitors walk under the plenum overhead at the
+// silver-door area.
+const SEG2_CENTER = SEG2_FACE_X - HALF_THICK                // +2.44
 // Segment 2 spans only the middle of the window-wall length so it
 // doesn't overlap with segments 1 and 3 at the inner corners.
 const SEG2_Z_START = SEG1_CENTER + HALF_THICK             // -3.53
@@ -167,15 +167,15 @@ export default function EntryPathway() {
       {seg2Cards.map((z, i) => (
         <mesh
           key={`s2-card-${i}`}
-          position={[SEG2_FACE + CARD_LIFT, CARD_Y, z]}
+          position={[SEG2_FACE_X + CARD_LIFT, CARD_Y, z]}
           rotation={[0, Math.PI / 2, 0]}
         >
           <planeGeometry args={[CARD_W, CARD_H]} />
           <meshStandardMaterial {...card} />
         </mesh>
       ))}
-      <pointLight position={[(SEG2_FACE + HW) / 2, LIGHT_Y, SEG2_Z_START + 1.5]} {...LIGHT_PROPS} />
-      <pointLight position={[(SEG2_FACE + HW) / 2, LIGHT_Y, SEG2_Z_END - 1.5]} {...LIGHT_PROPS} />
+      <pointLight position={[(SEG2_FACE_X + HW) / 2, LIGHT_Y, SEG2_Z_START + 1.5]} {...LIGHT_PROPS} />
+      <pointLight position={[(SEG2_FACE_X + HW) / 2, LIGHT_Y, SEG2_Z_END - 1.5]} {...LIGHT_PROPS} />
 
       {/* === Segment 3 — along back wall, ends at the D1 opening === */}
       <mesh

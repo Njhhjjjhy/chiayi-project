@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { Html } from '@react-three/drei'
 import DimensionLine from './DimensionLine.jsx'
-import { HW, HD, D1_X, WALL_T } from '../geometry/dimensions.js'
+import {
+  HW, HD, D1_X, WALL_T,
+  CORRIDOR_WIDTH, PARTITION_HEIGHT, SEG2_FACE_X,
+} from '../geometry/dimensions.js'
 
-// Partition system constants — must stay in sync with src/components/room/EntryPathway.jsx
-const CORRIDOR_WIDTH      = 1.35
-const PARTITION_HEIGHT    = 3.4
-const PARTITION_THICKNESS = WALL_T // 0.12 m
-const SEG2_FACE           = 2.5    // window-wall corridor partition (plenum-cleared)
+const PARTITION_THICKNESS = WALL_T // 0.12 m, matches the room walls
 const OPENING_HALF        = CORRIDOR_WIDTH / 2
 const PARTITION_COLOR     = '#0a8c5b' // green — distinct from room blue / human orange
 
@@ -155,9 +154,9 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
           />
           {/* Segment 2 corridor width — between window wall and seg-2 partition (plenum-cleared) */}
           <DimensionLine
-            start={[SEG2_FACE, 0.02, 0]}
+            start={[SEG2_FACE_X, 0.02, 0]}
             end={[HW, 0.02, 0]}
-            label={`${(HW - SEG2_FACE).toFixed(2)}m`}
+            label={`${(HW - SEG2_FACE_X).toFixed(2)}m`}
             offset={0.3}
             offsetDirection={[0, 0, 1]}
             color={PARTITION_COLOR}
