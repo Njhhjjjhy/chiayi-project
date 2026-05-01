@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
+import QAPanel from './components/QAPanel'
 
 const ThreeDPreview = lazy(() => import('./pages/ThreeDPreview'))
 const ProposalsPage = lazy(() => import('./pages/ProposalsPage'))
@@ -19,14 +20,17 @@ function PageLoader() {
 
 export default function App() {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route index element={<Navigate to="/3d" replace />} />
-        <Route path="3d" element={<ThreeDPreview />} />
-        <Route path="proposals" element={<Navigate to="/proposals/null" replace />} />
-        <Route path="proposals/:variantId" element={<ProposalsPage />} />
-        <Route path="*" element={<Navigate to="/3d" replace />} />
-      </Routes>
-    </Suspense>
+    <>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route index element={<Navigate to="/3d" replace />} />
+          <Route path="3d" element={<ThreeDPreview />} />
+          <Route path="proposals" element={<Navigate to="/proposals/null" replace />} />
+          <Route path="proposals/:variantId" element={<ProposalsPage />} />
+          <Route path="*" element={<Navigate to="/3d" replace />} />
+        </Routes>
+      </Suspense>
+      <QAPanel />
+    </>
   )
 }
