@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { useVariant } from '../hooks/useVariant.js'
 import { DEFAULT_VARIANTS } from '../variants/defaults.js'
 import { ROOM } from '../geometry/dimensions.js'
+import ArchEdges from './room/ArchEdges.jsx'
 
 const MARBLE_TILE = 0.80     // approx tile size observed in cam 1/2/3 frames
 
@@ -108,7 +109,8 @@ function GreyMarbleFloor({ isConstruction }) {
     return (
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[ROOM.W, ROOM.D]} />
-        <meshStandardMaterial wireframe color="#888" />
+        <meshStandardMaterial color="#f5f5f5" />
+        <ArchEdges />
       </mesh>
     )
   }

@@ -81,20 +81,22 @@ function MountainTopologyCeiling({ isConstruction, ceilingOpacity }) {
     <group position={[0, DROPPED_CEILING_Y, 0]}>
       <mesh geometry={geometry}>
         <meshStandardMaterial
-          vertexColors
-          wireframe={isConstruction}
+          vertexColors={!isConstruction}
+          color={isConstruction ? '#eeeeee' : undefined}
           side={THREE.DoubleSide}
           transparent
           opacity={isConstruction ? 1 : ceilingOpacity}
-          roughness={0.85}
+          roughness={0.9}
           metalness={0}
         />
       </mesh>
-      {!isConstruction && (
-        <lineSegments geometry={edges}>
-          <lineBasicMaterial color="#000" transparent opacity={ceilingOpacity * 0.5} />
-        </lineSegments>
-      )}
+      <lineSegments geometry={edges}>
+        <lineBasicMaterial
+          color={isConstruction ? '#444' : '#000'}
+          transparent
+          opacity={isConstruction ? 1 : ceilingOpacity * 0.5}
+        />
+      </lineSegments>
     </group>
   )
 }
@@ -104,10 +106,14 @@ const CEILING_COMPONENTS = {
 }
 
 export default function Ceiling() {
-  const { selections, viewMode } = useVariant()
+  const { selections, viewMode, walkMode, activeSceneKey } = useVariant()
   const isConstruction = viewMode === 'construction'
   const variantId = selections.ceiling || DEFAULT_VARIANTS.ceiling
   const Component = CEILING_COMPONENTS[variantId] || CEILING_COMPONENTS[DEFAULT_VARIANTS.ceiling]
+
+  // Ceiling preset = top-down plan view from above. Hide the ceiling
+  // mesh so the camera can see into the room.
+  if (!walkMode && activeSceneKey === 'ceiling') return null
 
   return <Component isConstruction={isConstruction} ceilingOpacity={1} />
 }

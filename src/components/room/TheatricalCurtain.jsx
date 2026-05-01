@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { ROOM, HW, MAIN_WIN_W, MAIN_WIN_Z, INSET } from '../../geometry/dimensions.js'
+import { useVariant } from '../../hooks/useVariant.js'
+import { ELEVATION_PRESET_KEYS } from '../../variants/config.js'
 
 // Dark navy blackout curtain hung in front of the main glass partition
 // on the window wall. Covers the 5.7 m main-glass run flush with the
@@ -12,6 +14,12 @@ import { ROOM, HW, MAIN_WIN_W, MAIN_WIN_Z, INSET } from '../../geometry/dimensio
 const OFFSET = 0.04 // metres from window wall into the room
 
 export default function TheatricalCurtain() {
+  const { walkMode, activeSceneKey } = useVariant()
+
+  // Hide the curtain while reviewing any wall, so the bare room reads.
+  // Walking the space restores it — the curtain is part of the install.
+  if (!walkMode && ELEVATION_PRESET_KEYS.has(activeSceneKey)) return null
+
   const x = HW - OFFSET - INSET
   const y = ROOM.H / 2
   const z = MAIN_WIN_Z

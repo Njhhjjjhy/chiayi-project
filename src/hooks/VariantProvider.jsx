@@ -8,6 +8,7 @@ export function VariantProvider({ children }) {
   const [viewMode, setViewMode] = useState('light')
   const [favorites, setFavorites] = useState([])
   const [walkMode, setWalkMode] = useState(false)
+  const [activeSceneKey, setActiveSceneKey] = useState(null)
 
   const selectVariant = useCallback((category, variantId) => {
     setSelections((prev) => ({ ...prev, [category]: variantId }))
@@ -50,6 +51,7 @@ export function VariantProvider({ children }) {
         isLight: viewMode === 'light',
         randomize, favorites, saveFavorite, loadFavorite, removeFavorite,
         walkMode, setWalkMode,
+        activeSceneKey, setActiveSceneKey,
       }}
     >
       {children}
