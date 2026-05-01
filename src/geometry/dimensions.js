@@ -97,6 +97,15 @@ export const PLENUM_DROP_Z = PLENUM_MAIN_Z
 export const PLENUM_DROP_Y =
   PLENUM_MAIN_Y - PLENUM_MAIN_HEIGHT_Y / 2 - PLENUM_DROP_HEIGHT_Y / 2
 
+// --- Corridor partitions (EntryPathway) ---
+// Clear walking width of the visitor corridor that wraps the front,
+// window, and back walls. Segment 2 along the window wall is pulled
+// inward to clear the HVAC plenum (plenum extends to x = 2.615), so
+// the corridor along that wall is wider than CORRIDOR_WIDTH.
+export const CORRIDOR_WIDTH = 1.35
+export const PARTITION_HEIGHT = 3.4               // up to underside of dropped ceiling
+export const SEG2_FACE_X = 2.5                    // window-wall partition, plenum-cleared
+
 // --- Door skip ranges for wall-covering generation ---
 // Per-wall main axis: x for front/back, z for entrance/window.
 export const DOOR_SKIPS = {
