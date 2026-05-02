@@ -23,7 +23,7 @@ export default function CompressedDay() {
   useEffect(() => {
     setViewMode('experience')
     selectVariant('fireflies', 'motion')
-    setTime(0)
+    setTime(0.85)
     setSpeed('30s')
     play()
     return () => pause()

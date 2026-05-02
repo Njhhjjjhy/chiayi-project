@@ -12,6 +12,7 @@ import ConstructionToolbar from '../components/ConstructionToolbar'
 import ExperiencePicker from '../components/proposals/ExperiencePicker.jsx'
 import PlaceholderBanner from '../components/proposals/PlaceholderBanner.jsx'
 import InstructionsOverlay from '../components/proposals/InstructionsOverlay.jsx'
+import BrightnessControl from '../components/proposals/BrightnessControl.jsx'
 import { experienceComponents } from '../components/proposals/experiences'
 
 // Five experience proposals — picker mounted above the same room shown
@@ -35,6 +36,7 @@ function ActiveExperience() {
 
 function PreviewInner() {
   const [uiHidden, setUiHidden] = useState(false)
+  const [brightness, setBrightness] = useState(0.4)
 
   useEffect(() => {
     function handleKey(e) {
@@ -59,6 +61,9 @@ function PreviewInner() {
         >
           <Scene />
           <ActiveExperience />
+          {brightness > 0 && (
+            <ambientLight intensity={brightness} color="#ffffff" />
+          )}
         </Canvas>
       </Suspense>
 
@@ -67,9 +72,10 @@ function PreviewInner() {
           <ExperiencePicker />
           <PlaceholderBanner />
           <InstructionsOverlay />
-          <VariantSwitcher hideViewMode hideCategories={['fireflies']} />
+          <VariantSwitcher hideViewMode />
           <TimelineController />
           <ConstructionToolbar />
+          <BrightnessControl value={brightness} onChange={setBrightness} />
         </>
       )}
 
