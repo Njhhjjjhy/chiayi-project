@@ -36,11 +36,13 @@ const DOOR_CLEAR = 0.08   // clearance each side of any door
 export const DROPPED_CEILING_Y = 3.4
 
 // --- Visitor entrance (entrance wall, x = -HW) ---
-export const ENT_W = 2.4
+// Opening is flush with the front-wall corner. South edge stays where
+// the partition (segment-a) aligns to it.
+export const ENT_START = -HD              // -5, flush with front wall
+export const ENT_END = -2.15              // south edge (matches segment-a face)
+export const ENT_W = ENT_END - ENT_START  // 2.85
 export const ENT_H = 3.52                 // full room height, no transom
-export const ENT_START = -HD + 0.45       // -4.55
-export const ENT_END = ENT_START + ENT_W  // -2.15
-export const ENT_Z = (ENT_START + ENT_END) / 2  // -3.35
+export const ENT_Z = (ENT_START + ENT_END) / 2  // -3.575
 
 // --- Back-wall doors (z = +HD) ---
 // D1 + D2 measured from window-wall corner (+HW).

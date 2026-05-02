@@ -25,7 +25,7 @@ export default function App() {
         <Routes>
           <Route index element={<Navigate to="/3d" replace />} />
           <Route path="3d" element={<ThreeDPreview />} />
-          <Route path="proposals" element={<Navigate to="/proposals/null" replace />} />
+          <Route path="proposals" element={<Navigate to="/proposals/compressed-day" replace />} />
           <Route path="proposals/:variantId" element={<ProposalsPage />} />
           <Route path="*" element={<Navigate to="/3d" replace />} />
         </Routes>

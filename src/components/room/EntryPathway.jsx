@@ -1,6 +1,7 @@
 import {
-  ROOM, HW, HD, D1_X, WALL_T,
+  ROOM, HW, HD, WALL_T,
   CORRIDOR_WIDTH, PARTITION_HEIGHT, SEG2_FACE_X,
+  ENT_END,
 } from '../../geometry/dimensions.js'
 import { useVariant } from '../../hooks/useVariant.js'
 import ArchEdges from './ArchEdges.jsx'
@@ -10,9 +11,6 @@ import ArchEdges from './ArchEdges.jsx'
 // (segment 1), turn right at the front/window corner into segment 2
 // along the window wall, then exit into the open forest at the
 // south-east corner.
-//
-// Two segments only — front wall + window wall. No partition along
-// the back wall, no perpendicular stub, no entrance seal.
 //
 // Partitions are 12 cm thick (matching the project's WALL_T) — modelled
 // as plywood-on-stud interior partitions, the standard for exhibition
@@ -30,6 +28,33 @@ const CARD_W        = 0.42
 const CARD_H        = 0.30
 const CARD_Y        = 1.55          // centre height — readable while standing
 const CARD_LIFT     = 0.01          // distance off the partition surface so card doesn't z-fight
+
+// Segment 1 — parallel to the front wall, corridor-side face flush
+// with the south edge of the entrance opening. Stops at the
+// front-window inner corner where segment-2 starts (i.e. it does NOT
+// extend all the way to the window wall — that would put its end
+// right in front of the silver service door).
+const SEG1_FACE     = ENT_END                             // -2.15, flush with entrance opening south edge
+const SEG1_CENTER_Z = SEG1_FACE + HALF_THICK              // -2.09
+const SEG1_X_START  = -HW                                 // -4.415, entrance-wall side
+const SEG1_X_END    = SEG2_FACE_X                         // +2.50, front/window inner corner
+const SEG1_LENGTH   = SEG1_X_END - SEG1_X_START           // ~6.92 m
+const SEG1_X_CENTER = (SEG1_X_START + SEG1_X_END) / 2     // ~-0.96
+// Segment 2 (parallel to window wall) — SEG2_FACE_X is imported from
+// dimensions.js; it's pulled inward from the wall to clear the HVAC
+// plenum (which extends 1.8 m into the room from the window wall, x
+// range 2.615–4.415). The corridor balloons to ≈1.9 m wide along this
+// segment as a result; visitors walk under the plenum overhead at the
+// silver-door area.
+const SEG2_CENTER = SEG2_FACE_X - HALF_THICK                // +2.44
+// Segment 2 starts where seg-1's far face ends (the front/window
+// inner corner) and runs along the window wall toward the back wall,
+// stopping a corridor-width short of the back wall so visitors can
+// exit at the south-east corner.
+const SEG2_Z_START = SEG1_CENTER_Z + HALF_THICK           // -2.03, meets seg-1 at front/window corner
+const SEG2_Z_END   = HD - CORRIDOR_WIDTH - HALF_THICK     // +3.59
+const SEG2_LENGTH  = SEG2_Z_END - SEG2_Z_START            // ~5.62 m
+const SEG2_Z_CENTER = (SEG2_Z_START + SEG2_Z_END) / 2     // ~+0.78
 
 // Plywood partition finished in matte black paint. Same paint colour
 // family as the concrete walls but slightly lighter and a bit smoother
@@ -66,78 +91,23 @@ const LIGHT_PROPS = {
 }
 const LIGHT_Y = 1.8
 
-// Each SEG*_FACE constant is the corridor-walking-side face of the
-// partition — the surface visitors see and where cards mount. The
-// partition body extends from there into the forest by
-// PARTITION_THICKNESS, so corridor walking width stays at exactly
-// CORRIDOR_WIDTH.
-
-// Segment 1 (parallel to front wall)
-const SEG1_FACE   = -HD + CORRIDOR_WIDTH                  // -3.65, corridor-side face
-const SEG1_CENTER = SEG1_FACE + HALF_THICK                // -3.59
-// Segment 2 (parallel to window wall) — SEG2_FACE_X is imported from
-// dimensions.js; it's pulled inward from the wall to clear the HVAC
-// plenum (which extends 1.8 m into the room from the window wall, x
-// range 2.615–4.415). The corridor balloons to ≈1.9 m wide along this
-// segment as a result; visitors walk under the plenum overhead at the
-// silver-door area.
-const SEG2_CENTER = SEG2_FACE_X - HALF_THICK                // +2.44
-// Segment 2 spans only the middle of the window-wall length so it
-// doesn't overlap with segments 1 and 3 at the inner corners.
-const SEG2_Z_START = SEG1_CENTER + HALF_THICK             // -3.53
-const SEG2_Z_END   = HD - CORRIDOR_WIDTH - HALF_THICK     // +3.59 - 0.06 = +3.53
-const SEG2_LENGTH  = SEG2_Z_END - SEG2_Z_START            // 7.06 m
-const SEG2_Z_CENTER = (SEG2_Z_START + SEG2_Z_END) / 2     // 0
-// Segment 3 (parallel to back wall)
-const SEG3_FACE   = HD - CORRIDOR_WIDTH                   // +3.65, corridor-side face
-const SEG3_CENTER = SEG3_FACE - HALF_THICK                // +3.59
-
-// Corridor-exit opening at D1. Width = corridor width.
-const OPENING_HALF      = CORRIDOR_WIDTH / 2
-const OPENING_X_NEAR    = D1_X + OPENING_HALF             // window-side edge
-const OPENING_X_FAR     = D1_X - OPENING_HALF             // entrance-side edge
-// Segment 3 piece A: from window-wall corner to opening's window-side edge.
-// Corridor does not extend past the opening toward D2 — no piece beyond.
-const SEG3_PIECE_LENGTH = HW - OPENING_X_NEAR             // ~4.175 m
-const SEG3_PIECE_X      = (HW + OPENING_X_NEAR) / 2
-
-// Segment 4 — perpendicular finish stub past D1 into the forest. Sits
-// flush with the entrance-side opening edge so it guides visitors deeper
-// without letting them turn left toward D2.
-const SEG4_LENGTH = CORRIDOR_WIDTH                        // 1.35 m into the forest
-const SEG4_FACE_X = OPENING_X_FAR                         // corridor-side face on the +X side
-const SEG4_CENTER_X = SEG4_FACE_X - HALF_THICK            // partition body extends -X from the face
-const SEG4_CENTER_Z = SEG3_FACE - SEG4_LENGTH / 2
-
-// Entrance-wall side forest seal. Visitor enters at z = -3.35 (entrance
-// opening spans z = -4.55 to -2.15). The portion from z = -3.65 to
-// z = -2.15 sits inside the forest; this seal blocks visitors from
-// walking through that portion straight into the forest, funnelling
-// them toward z < -3.65 where segment 1 begins.
-const ENTRANCE_SEAL_FACE_X   = -HW + 0.04                 // 4 cm gap to the entrance wall, room-facing edge
-const ENTRANCE_SEAL_CENTER_X = ENTRANCE_SEAL_FACE_X + HALF_THICK
-const ENTRANCE_SEAL_Z_START  = SEG1_FACE                  // -3.65
-const ENTRANCE_SEAL_Z_END    = -2.15
-const ENTRANCE_SEAL_LENGTH   = ENTRANCE_SEAL_Z_END - ENTRANCE_SEAL_Z_START
-const ENTRANCE_SEAL_CENTER_Z = (ENTRANCE_SEAL_Z_START + ENTRANCE_SEAL_Z_END) / 2
-
 export default function EntryPathway() {
   const { isConstruction } = useVariant()
   const partition = partitionMaterial(isConstruction)
   const card = cardMaterial(isConstruction)
 
-  const seg1Cards = makeCardPositions(-HW + 1.5, HW - 1.5, CARDS_PER_SEG)
+  const seg1Cards = makeCardPositions(SEG1_X_START + 1.0, SEG1_X_END - 1.0, CARDS_PER_SEG)
   const seg2Cards = makeCardPositions(SEG2_Z_START + 1.0, SEG2_Z_END - 1.0, CARDS_PER_SEG)
 
   return (
     <group>
-      {/* === Segment 1 — along front wall === */}
+      {/* === Segment 1 — face flush with entrance opening south edge, stops at front/window corner === */}
       <mesh
-        position={[0, PARTITION_HEIGHT / 2, SEG1_CENTER]}
+        position={[SEG1_X_CENTER, PARTITION_HEIGHT / 2, SEG1_CENTER_Z]}
         castShadow
         receiveShadow
       >
-        <boxGeometry args={[ROOM.W, PARTITION_HEIGHT, PARTITION_THICKNESS]} />
+        <boxGeometry args={[SEG1_LENGTH, PARTITION_HEIGHT, PARTITION_THICKNESS]} />
         <meshStandardMaterial {...partition} />
         <ArchEdges color="#0a8c5b" />
       </mesh>
@@ -151,8 +121,8 @@ export default function EntryPathway() {
           <meshStandardMaterial {...card} />
         </mesh>
       ))}
-      <pointLight position={[-HW + 2.5, LIGHT_Y, -HD + CORRIDOR_WIDTH / 2]} {...LIGHT_PROPS} />
-      <pointLight position={[ HW - 2.5, LIGHT_Y, -HD + CORRIDOR_WIDTH / 2]} {...LIGHT_PROPS} />
+      <pointLight position={[-HW + 2.5, LIGHT_Y, (-HD + SEG1_FACE) / 2]} {...LIGHT_PROPS} />
+      <pointLight position={[ HW - 2.5, LIGHT_Y, (-HD + SEG1_FACE) / 2]} {...LIGHT_PROPS} />
 
       {/* === Segment 2 — along window wall, inset to clear the HVAC plenum === */}
       <mesh

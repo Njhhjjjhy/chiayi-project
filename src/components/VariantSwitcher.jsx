@@ -39,7 +39,7 @@ function VariantDescription({ variant, onClose }) {
   )
 }
 
-function CategorySection({ categoryKey, label, variants, onShowInfo }) {
+function CategorySection({ categoryKey, label, variants }) {
   const [open, setOpen] = useState(false)
   const { selections, selectVariant } = useVariant()
   const hasVariants = variants.length > 0
@@ -80,16 +80,6 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
                 >
                   {v.label}
                 </button>
-                {v.description && (
-                  <button
-                    onClick={() => onShowInfo(v)}
-                    aria-label={`Info about ${v.label}`}
-                    style={TRANSITION}
-                    className="inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-full text-[13px] text-white/55 hover:text-white hover:bg-white/[0.08] cursor-pointer transition-colors"
-                  >
-                    ?
-                  </button>
-                )}
               </div>
             )
           })}
@@ -99,7 +89,7 @@ function CategorySection({ categoryKey, label, variants, onShowInfo }) {
   )
 }
 
-export default function VariantSwitcher() {
+export default function VariantSwitcher({ hideViewMode = false, hideCategories = [] } = {}) {
   const {
     viewMode, setViewMode, randomize,
     favorites, saveFavorite, loadFavorite, removeFavorite,
@@ -112,7 +102,6 @@ export default function VariantSwitcher() {
   } = useMeasure()
   const [collapsed, setCollapsed] = useState(false)
   const [showFavorites, setShowFavorites] = useState(false)
-  const [infoVariant, setInfoVariant] = useState(null)
 
   if (tourActive) return null
 
@@ -159,24 +148,26 @@ export default function VariantSwitcher() {
         {!collapsed && (
           <>
             {/* View mode toggle */}
-            <div className="px-3 py-2 border-t border-white/10">
-              <div className="flex rounded-full p-0.5 border border-white/10 gap-0.5">
-                {Object.entries(viewModes).map(([key, label]) => (
-                  <button
-                    key={key}
-                    onClick={() => setViewMode(key)}
-                    style={TRANSITION}
-                    className={`flex-1 min-h-[36px] text-[13px] rounded-full cursor-pointer transition-colors ${
-                      viewMode === key
-                        ? 'bg-white/15 text-white'
-                        : 'text-white/65 hover:text-white'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+            {!hideViewMode && (
+              <div className="px-3 py-2 border-t border-white/10">
+                <div className="flex rounded-full p-0.5 border border-white/10 gap-0.5">
+                  {Object.entries(viewModes).map(([key, label]) => (
+                    <button
+                      key={key}
+                      onClick={() => setViewMode(key)}
+                      style={TRANSITION}
+                      className={`flex-1 min-h-[36px] text-[13px] rounded-full cursor-pointer transition-colors ${
+                        viewMode === key
+                          ? 'bg-white/15 text-white'
+                          : 'text-white/65 hover:text-white'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Walk mode trigger */}
             <div className="px-3 py-2 border-t border-white/10">
@@ -191,15 +182,16 @@ export default function VariantSwitcher() {
 
             {/* Category sections */}
             <div className="border-t border-white/10">
-              {Object.entries(variantCategories).map(([key, cat]) => (
-                <CategorySection
-                  key={key}
-                  categoryKey={key}
-                  label={cat.label}
-                  variants={cat.variants}
-                  onShowInfo={setInfoVariant}
-                />
-              ))}
+              {Object.entries(variantCategories)
+                .filter(([key]) => !hideCategories.includes(key))
+                .map(([key, cat]) => (
+                  <CategorySection
+                    key={key}
+                    categoryKey={key}
+                    label={cat.label}
+                    variants={cat.variants}
+                  />
+                ))}
             </div>
 
             {/* Ruler — construction mode only */}
@@ -317,10 +309,6 @@ export default function VariantSwitcher() {
           </>
         )}
       </Glass>
-
-      {infoVariant && (
-        <VariantDescription variant={infoVariant} onClose={() => setInfoVariant(null)} />
-      )}
     </div>
   )
 }
