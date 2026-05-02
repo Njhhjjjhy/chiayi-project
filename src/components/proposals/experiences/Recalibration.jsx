@@ -23,7 +23,11 @@ export default function Recalibration() {
 
   useEffect(() => {
     setViewMode('experience')
-    selectVariant('fireflies', 'blinking')
+    // 'blinking' has a 120-second appear-one-by-one buildup that reads
+    // as "no fireflies" for the first ~10 seconds; not what we want for
+    // a review tool. 'motion' shows visible LEDs immediately while still
+    // matching the contemplative tone of this proposal.
+    selectVariant('fireflies', 'motion')
     setTime(0.85)
     pause()
   }, [setViewMode, selectVariant, setTime, pause])
