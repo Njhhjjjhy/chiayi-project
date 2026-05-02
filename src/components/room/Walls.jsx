@@ -4,7 +4,7 @@ import ArchEdges from './ArchEdges.jsx'
 import {
   ROOM, HW, HD, WALL_T,
   INSIDE,
-  ENT_START, ENT_END,
+  ENT_END,
   D1_W, D1_H, D1_START_X, D1_END_X, D1_X,
   D2_W, D2_H, D2_END_X, D2_X,
 } from '../../geometry/dimensions.js'
@@ -17,9 +17,8 @@ export default function Walls({ width = ROOM.W, depth = ROOM.D, height = ROOM.H 
   const { isConstruction } = useVariant()
   const wall = wallMaterial(isConstruction)
 
-  // entrance-wall (x = -HW): sections flanking the visitor entrance
-  const leftA_len = ENT_START - (-HD)
-  const leftA_z = (-HD + ENT_START) / 2
+  // entrance-wall (x = -HW): one section south of the visitor entrance
+  // (the entrance is flush with the front wall, so no north section).
   const leftB_len = HD - ENT_END
   const leftB_z = (ENT_END + HD) / 2
 
@@ -32,12 +31,7 @@ export default function Walls({ width = ROOM.W, depth = ROOM.D, height = ROOM.H 
 
   return (
     <group>
-      {/* entrance-wall sections (x = -HW) */}
-      <mesh position={[INSIDE.entrance - WALL_T / 2, height / 2, leftA_z]} receiveShadow>
-        <boxGeometry args={[WALL_T, height, leftA_len]} />
-        <meshStandardMaterial {...wall} />
-        <ArchEdges />
-      </mesh>
+      {/* entrance-wall section south of the visitor entrance (x = -HW) */}
       <mesh position={[INSIDE.entrance - WALL_T / 2, height / 2, leftB_z]} receiveShadow>
         <boxGeometry args={[WALL_T, height, leftB_len]} />
         <meshStandardMaterial {...wall} />
@@ -51,9 +45,11 @@ export default function Walls({ width = ROOM.W, depth = ROOM.D, height = ROOM.H 
         <ArchEdges />
       </mesh>
 
-      {/* front-wall (z = -HD) — continuous */}
+      {/* front-wall (z = -HD) — continuous, extended by WALL_T on each side
+          so the front-wall + entrance-wall corner is sealed (no visible
+          sliver where the two walls' offset bodies don't overlap). */}
       <mesh position={[0, height / 2, INSIDE.front - WALL_T / 2]} receiveShadow>
-        <boxGeometry args={[width, height, WALL_T]} />
+        <boxGeometry args={[width + 2 * WALL_T, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
         <ArchEdges />
       </mesh>
