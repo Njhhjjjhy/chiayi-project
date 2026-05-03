@@ -1,7 +1,9 @@
 import { useMeasure } from '../hooks/useMeasure.js'
 import DimensionLine from './DimensionLine.jsx'
+import { ROOM, HW, HD } from '../geometry/dimensions.js'
 
-// Invisible click plane that fills the room for raycasting
+// Invisible click plane that fills the room for raycasting. All planes
+// derive from canonical room constants so the tool follows ROOM.
 function ClickPlane({ onPoint }) {
   const handleClick = (e) => {
     e.stopPropagation()
@@ -13,66 +15,68 @@ function ClickPlane({ onPoint }) {
     ])
   }
 
+  const halfH = ROOM.H / 2
+
   return (
     <group>
-      {/* Floor plane */}
+      {/* Floor plane (slightly larger than footprint for edge clicks) */}
       <mesh
         position={[0, 0, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         onClick={handleClick}
         visible={false}
       >
-        <planeGeometry args={[12, 12]} />
+        <planeGeometry args={[ROOM.W + 1, ROOM.D + 1]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      {/* Back wall */}
-      <mesh position={[0, 1.76, -5]} onClick={handleClick} visible={false}>
-        <planeGeometry args={[10, 3.52]} />
+      {/* Front-wall (z = -HD) */}
+      <mesh position={[0, halfH, -HD]} onClick={handleClick} visible={false}>
+        <planeGeometry args={[ROOM.W, ROOM.H]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      {/* Left wall */}
+      {/* Back-wall (z = +HD) */}
       <mesh
-        position={[-5, 1.76, 0]}
-        rotation={[0, Math.PI / 2, 0]}
-        onClick={handleClick}
-        visible={false}
-      >
-        <planeGeometry args={[10, 3.52]} />
-        <meshBasicMaterial transparent opacity={0} />
-      </mesh>
-
-      {/* Right wall */}
-      <mesh
-        position={[5, 1.76, 0]}
-        rotation={[0, -Math.PI / 2, 0]}
-        onClick={handleClick}
-        visible={false}
-      >
-        <planeGeometry args={[10, 3.52]} />
-        <meshBasicMaterial transparent opacity={0} />
-      </mesh>
-
-      {/* Front wall */}
-      <mesh
-        position={[0, 1.76, 5]}
+        position={[0, halfH, HD]}
         rotation={[0, Math.PI, 0]}
         onClick={handleClick}
         visible={false}
       >
-        <planeGeometry args={[10, 3.52]} />
+        <planeGeometry args={[ROOM.W, ROOM.H]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      {/* Ceiling */}
+      {/* Entrance-wall (x = -HW) */}
       <mesh
-        position={[0, 3.52, 0]}
+        position={[-HW, halfH, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        onClick={handleClick}
+        visible={false}
+      >
+        <planeGeometry args={[ROOM.D, ROOM.H]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+
+      {/* Window-wall (x = +HW) */}
+      <mesh
+        position={[HW, halfH, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+        onClick={handleClick}
+        visible={false}
+      >
+        <planeGeometry args={[ROOM.D, ROOM.H]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+
+      {/* Ceiling (y = ROOM.H) */}
+      <mesh
+        position={[0, ROOM.H, 0]}
         rotation={[Math.PI / 2, 0, 0]}
         onClick={handleClick}
         visible={false}
       >
-        <planeGeometry args={[10, 10]} />
+        <planeGeometry args={[ROOM.W, ROOM.D]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
     </group>
