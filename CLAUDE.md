@@ -1,5 +1,24 @@
 # Fireflies
 
+## How to talk to the user (read this first)
+
+**The user is a designer, not a developer.** Never use code jargon, file names, function names, or technical shorthand in conversation. Describe everything in plain or design terms — what the user would *see, feel, or do*, not how the code does it.
+
+Examples of what NOT to say:
+- "MeasureTool.jsx hardcodes [10, 3.52] planes"
+- "Refactored ClickPlane to derive from ROOM constants"
+- "kebab-case the dropdown values"
+- "rename PARTITION_HEIGHT to PATHWAY_HEIGHT"
+
+Translated to plain language:
+- "the click-to-measure tool was still set up for the old, bigger room — fixed it to follow the current room size"
+- "the room dropdown buttons in the QA panel were named with the old labels — updated"
+- "the partition's height value had the old name — renamed to match the new naming"
+
+If a code change has no visible effect, just *do it silently* and don't mention it. If it does have a visible effect, describe the effect, not the change.
+
+When the user asks "what is X?", explain X in terms a non-developer can picture. Do not assume they know any naming conventions, file structures, or programming concepts.
+
 ## Design Context
 
 ### Users
@@ -50,6 +69,18 @@ No designer, artist, studio, or specific-artwork names appear anywhere in this c
 
 ### Room glossary
 When interpreting QA notes from Corbett (or any informal language about room elements), read `docs/room-glossary.md` first. It maps every wall / fixture / fabric / firefly group to its canonical name and code reference, plus a translation cheatsheet for common informal phrases.
+
+### Naming rule (locked)
+Every room element has one canonical name with a hyphen: front-wall, back-wall, window-wall, entrance-wall, entrance-wall-partition, pathway, forest, exhibition-area, hvac-plenum, silver-service-door, etc. Use these everywhere — comments, doc text, dropdown labels, file names. Old names like "corridor", "Segment 1/2/3", "EntryPathway" are forbidden — see `docs/room-glossary.md` for the translation table when reading old QA notes.
+
+### Real-world room sizes (locked)
+The room is rectangular: 8.83 m (front-wall and back-wall) × 8.78 m (entrance-wall and window-wall) × 3.52 m tall (working ceiling, after beams). Total height to the original structural ceiling is 4.2 m, but only 3.52 m is modelled. Visitor entrance is 2.4 m wide × full-height. Source of truth lives in `src/geometry/dimensions.js` — every other position derives from it. Don't hardcode numbers.
+
+### Window-wall layout (locked)
+Walking along the window-wall from the front-wall corner toward the back-wall corner: 119 cm plain wall (with the small 59 × 178 cm window cut in flush-left), then 99 cm silver service door, then 90 cm plain wall, then 570 cm main glass partition that ends flush with the back-wall corner. Total 878 cm.
+
+### Visual diagnostic snapshots
+The folder `baselines/` (top-level, gitignored) holds PNG screenshots from `scripts/baseline-screenshot.mjs` and `scripts/screenshot-all-presets.mjs`. One PNG per significant change, filename `<YYYY-MM-DD-HHMMSS>-<label>.png`. Used to visually verify geometry changes side-by-side with prior states. Do not commit these.
 
 ### Honesty about sources
 Never claim to have read documentation or URLs that weren't actually retrieved. WebFetch fails silently on JavaScript-rendered sites (e.g. developer.apple.com) — when that happens, say so explicitly and propose an alternative (puppeteer, user paste, PDF). Distinguish clearly between (a) content actually retrieved from a URL/file and (b) reference info from a Claude skill or training data. Do not substitute one for the other.
