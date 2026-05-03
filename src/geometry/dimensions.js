@@ -40,12 +40,22 @@ export const DROPPED_CEILING_Y = 3.4
 
 // --- Visitor entrance (entrance-wall, x = -HW) ---
 // Opening is flush with the front-wall corner. South edge stays where
-// the partition's front-wall side aligns to it.
+// the column's front face sits.
 export const ENT_W = 2.40                 // canonical entrance width
 const ENT_START = -HD                     // flush with front-wall corner
 export const ENT_END = ENT_START + ENT_W  // south edge, derived
 export const ENT_H = ROOM.H               // full working ceiling height, no transom
 export const ENT_Z = (ENT_START + ENT_END) / 2
+
+// --- Column (south side of visitor entrance) ---
+// 40 × 40 cm plywood column, full ROOM.H tall. Outer face flush with
+// the entrance-wall line at x = -HW; front face at the south edge of
+// the entrance opening (z = ENT_END). Together with the
+// entrance-wall-partition it forms the conceptual entrance-wall.
+export const COL_W = 0.40
+export const COL_CENTER_X = -HW + COL_W / 2     // -4.215
+export const COL_CENTER_Z = ENT_END + COL_W / 2 // -1.79
+export const COL_BACK_Z = ENT_END + COL_W       // -1.59
 
 // --- Back-wall doors (z = +HD) ---
 // D1 + D2 measured from window-wall corner (+HW).

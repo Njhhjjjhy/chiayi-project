@@ -7,6 +7,7 @@ import HVAC from './room/HVAC.jsx'
 import Wainscot from './room/Wainscot.jsx'
 import TheatricalCurtain from './room/TheatricalCurtain.jsx'
 import EntranceWallPartition from './room/EntranceWallPartition.jsx'
+import Column from './room/Column.jsx'
 import Pathway from './room/Pathway.jsx'
 import { ROOM } from '../geometry/dimensions.js'
 
@@ -28,6 +29,7 @@ export default function Room({ width = ROOM.W, depth = ROOM.D, height = ROOM.H }
       <Wainscot width={width} depth={depth} />
       <TheatricalCurtain />
       <EntranceWallPartition />
+      <Column />
       <Pathway />
     </group>
   )
