@@ -2,13 +2,10 @@ import { useState } from 'react'
 import { Html } from '@react-three/drei'
 import DimensionLine from './DimensionLine.jsx'
 import {
-  HW, HD, D1_X, WALL_T,
-  CORRIDOR_WIDTH, PARTITION_HEIGHT, SEG2_FACE_X,
+  HW, WINDOW_PRESET_CAMERA_X,
 } from '../geometry/dimensions.js'
 
-const PARTITION_THICKNESS = WALL_T // 0.12 m, matches the room walls
-const OPENING_HALF        = CORRIDOR_WIDTH / 2
-const PARTITION_COLOR     = '#0a8c5b' // green — distinct from room blue / human orange
+const PARTITION_COLOR = '#0a8c5b' // green — distinct from room blue / human orange
 
 function MaterialNote({ position, children }) {
   return (
@@ -103,7 +100,7 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
       {/* === ROOM DIMENSIONS === */}
       {has('room') && (
         <>
-          {/* Width — along front wall */}
+          {/* Width — along front-wall */}
           <DimensionLine
             start={[-halfW, 0, halfD]}
             end={[halfW, 0, halfD]}
@@ -143,71 +140,15 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
       {/* === PARTITIONS === */}
       {has('partitions') && (
         <>
-          {/* Segment 1 corridor width — between front wall and seg-1 partition */}
+          {/* Window-wall preset camera setback — distance from window-wall to the
+              x where the camera sits in the window-wall preset */}
           <DimensionLine
-            start={[-2, 0.02, -HD]}
-            end={[-2, 0.02, -HD + CORRIDOR_WIDTH]}
-            label={`${CORRIDOR_WIDTH}m`}
-            offset={0.3}
-            offsetDirection={[-1, 0, 0]}
-            color={PARTITION_COLOR}
-          />
-          {/* Segment 2 corridor width — between window wall and seg-2 partition (plenum-cleared) */}
-          <DimensionLine
-            start={[SEG2_FACE_X, 0.02, 0]}
+            start={[WINDOW_PRESET_CAMERA_X, 0.02, 0]}
             end={[HW, 0.02, 0]}
-            label={`${(HW - SEG2_FACE_X).toFixed(2)}m`}
+            label={`${(HW - WINDOW_PRESET_CAMERA_X).toFixed(2)}m`}
             offset={0.3}
             offsetDirection={[0, 0, 1]}
             color={PARTITION_COLOR}
-          />
-          {/* Segment 3 corridor width — between back wall and seg-3 partition */}
-          <DimensionLine
-            start={[2, 0.02, HD - CORRIDOR_WIDTH]}
-            end={[2, 0.02, HD]}
-            label={`${CORRIDOR_WIDTH}m`}
-            offset={0.3}
-            offsetDirection={[1, 0, 0]}
-            color={PARTITION_COLOR}
-          />
-          {/* D1 corridor opening — visitors exit corridor through this gap into the forest */}
-          <DimensionLine
-            start={[D1_X - OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH]}
-            end={[D1_X + OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH]}
-            label={`opening ${CORRIDOR_WIDTH}m`}
-            offset={0.3}
-            offsetDirection={[0, 0, -1]}
-            color={PARTITION_COLOR}
-            fontSize="8px"
-          />
-          {/* Partition height — measured at the segment 1 partition near front-wall corner */}
-          <DimensionLine
-            start={[-HW + 0.5, 0, -HD + CORRIDOR_WIDTH]}
-            end={[-HW + 0.5, PARTITION_HEIGHT, -HD + CORRIDOR_WIDTH]}
-            label={`${PARTITION_HEIGHT}m`}
-            offset={0.3}
-            offsetDirection={[-1, 0, 0]}
-            color={PARTITION_COLOR}
-          />
-          {/* Partition thickness — across segment 1's body */}
-          <DimensionLine
-            start={[3, 0.02, -HD + CORRIDOR_WIDTH]}
-            end={[3, 0.02, -HD + CORRIDOR_WIDTH + PARTITION_THICKNESS]}
-            label={`${(PARTITION_THICKNESS * 100).toFixed(0)}cm`}
-            offset={0.4}
-            offsetDirection={[0, 0, 1]}
-            color={PARTITION_COLOR}
-            fontSize="8px"
-          />
-          {/* Segment 4 stub length — perpendicular finish past D1 into the forest */}
-          <DimensionLine
-            start={[D1_X - OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH]}
-            end={[D1_X - OPENING_HALF, 0.02, HD - CORRIDOR_WIDTH - CORRIDOR_WIDTH]}
-            label={`stub ${CORRIDOR_WIDTH}m`}
-            offset={0.3}
-            offsetDirection={[-1, 0, 0]}
-            color={PARTITION_COLOR}
-            fontSize="8px"
           />
         </>
       )}

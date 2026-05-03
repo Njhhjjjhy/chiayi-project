@@ -9,9 +9,8 @@ import { useVariant } from '../../../hooks/useVariant.js'
 // the timeline) and reuses the existing 4-phase shader.
 //
 // Also overrides:
-//   - Firefly variant → 'motion' (the default 'blinking' variant has a
-//     2-minute warm-up before fireflies become visible, which makes the
-//     30-second compressed cycle look broken).
+//   - Firefly variant → 'drifting-swarm' (visible motion clusters that
+//     read clearly against the cycling sky).
 //   - Initial timeline position → 0.7 (late blue hour) so fireflies are
 //     visible immediately on page load, instead of having to wait
 //     through the daylight portion of the cycle.
@@ -22,7 +21,7 @@ export default function CompressedDay() {
 
   useEffect(() => {
     setViewMode('experience')
-    selectVariant('fireflies', 'motion')
+    selectVariant('fireflies', 'drifting-swarm')
     setTime(0.85)
     setSpeed('30s')
     play()

@@ -52,7 +52,7 @@ const LABELS = [
     color: '#37474f',
   },
   {
-    name: 'Wainscoting — dark wood, ~90cm on front/back walls, ~30cm on window-wall; entrance-wall has none',
+    name: 'Wainscoting — dark wood, ~90cm on front-wall and back-wall, ~30cm on window-wall; entrance-wall has none',
     position: [3.0, 0.4, -4.0],
     color: '#5d4037',
   },

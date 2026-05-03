@@ -9,15 +9,15 @@ import {
   WAINSCOT_H as WAINSCOT_CFG,
 } from '../../geometry/dimensions.js'
 
-// Dark wood plank band, bottom ~90 cm of front/back walls, ~30 cm of window-wall.
+// Dark wood plank band, bottom ~90 cm of front-wall and back-wall, ~30 cm of window-wall.
 // Three layers:
 //   (1) bulk back panels (recessed backing — fills space between planks)
 //   (2) vertical plank faces (sit ~1.5 cm proud, tongue-and-groove relief)
 //   (3) cap rail at top + skirting board at bottom (horizontal trim)
 // Cut around every real door with a 2 cm visible clearance on each side.
 
-const WAINSCOT_H = WAINSCOT_CFG.front        // front + back walls (0.90)
-const WW_WAINSCOT_H = WAINSCOT_CFG.window    // window wall, shorter (0.30)
+const WAINSCOT_H = WAINSCOT_CFG.front        // front-wall + back-wall (0.90)
+const WW_WAINSCOT_H = WAINSCOT_CFG.window    // window-wall, shorter (0.30)
 const WAINSCOT_T = 0.04
 const PLANK_PITCH = 0.14      // centre-to-centre
 const PLANK_W = 0.115         // visible plank width (~3 cm gap → groove)
@@ -27,7 +27,7 @@ const CAP_H = 0.03
 const DOOR_CLEAR = 0.02       // panels visibly stop before door frames
 
 // Plank-position generator. Skips planks whose centre falls inside any
-// skipRange [lo,hi]. axis='x' for front/back walls, axis='z' for window wall.
+// skipRange [lo,hi]. axis='x' for front-wall and back-wall, axis='z' for window-wall.
 function plankPositions(axis, wallInsideFace, signDir, totalLen, wsH, skipRanges = []) {
   const count = Math.floor(totalLen / PLANK_PITCH)
   const startT = -((count - 1) * PLANK_PITCH) / 2

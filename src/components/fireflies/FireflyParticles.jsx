@@ -8,10 +8,10 @@ import { useFrame } from '@react-three/fiber'
 const tempObject = new THREE.Object3D()
 const tempColor = new THREE.Color()
 
-// Real-world LED is 3 mm diameter (~1.5 mm physical radius).
-// Scaled up to 0.015 for visibility at sim camera distances.
-// This is a display value, not a physical measurement.
-export default function FireflyParticles({ count, positions, opacities, colors, size = 0.015 }) {
+// LED visible point = 3 mm (0.003 in scene units). This matches the
+// real-world LED diameter. Do not inflate for "visibility" — the 3D
+// preview must match what the room will actually look like.
+export default function FireflyParticles({ count, positions, opacities, colors, size = 0.003 }) {
   const meshRef = useRef()
 
   const geometry = useMemo(() => new THREE.SphereGeometry(1, 4, 4), [])

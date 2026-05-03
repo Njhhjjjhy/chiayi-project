@@ -1,10 +1,11 @@
-import Blinking from '../components/fireflies/Blinking.jsx'
-import Interaction from '../components/fireflies/Interaction.jsx'
-import Motion from '../components/fireflies/Motion.jsx'
-import TheWave from '../components/fireflies/TheWave.jsx'
+import Awakening from '../components/fireflies/Awakening.jsx'
+import Flashlight from '../components/fireflies/Flashlight.jsx'
+import DriftingSwarm from '../components/fireflies/DriftingSwarm.jsx'
+import PulseWave from '../components/fireflies/PulseWave.jsx'
+import Heartbeat from '../components/fireflies/Heartbeat.jsx'
 
 // Canonical registry for every firefly variant. To add a new variant:
-//   1. Create the component file (e.g. Sparkle.jsx) in components/fireflies/
+//   1. Create the component file in components/fireflies/
 //   2. Add one entry below with id, label, description, component, and
 //      optionally isDefault: true
 // Nothing else needs changing — FireflySystem reads components from the
@@ -12,30 +13,36 @@ import TheWave from '../components/fireflies/TheWave.jsx'
 // list for UI display.
 
 export const fireflyVariants = {
-  blinking: {
-    id: 'blinking',
-    label: 'Phase 1: appearing',
-    description: 'Fireflies start appearing — very few at first, then more and more over ~30 seconds until the whole ceiling and walls are alive with them. Each 1.2×1.2 m unit lights up in a shuffled order; once a unit is on, its 18 LEDs blink independently.',
-    component: Blinking,
+  awakening: {
+    id: 'awakening',
+    label: 'Awakening',
+    description: 'A single firefly lights up first, then the awakening expands outward in widening rings until every LED is on. Once fully lit, the room settles into a long, slow breath.',
+    component: Awakening,
     isDefault: true,
   },
-  interaction: {
-    id: 'interaction',
-    label: 'Phase 2: flashlight',
-    description: 'Visitors sweep an IR flashlight (simulated here with the mouse pointer). Each unit the beam enters toggles — on becomes off, off becomes on. Sweep around to "paint" the firefly pattern yourself.',
-    component: Interaction,
+  flashlight: {
+    id: 'flashlight',
+    label: 'Flashlight',
+    description: 'A wide beam (60 cm) follows the cursor and wakes every LED it touches. The beam fades slowly so you see a trail of light following you, and the light spreads to neighbouring clusters as you move.',
+    component: Flashlight,
   },
-  motion: {
-    id: 'motion',
-    label: 'Phase 3: fireflies moving',
-    description: 'The fireflies come alive and start moving around. Five drifting swarms wander through the room; the LEDs light up as each swarm passes over them, so the glow flows across the ceiling and walls.',
-    component: Motion,
+  'drifting-swarm': {
+    id: 'drifting-swarm',
+    label: 'Drifting swarm',
+    description: 'Five glowing clusters drift slowly through the room. Each one lights up roughly fifty LEDs at a time and leaves a fading trail behind it as it moves on.',
+    component: DriftingSwarm,
   },
-  theWave: {
-    id: 'theWave',
-    label: 'The wave',
-    description: 'A bright wave of light sweeps across the room every 15 seconds — left to right, front to back, or radiating outward. Between waves, LEDs flicker quietly.',
-    component: TheWave,
+  'pulse-wave': {
+    id: 'pulse-wave',
+    label: 'Pulse wave',
+    description: 'Every fifteen seconds a wave of light radiates outward from a random point on the ceiling, sweeping across the ceiling and down the side walls. Between waves a few LEDs twinkle softly.',
+    component: PulseWave,
+  },
+  heartbeat: {
+    id: 'heartbeat',
+    label: 'Heartbeat',
+    description: 'Every LED in the room pulses in unison at about seventy beats per minute, with two beats per cycle so it reads as a heartbeat rather than a steady throb.',
+    component: Heartbeat,
   },
 }
 

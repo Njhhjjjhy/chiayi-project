@@ -1,5 +1,5 @@
 // Five experience proposals for the firefly room. Each one is a complete
-// corridor → forest → exit experience, anchored on a different reference
+// pathway → forest → exit experience, anchored on a different reference
 // principle. Source document: docs/experience-proposals.md.
 //
 // Phase status:
@@ -9,8 +9,8 @@
 
 export const experiences = [
   {
-    id: 'dark-corridor',
-    label: 'Dark corridor',
+    id: 'dark-pathway',
+    label: 'Dark pathway',
     summary: 'Almost no light. Flashlight makes a small bubble of legibility; everything outside the bubble must be sensed by other means.',
     status: 'built',
   },
@@ -23,7 +23,7 @@ export const experiences = [
   {
     id: 'recalibration',
     label: 'Recalibration',
-    summary: 'Dark adaption is the subject. The corridor walks the visitor through a tuned dimming curve; the forest rewards stillness.',
+    summary: 'Dark adaption is the subject. The pathway walks the visitor through a tuned dimming curve; the forest rewards stillness.',
     status: 'built',
   },
   {
@@ -35,7 +35,7 @@ export const experiences = [
   {
     id: 'compressed-day',
     label: 'Compressed day',
-    summary: 'A 24-hour cycle in 15–20 minutes. The corridor is the day, the forest is the night, the flashlight is the moon.',
+    summary: 'A 24-hour cycle in 15–20 minutes. The pathway is the day, the forest is the night, the flashlight is the moon.',
     status: 'built',
   },
 ]

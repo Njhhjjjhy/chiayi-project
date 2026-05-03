@@ -6,7 +6,8 @@ import Doors from './room/Doors.jsx'
 import HVAC from './room/HVAC.jsx'
 import Wainscot from './room/Wainscot.jsx'
 import TheatricalCurtain from './room/TheatricalCurtain.jsx'
-import EntryPathway from './room/EntryPathway.jsx'
+import EntranceWallPartition from './room/EntranceWallPartition.jsx'
+import Pathway from './room/Pathway.jsx'
 import { ROOM } from '../geometry/dimensions.js'
 
 // 3D code → user's wall names (existing venue reality):
@@ -26,7 +27,8 @@ export default function Room({ width = ROOM.W, depth = ROOM.D, height = ROOM.H }
       <HVAC width={width} height={height} />
       <Wainscot width={width} depth={depth} />
       <TheatricalCurtain />
-      <EntryPathway />
+      <EntranceWallPartition />
+      <Pathway />
     </group>
   )
 }

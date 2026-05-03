@@ -32,7 +32,7 @@ The canonical numeric source is `src/geometry/dimensions.js` — change a number
 
 ## Big-wall treatment concepts (visual descriptions)
 
-The back wall is the major surface. Six treatment proposals are tracked in the proposals viewer (`/proposals/:variantId`). Visual logic only — sources are not cited per the project's attribution policy ("the form carries the reference").
+The back-wall is the major surface. Six treatment proposals are tracked in the proposals viewer (`/proposals/:variantId`). Visual logic only — sources are not cited per the project's attribution policy ("the form carries the reference").
 
 - **Living moss.** Wall-sized surface of living moss or lichen woven into wire mesh. The wall is alive; ecology made tangible; visitors smell forest. Local Alishan mountain moss preferred.
 - **Layered mountain silhouette.** Multiple thin wood/foam-core panels cut into mountain ridge profiles, spaced 5–15 cm apart, LED rope lights behind each layer. Backlit silhouettes glow; warm-to-cool gradient back to front. Cost: under 50,000 TWD.

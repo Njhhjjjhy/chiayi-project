@@ -1,6 +1,7 @@
 import { fireflyVariantList } from './fireflies.js'
 import { ceilingVariantList, floorVariantList } from './room.js'
 import { wallCoveringVariantList } from './wallCovering.js'
+import { HW, HD, ENT_W, WINDOW_PRESET_CAMERA_X } from '../geometry/dimensions.js'
 
 export const variantCategories = {
   wallCovering: {
@@ -27,30 +28,36 @@ export const viewModes = {
   construction: 'Construction',
 }
 
-// Each wall preset stands in the forest centre and looks head-on
-// at the named wall, like an architectural elevation. Anything in
-// front of that wall that would block the view is hidden for that
-// preset only — and only while not walking the space.
+// Each wall preset stands inside the room and looks head-on at the
+// named wall, like an architectural elevation. Positions and targets
+// are derived from ROOM constants so they auto-update when room
+// dimensions change.
 //
-//   - front: nothing on the front wall, but seg-1 partition is in
-//     the way. Hidden.
-//   - back: D1 + D2 visible, seg-3 + seg-4 don't block from this
-//     camera position. Nothing hidden.
-//   - entrance: visitor entrance opening visible head-on, seal
-//     partition hidden so the opening reads through.
-//   - window: silver door + small window + main glass + plenum
-//     visible. Seg-2 partition + theatrical curtain hidden.
-//     Windows switch to a visible glass material in this preset.
-//   - ceiling: forest centre, looking up at dropped ceiling.
-//   - standing: forest centre, eye-level visitor POV (full
-//     installation visible — partitions + curtain + everything).
+//   - front: camera near back-wall, looking at front-wall centre.
+//     Partition's front-wall side will appear in foreground (not
+//     auto-hidden in current implementation).
+//   - back: camera near front-wall, looking at back-wall centre.
+//     No partition obstruction (partition only has front + window arms).
+//   - window: camera between partition's window-wall arm and the
+//     window-wall itself, so the actual fixtures (small window,
+//     silver door, main glass) read clearly. Theatrical curtain
+//     hidden in this preset.
+//   - entrance: camera on the entrance-wall side of the partition arm
+//     (so partition is behind the camera, not occluding view).
+//   - ceiling: top-down. y = 9 m fits the 8.83 × 8.78 footprint.
+//   - standing: visitor POV — just inside the entrance, at the south
+//     edge of the entrance opening, looking into the room interior.
 export const cameraPresets = {
-  ceiling:  { label: 'Ceiling',       position: [0.5, 8, 0.5],     target: [0, 0, 0] },
-  front:    { label: 'Front wall',    position: [0, 1.6, -2],      target: [0, 1.6, -5] },
-  back:     { label: 'Back wall',     position: [0, 1.6, 2],       target: [0, 1.6, 5] },
-  entrance: { label: 'Entrance wall', position: [0, 1.6, -3.35],   target: [-4.4, 1.6, -3.35] },
-  window:   { label: 'Window wall',   position: [0, 1.6, 0],       target: [4.4, 1.6, 0] },
-  standing: { label: 'Standing',      position: [0, 1.6, 0],       target: [0, 1.6, -2] },
+  ceiling:  { label: 'Ceiling',       position: [0.5, 9, 0.5],                                target: [0, 0, 0] },
+  front:    { label: 'Front wall',    position: [0, 1.6, HD - 0.3],                           target: [0, 1.6, -HD] },
+  back:     { label: 'Back wall',     position: [0, 1.6, -HD + 0.3],                          target: [0, 1.6, HD] },
+  window:   {
+    label: 'Window wall',
+    position: [WINDOW_PRESET_CAMERA_X, 1.6, 0],
+    target:   [HW, 1.6, 0],
+  },
+  entrance: { label: 'Entrance wall', position: [HW / 2, 1.6, 0],                             target: [-HW, 1.6, 0] },
+  standing: { label: 'Standing',      position: [-HW + 0.5, 1.6, -HD + ENT_W],                target: [0, 1.6, 0] },
 }
 
 // Window preset hides the theatrical curtain (so the main glass +

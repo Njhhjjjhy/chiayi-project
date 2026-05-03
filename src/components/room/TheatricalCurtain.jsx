@@ -4,14 +4,14 @@ import { useVariant } from '../../hooks/useVariant.js'
 import { ELEVATION_PRESET_KEYS } from '../../variants/config.js'
 
 // Dark navy blackout curtain hung in front of the main glass partition
-// on the window wall. Covers the 5.7 m main-glass run flush with the
-// back wall, full room height. Stops short of the silver door + HVAC
+// on the window-wall. Covers the 5.7 m main-glass run flush with the
+// back-wall, full room height. Stops short of the silver door + HVAC
 // plenum on the entrance-wall side, so no clipping.
 //
 // Always rendered — the curtain is a permanent part of the canonical
 // room, not a togglable proposal element.
 
-const OFFSET = 0.04 // metres from window wall into the room
+const OFFSET = 0.04 // metres from window-wall into the room
 
 export default function TheatricalCurtain() {
   const { walkMode, activeSceneKey } = useVariant()

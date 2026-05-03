@@ -12,8 +12,8 @@ import { ROOM, HW, HD, INSET } from '../../../geometry/dimensions.js'
 //
 // Forces:
 //   - Experience view mode
-//   - Firefly variant 'motion' (the moving swarms read best with the
-//     pulsing intensity)
+//   - Firefly variant 'heartbeat' — every LED pulses in unison at
+//     ~70 bpm, matching the ambient heart-rate light.
 //   - Timeline parked at blue hour (dim, but visible enough that the
 //     mirror band reads against the wall)
 //   - Timeline paused
@@ -29,7 +29,7 @@ export default function MirroredSelf() {
 
   useEffect(() => {
     setViewMode('experience')
-    selectVariant('fireflies', 'motion')
+    selectVariant('fireflies', 'heartbeat')
     setTime(0.85)
     pause()
   }, [setViewMode, selectVariant, setTime, pause])

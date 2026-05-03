@@ -10,12 +10,12 @@ If a name changes here, update `src/components/QAPanel/locations.js` (the dropdo
 
 | Canonical name | Aliases / how Corbett might describe it | Code reference |
 | --- | --- | --- |
-| **Entrance wall** | "the wall with the visitor entrance", "the wall you walk in through", "left side wall" (when facing back wall), "west wall" | `INSIDE.entrance` (x = -HW = -4.415) |
-| **Window wall** | "the wall with the big windows", "the wall with the silver door", "the wall with the HVAC", "right side wall" (when facing back wall), "east wall" | `INSIDE.window` (x = +HW = +4.415) |
-| **Front wall** | "the wall opposite the back wall", "the wall facing visitors when they enter", "north wall" | `INSIDE.front` (z = -HD = -5) |
-| **Back wall** | "the wall with the two staff doors", "the back wall", "south wall" | `INSIDE.back` (z = +HD = +5) |
+| **Entrance-wall** | "the wall with the visitor entrance", "the wall you walk in through", "left side wall" (when facing the back-wall), "west wall". Note: conceptual only — built from the entrance-wall-partition plus the column. | `INSIDE.entrance` (x = -HW = -4.415) |
+| **Window-wall** | "the wall with the big windows", "the wall with the silver door", "the wall with the HVAC", "right side wall" (when facing the back-wall), "east wall" | `INSIDE.window` (x = +HW = +4.415) |
+| **Front-wall** | "the wall opposite the back-wall", "the wall facing visitors when they enter", "north wall" | `INSIDE.front` (z = -HD = -5) |
+| **Back-wall** | "the wall with the two staff doors", "the back wall", "south wall" | `INSIDE.back` (z = +HD = +5) |
 
-Fireflies (LEDs behind fabric) are on **ceiling + entrance wall + window wall** only. Front and back walls do NOT have fireflies. (See `src/components/fireflies/surfacePositions.js`.)
+Fireflies (LEDs behind fabric) are on **ceiling + entrance-wall + window-wall** only. The front-wall and back-wall do NOT have fireflies. (See `src/components/fireflies/surfacePositions.js`.)
 
 ## Ceiling and floor
 
@@ -24,10 +24,10 @@ Fireflies (LEDs behind fabric) are on **ceiling + entrance wall + window wall** 
 
 ## Doors
 
-- **Visitor entrance** — full-height (3.52 m) opening on the entrance wall. The single way visitors enter.
-- **D1 / first staff door** — back wall, closer to the window-wall corner. 96 × 236 cm.
-- **D2 / second staff door** — back wall, closer to the entrance-wall corner. 90 × 236 cm.
-- **Silver service door** / **steel door** — window wall, between the small window and the main glass. 99 × 207 cm. Likely how Corbett refers to "that metal door".
+- **Visitor entrance** — full-height (3.52 m) opening on the entrance-wall, between the column and the front-wall. The single way visitors enter.
+- **D1 / first staff door** — back-wall, closer to the window-wall corner. 96 × 236 cm.
+- **D2 / second staff door** — back-wall, closer to the entrance-wall corner. 90 × 236 cm.
+- **Silver service door** / **steel door** — window-wall, between the small window and the main glass. 99 × 207 cm. Likely how Corbett refers to "that metal door".
 
 ## Window-wall fixtures
 
@@ -37,15 +37,20 @@ Fireflies (LEDs behind fabric) are on **ceiling + entrance wall + window wall** 
 
 ## Wainscoting
 
-Dark wood band at the bottom of three walls — heights vary. Entrance wall has none.
-- Front wall: 90 cm
-- Back wall: 90 cm
-- Window wall: 30 cm
-- Entrance wall: 0 (no wainscoting)
+Dark wood band at the bottom of three walls — heights vary. The entrance-wall has none.
+- Front-wall: 90 cm
+- Back-wall: 90 cm
+- Window-wall: 30 cm
+- Entrance-wall: 0 (no wainscoting)
 
 ## Visitor flow elements
 
-- **Corridor / corridor partitions / entry pathway** — the narrow walking corridor that wraps around three walls (front, window, back). Visitors enter through the entrance wall, walk around the perimeter, and exit. Width 1.35 m. Component: `EntryPathway.jsx`.
+- **Pathway** — the narrow walking strip wrapping the partition along its front-wall and window-wall sides. Visitors enter through the visitor entrance, walk around the partition, and exit at the back/window-wall corner. Width 1.35 m (`PATHWAY_WIDTH`).
+- **Partition** — the L-shaped plywood wall inside the exhibition area that the pathway wraps around. Component: `Pathway.jsx`. Built from plywood-on-stud, 12 cm thick, 3.4 m tall (`PATHWAY_HEIGHT`), matte black paint.
+- **Entrance-wall-partition** — a separate plywood partition that creates the conceptual entrance-wall along the left side of the exhibition area. Component: `EntranceWallPartition.jsx`. 60 mm thick, full ROOM.H tall, runs from the south edge of the entrance opening to the back-wall.
+- **Column** — small vertical plywood element near the front-wall corner of the entrance-wall side. The visitor entrance is the gap between the column and the front-wall.
+- **Forest** — the open space inside the exhibition area, bounded by the partition, entrance-wall-partition, and column. The dark inner sanctum where the fireflies live.
+- **Exhibition-area** — the rectangular zone bounded by the front-wall, back-wall, window-wall, and the entrance-wall-partition + column line on the entrance-wall side. Contains exactly two spaces: pathway and forest.
 - **Theatrical curtain** — the fabric curtain layer (the inner fabric that fireflies sit behind). Component: `TheatricalCurtain.jsx`.
 
 ## Wall coverings
@@ -54,7 +59,7 @@ The decorative fabric / lattice / panel layer on top of the structural walls. Cu
 
 ## Fireflies
 
-The LEDs behind the fabric. Distributed in 60 × 60 cm squares on the ceiling, entrance wall, and window wall. Various behavior modes: blinking, motion (drift), interaction (visitor-triggered), the wave (synchronized).
+The LEDs behind the fabric. Distributed in 60 × 60 cm squares on the ceiling, entrance-wall, and window-wall. Visible LED point is 3 mm.
 
 ---
 
@@ -62,13 +67,15 @@ The LEDs behind the fabric. Distributed in 60 × 60 cm squares on the ceiling, e
 
 If Corbett writes... | He probably means...
 --- | ---
-"the partitions that close the open section next to the entrance" | the corridor partitions on the entrance side (the EntryPathway segment)
-"the wall where you come in" | entrance wall
-"the wall with all the windows" | window wall
-"the wall with the two doors" | back wall
+"the corridor" / "the entry pathway" | pathway
+"the corridor partitions" / "Segment 1 / 2 / 3" | partition (specifically the front-wall, window-wall, or back-wall side of it)
+"the partitions that close the open section next to the entrance" | entrance-wall-partition (the long plywood line on the entrance-wall side)
+"the wall where you come in" | entrance-wall (a conceptual term — built from the entrance-wall-partition + column)
+"the wall with all the windows" | window-wall
+"the wall with the two doors" | back-wall
 "that AC unit" / "the air con box" | HVAC plenum
-"the metal door" / "service door" | silver service door (window wall)
-"the staff doors" | D1 and D2 (back wall)
+"the metal door" / "service door" | silver service door (window-wall)
+"the staff doors" | D1 and D2 (back-wall)
 "the panels" / "the screens" / "the fabric layer" | wall coverings (bamboo lattice etc.)
 "the LEDs" / "the lights" | fireflies (LEDs behind fabric)
 "the wood at the bottom" | wainscoting

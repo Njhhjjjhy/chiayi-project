@@ -2,15 +2,15 @@
 
 ## Read this first
 
-This document holds five distinct experience-design proposals. Each is a complete experience from corridor entry to forest exit, anchored in a specific reference principle, with a flashlight-LED interaction.
+This document holds five distinct experience-design proposals. Each is a complete experience from pathway entry to forest exit, anchored in a specific reference principle, with a flashlight-LED interaction.
 
 Every value that has not been explicitly agreed by Riaan is marked `[FLAG: ...]`. These are not defaults. They are the questions that must be answered before any of these proposals becomes buildable.
 
 What is locked (from the project's own decisions, not from this document):
 - Room: 10x10m, usable ceiling ~3.52m, pillar-to-opposite-wall ~5.82m, entrance 240x352cm, 30-adult max capacity.
-- Wall names: front wall, back wall, entrance wall, window wall.
-- Architectural elements: D1 + D2 (back-wall doors), HVAC plenum (window-wall corner), windows (window wall), visitor entrance curtain (entrance wall).
-- Spatial regions: corridor (lit, three segments along front + window + back walls) and forest (dark inner space).
+- Wall names: front-wall, back-wall, entrance-wall, window-wall.
+- Architectural elements: D1 + D2 (back-wall doors), HVAC plenum (window-wall corner), windows (window-wall), visitor entrance curtain (entrance-wall).
+- Spatial regions: pathway (lit, three segments along front + window + back-walls) and forest (dark inner space).
 - Experience runtime envelope: 15 to 20 minutes.
 - Existing hardware base: Arduino-controlled addressable warm LEDs, infrared LEDs, sound sensors.
 - Existing codebase elements: four-phase sunset shader, three behavioural states (Scattered Souls, The Wave, The Listening Dark), firefly point lights across ceiling modules.
@@ -21,18 +21,18 @@ What is not locked and is referenced as flagged across all five proposals:
 - Per-LED IR sensing vs centralised IR sensing. [FLAG: which is the actual hardware capability]
 - Wall treatment in the forest. [FLAG: still one of five open options — moss wall, layered mountain silhouette, reflective fracture wall, fiber veil wall, projection-reactive surface]
 - Fact card count, distribution, geometry, content. [FLAG: per ongoing decisions in plan-and-phases]
-- Exit route. The exit is via D1 or D2; "exit corridor" is not a real architectural feature in this room. [FLAG: which door, what visitor sees on the way out]
+- Exit route. The exit is via D1 or D2; "exit pathway" is not a real architectural feature in this room. [FLAG: which door, what visitor sees on the way out]
 - All durations, lumens, colour temperatures, milliseconds, intensities. Marked individually below.
 
-A note on shared references. Two of the proposals (1 and 5) draw on the same reference work, the fog-corridor reference, because that single work contains both a restricted-vision aspect and a compressed-day aspect. Riaan should decide whether the comparison set keeps both or whether one is reassigned to a different reference. [FLAG: keep both, drop one, reassign]
+A note on shared references. Two of the proposals (1 and 5) draw on the same reference work, the fog-pathway reference, because that single work contains both a restricted-vision aspect and a compressed-day aspect. Riaan should decide whether the comparison set keeps both or whether one is reassigned to a different reference. [FLAG: keep both, drop one, reassign]
 
 A note on the flashlight concept. The flashlight is the instrument by which the visitor becomes a co-producer of the work. That framing is locked. What the flashlight physically is, how many there are, and what it does mechanically — none of those are decided.
 
 ---
 
-## Proposal 1 — the dark-corridor proposal
+## Proposal 1 — the dark-pathway proposal
 
-**Reference.** A fog-filled corridor where vision is restricted to about 1.5 metres so the visitor must navigate by other senses.
+**Reference.** A fog-filled pathway where vision is restricted to about 1.5 metres so the visitor must navigate by other senses.
 
 **Thesis.** The room is built for the eye that does not work. Visitors arrive expecting to see fireflies. They are given almost no light to do so. The flashlight makes a small bubble of legibility; everything outside the bubble must be sensed by other means.
 
@@ -42,11 +42,11 @@ A note on the flashlight concept. The flashlight is the instrument by which the 
 
 *Phase 1 — entry.* [FLAG: duration]. Visitor pushes through the entrance curtain. The flashlight is given. [FLAG: by host vs self-service vs wall-mounted dispenser]
 
-*Phase 2 — corridor.* [FLAG: duration. Note: same physical corridor across all proposals — duration must be consistent unless dwell time is the variable]. The corridor begins at outdoor brightness. Each segment of the spiral steps down in brightness. [FLAG: how many brightness steps, what target lux at each segment]. By the partition entry, the corridor is dark enough that the flashlight is required to read the fact cards. [FLAG: card content, card lighting choice — self-illuminated vs flashlight-revealed]
+*Phase 2 — pathway.* [FLAG: duration. Note: same physical pathway across all proposals — duration must be consistent unless dwell time is the variable]. The pathway begins at outdoor brightness. Each segment of the spiral steps down in brightness. [FLAG: how many brightness steps, what target lux at each segment]. By the partition entry, the pathway is dark enough that the flashlight is required to read the fact cards. [FLAG: card content, card lighting choice — self-illuminated vs flashlight-revealed]
 
-[FLAG: haze yes/no in corridor. If yes: type, density, generation method, ventilation impact, fire-code implications]
+[FLAG: haze yes/no in pathway. If yes: type, density, generation method, ventilation impact, fire-code implications]
 
-*Phase 3 — forest entry.* [FLAG: duration]. The visitor steps through the partition opening into the forest. The forest is darker than the corridor's last stretch.
+*Phase 3 — forest entry.* [FLAG: duration]. The visitor steps through the partition opening into the forest. The forest is darker than the pathway's last stretch.
 
 *Phase 4 — forest.* [FLAG: duration]. The fireflies are present but invisible until the flashlight reveals them. When the visitor's flashlight beam hits a region, the LEDs there respond — [FLAG: see mechanical concern above; choose response model first].
 
@@ -72,9 +72,9 @@ A note on the flashlight concept. The flashlight is the instrument by which the 
 
 **Phases.**
 
-*Phase 1 — entry.* [FLAG: duration]. Visitor enters the corridor. The flashlight is given. [FLAG: how to communicate the click rule to the visitor — staff briefing, signage, by example]
+*Phase 1 — entry.* [FLAG: duration]. Visitor enters the pathway. The flashlight is given. [FLAG: how to communicate the click rule to the visitor — staff briefing, signage, by example]
 
-*Phase 2 — corridor.* [FLAG: duration]. The corridor functions as the click-calibration zone. Visitors learn the click is the unit of attention. [FLAG: corridor lighting — does the click do anything in the corridor, or does it only activate inside the forest]
+*Phase 2 — pathway.* [FLAG: duration]. The pathway functions as the click-calibration zone. Visitors learn the click is the unit of attention. [FLAG: pathway lighting — does the click do anything in the pathway, or does it only activate inside the forest]
 
 [FLAG: fact card content and whether they are click-related prompts vs firefly facts vs vision facts]
 
@@ -110,9 +110,9 @@ A note on the flashlight concept. The flashlight is the instrument by which the 
 
 **Phases.**
 
-*Phase 1 — entry.* [FLAG: duration]. The visitor passes through the entrance curtain into the corridor. They are told the room rewards stillness. [FLAG: exact wording of instruction to visitor]. The flashlight is given.
+*Phase 1 — entry.* [FLAG: duration]. The visitor passes through the entrance curtain into the pathway. They are told the room rewards stillness. [FLAG: exact wording of instruction to visitor]. The flashlight is given.
 
-*Phase 2 — corridor as adaption ramp.* [FLAG: duration. Note: dark adaption is a measurable physiological process — the corridor walk-time should be calibrated to a real adaption curve, not picked arbitrarily]. The corridor walks the visitor through a tuned dimming curve calibrated to rod cell adaption. [FLAG: target lux at each corridor segment, total dimming range, segmentation]
+*Phase 2 — pathway as adaption ramp.* [FLAG: duration. Note: dark adaption is a measurable physiological process — the pathway walk-time should be calibrated to a real adaption curve, not picked arbitrarily]. The pathway walks the visitor through a tuned dimming curve calibrated to rod cell adaption. [FLAG: target lux at each pathway segment, total dimming range, segmentation]
 
 [FLAG: fact card content. Note: in this proposal the cards were originally about vision physiology, but those claims need verification per biological note above]
 
@@ -133,7 +133,7 @@ There is no auto-reveal, no group mechanic, no climactic event.
 - The mechanic is purely physiological.
 - [FLAG: optional features such as a press counter — keep, drop, or defer]
 
-**What this proposal trades.** It is the slowest, the most patient, and the most likely to lose visitors who do not know how to be still. It is also the cheapest to build — most of the engineering is in the corridor's dimming curve and the forest LED base layer. The risk is that visitors leave thinking nothing happened.
+**What this proposal trades.** It is the slowest, the most patient, and the most likely to lose visitors who do not know how to be still. It is also the cheapest to build — most of the engineering is in the pathway's dimming curve and the forest LED base layer. The risk is that visitors leave thinking nothing happened.
 
 ---
 
@@ -151,7 +151,7 @@ There is no auto-reveal, no group mechanic, no climactic event.
 
 *Phase 1 — entry.* [FLAG: duration]. The visitor passes through the entrance curtain. The flashlight is given. [FLAG: visitor instruction wording, what the visitor is told vs not told about the pulse mechanic]
 
-*Phase 2 — corridor as reflective spiral.* [FLAG: duration]. The corridor's interior partition wall is treated with alternating vertical bands of mirrored film and transparent dark surface. [FLAG: stripe width, ratio of mirror to transparent, mounting, fabrication method, cost]
+*Phase 2 — pathway as reflective spiral.* [FLAG: duration]. The pathway's interior partition wall is treated with alternating vertical bands of mirrored film and transparent dark surface. [FLAG: stripe width, ratio of mirror to transparent, mounting, fabrication method, cost]
 
 [FLAG: fact card placement strategy in relation to mirror stripes — between, on, ignored]
 
@@ -176,15 +176,15 @@ There is no auto-reveal, no group mechanic, no climactic event.
 
 ## Proposal 5 — the compressed-day proposal
 
-**Reference.** Same source as proposal 1. In addition to being a fog tunnel, the fog-corridor reference condenses an entire day's light into a single corridor walk — bright daylight, golden sunrise, chilly blues, deep twilight. This proposal builds on that compressed-day aspect.
+**Reference.** Same source as proposal 1. In addition to being a fog tunnel, the fog-pathway reference condenses an entire day's light into a single pathway walk — bright daylight, golden sunrise, chilly blues, deep twilight. This proposal builds on that compressed-day aspect.
 
-**Thesis.** The visitor walks through a 24-hour cycle in 15 to 20 minutes. The corridor is the day. The forest is the night. The flashlight is the moon.
+**Thesis.** The visitor walks through a 24-hour cycle in 15 to 20 minutes. The pathway is the day. The forest is the night. The flashlight is the moon.
 
 **Phases.**
 
 *Phase 1 — entry.* [FLAG: duration]. The visitor passes through the entrance curtain. The flashlight is given. [FLAG: visitor instruction wording]
 
-*Phase 2 — corridor as compressed day.* [FLAG: duration. Note: must be consistent with proposals 1 and 3 corridor durations — same physical corridor]. The corridor walls and ceiling run a slow synchronised colour wash across the four-phase sunset palette already implemented in the codebase. [FLAG: how the existing screen-based shader is translated to physical corridor lighting — projection, RGB LED panels, RGB LED strips, painted gradient with white-balance light, none of these]
+*Phase 2 — pathway as compressed day.* [FLAG: duration. Note: must be consistent with proposals 1 and 3 pathway durations — same physical pathway]. The pathway walls and ceiling run a slow synchronised colour wash across the four-phase sunset palette already implemented in the codebase. [FLAG: how the existing screen-based shader is translated to physical pathway lighting — projection, RGB LED panels, RGB LED strips, painted gradient with white-balance light, none of these]
 
 [FLAG: fact card content following the time-of-day arc — actual sentences to be written]
 
@@ -217,7 +217,7 @@ There is no auto-reveal, no group mechanic, no climactic event.
 
 The five proposals share:
 - The room's locked architecture.
-- The corridor → forest → exit structure.
+- The pathway → forest → exit structure.
 - The flashlight as the visitor's instrument.
 - A 15 to 20 minute total runtime.
 
@@ -225,7 +225,7 @@ The five proposals differ in:
 - Which reference principle is dominant.
 - What the flashlight does mechanically.
 - How active or passive the visitor's role is.
-- How the corridor is lit and what its dimming/colour curve is.
+- How the pathway is lit and what its dimming/colour curve is.
 - What the forest looks like at rest (absolute dark vs near-dark vs faint base layer).
 - Whether there are auto-events vs purely visitor-driven events.
 - Whether multiple visitors interact via the system or experience the room in parallel.

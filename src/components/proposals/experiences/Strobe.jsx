@@ -8,8 +8,8 @@ import { useVariant } from '../../../hooks/useVariant.js'
 //
 // Forces:
 //   - Experience view mode (so the dark lighting actually applies)
-//   - Firefly variant 'motion' (so each flash reveals a different
-//     swarm position)
+//   - Firefly variant 'drifting-swarm' (so each flash reveals a
+//     different swarm position)
 //   - Timeline parked at darkness, paused (no auto-cycle here)
 
 const FLASH_DURATION_MS = 120
@@ -21,7 +21,7 @@ export default function Strobe() {
 
   useEffect(() => {
     setViewMode('experience')
-    selectVariant('fireflies', 'motion')
+    selectVariant('fireflies', 'drifting-swarm')
     setTime(1.0)
     pause()
   }, [setViewMode, selectVariant, setTime, pause])

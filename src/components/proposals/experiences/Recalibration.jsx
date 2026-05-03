@@ -10,7 +10,7 @@ import { useVariant } from '../../../hooks/useVariant.js'
 //
 // Forces:
 //   - Experience view mode
-//   - Firefly variant 'blinking' (slow, contemplative)
+//   - Firefly variant 'drifting-swarm' (visible motion against the dim base)
 //   - Timeline parked at twilight/blue-hour boundary (dim base layer)
 //   - Timeline paused
 
@@ -23,11 +23,7 @@ export default function Recalibration() {
 
   useEffect(() => {
     setViewMode('experience')
-    // 'blinking' has a 120-second appear-one-by-one buildup that reads
-    // as "no fireflies" for the first ~10 seconds; not what we want for
-    // a review tool. 'motion' shows visible LEDs immediately while still
-    // matching the contemplative tone of this proposal.
-    selectVariant('fireflies', 'motion')
+    selectVariant('fireflies', 'drifting-swarm')
     setTime(0.85)
     pause()
   }, [setViewMode, selectVariant, setTime, pause])

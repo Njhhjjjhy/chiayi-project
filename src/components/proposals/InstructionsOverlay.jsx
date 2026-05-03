@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 const INSTRUCTIONS = {
   'strobe': 'Press SPACE to strobe',
   'recalibration': 'Press SPACE to wipe your dark adaption',
-  'dark-corridor': 'Move the camera — the flashlight follows where you look',
+  'dark-pathway': 'Move the camera — the flashlight follows where you look',
 }
 
 export default function InstructionsOverlay() {

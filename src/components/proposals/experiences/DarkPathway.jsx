@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { useTimeline } from '../../../hooks/useTimeline.js'
 import { useVariant } from '../../../hooks/useVariant.js'
 
-// Dark corridor — almost no ambient light. A spotlight rides with the
+// Dark pathway — almost no ambient light. A spotlight rides with the
 // camera and points wherever the camera looks, so the visitor sees
 // only a small bubble of legibility around the centre of frame. The
 // rest of the room must be sensed (and the fireflies are still doing
@@ -12,7 +12,7 @@ import { useVariant } from '../../../hooks/useVariant.js'
 //
 // Forces:
 //   - Experience view mode
-//   - Firefly variant 'motion'
+//   - Firefly variant 'drifting-swarm'
 //   - Timeline parked at full darkness
 //   - Timeline paused
 
@@ -21,7 +21,7 @@ const FLASHLIGHT_ANGLE = Math.PI / 7   // ~26° cone
 const FLASHLIGHT_INTENSITY = 6
 const FLASHLIGHT_COLOR = '#fff1c8'     // warm amber
 
-export default function DarkCorridor() {
+export default function DarkPathway() {
   const { setTime, pause } = useTimeline()
   const { setViewMode, selectVariant } = useVariant()
   const { camera } = useThree()
@@ -30,7 +30,7 @@ export default function DarkCorridor() {
 
   useEffect(() => {
     setViewMode('experience')
-    selectVariant('fireflies', 'motion')
+    selectVariant('fireflies', 'drifting-swarm')
     setTime(1.0)
     pause()
   }, [setViewMode, selectVariant, setTime, pause])

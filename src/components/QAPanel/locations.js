@@ -15,7 +15,7 @@ export const ROOM_LOCATIONS = [
   { value: 'small-window', label: 'Small window' },
   { value: 'hvac-plenum', label: 'HVAC plenum' },
   { value: 'wainscoting', label: 'Wainscoting' },
-  { value: 'corridor', label: 'Corridor / partitions' },
+  { value: 'pathway', label: 'Pathway / partition' },
   { value: 'curtain', label: 'Theatrical curtain' },
   { value: 'wall-coverings', label: 'Wall coverings (panels)' },
   { value: 'fireflies', label: 'Fireflies (LEDs)' },

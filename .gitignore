@@ -36,3 +36,6 @@ skills-lock.json
 # QA panel local dev data (test notes + screenshots)
 .qa-dev-notes.json
 public/qa-dev-screenshots/
+
+# Baseline screenshots (local visual diagnostics, not versioned)
+baselines/

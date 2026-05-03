@@ -79,18 +79,6 @@ function poissonDisk(rand, width, height, minDist, targetCount) {
   return points
 }
 
-// --- Proposals review page: total LED count override ---
-// When set via setFireflyCountOverride(total), distributeUnits scales
-// leds-per-unit uniformly across all three surfaces so the total count
-// matches approximately. Null for all other callers (e.g. the /3d
-// page) — their behaviour is unchanged. The proposals page clears the
-// override on unmount.
-let _totalCountOverride = null
-
-export function setFireflyCountOverride(total) {
-  _totalCountOverride = total
-}
-
 // Distribute LEDs across one flat surface using global Poisson-disk
 // sampling, then assign each LED to its nearest unit for hardware-control
 // purposes. The unit grid still exists conceptually (hardware reality: one
@@ -153,8 +141,6 @@ export function distributeUnits({ unitSize = 1.2, ledsPerUnit = 18, seed = 77 } 
 
   const rand = makeRng(seed)
 
-  // Per-surface unit counts. Pre-computed so the proposals-page total-
-  // count override can scale leds-per-unit before sampling.
   const cNu = Math.floor(ROOM_W / unitSize)
   const cNv = Math.floor(ROOM_D / unitSize)
   const eNu = Math.floor(ROOM_D / unitSize)
@@ -164,15 +150,6 @@ export function distributeUnits({ unitSize = 1.2, ledsPerUnit = 18, seed = 77 } 
   const wWallH = ROOM_H - WAINSCOT_H.window
   const wNv = Math.floor(wWallH / unitSize)
 
-  const totalUnits = cNu * cNv + eNu * eNv + wNu * wNv
-
-  // Proposals-only total-count override, if any. Keeps each surface's
-  // relative density by scaling leds-per-unit uniformly.
-  const effectiveLedsPerUnit =
-    _totalCountOverride !== null && totalUnits > 0
-      ? Math.max(1, Math.round(_totalCountOverride / totalUnits))
-      : ledsPerUnit
-
   const positions = []
   const unitIndices = []
   const surfaceIndices = []
@@ -181,7 +158,7 @@ export function distributeUnits({ unitSize = 1.2, ledsPerUnit = 18, seed = 77 } 
   // CEILING — y = ROOM.H − INSET. u along X, v along Z.
   const cY = ROOM_H - INSET
   distributeSurface({
-    nU: cNu, nV: cNv, unitSize, ledsPerUnit: effectiveLedsPerUnit,
+    nU: cNu, nV: cNv, unitSize, ledsPerUnit,
     toWorld: (u, v) => [u, cY, v],
     surfaceIndex: 0,
     unitIdStart: 0, rand,
@@ -194,7 +171,7 @@ export function distributeUnits({ unitSize = 1.2, ledsPerUnit = 18, seed = 77 } 
   const eYCentre = WAINSCOT_H.entrance + (eNv * unitSize) / 2
   const entranceUnitStart = unitCenters.length
   distributeSurface({
-    nU: eNu, nV: eNv, unitSize, ledsPerUnit: effectiveLedsPerUnit,
+    nU: eNu, nV: eNv, unitSize, ledsPerUnit,
     toWorld: (u, v) => [eX, eYCentre + v, u],
     surfaceIndex: 1,
     unitIdStart: entranceUnitStart, rand,
@@ -206,7 +183,7 @@ export function distributeUnits({ unitSize = 1.2, ledsPerUnit = 18, seed = 77 } 
   const wYCentre = WAINSCOT_H.window + (wNv * unitSize) / 2
   const windowUnitStart = unitCenters.length
   distributeSurface({
-    nU: wNu, nV: wNv, unitSize, ledsPerUnit: effectiveLedsPerUnit,
+    nU: wNu, nV: wNv, unitSize, ledsPerUnit,
     toWorld: (u, v) => [wX, wYCentre + v, u],
     surfaceIndex: 2,
     unitIdStart: windowUnitStart, rand,
