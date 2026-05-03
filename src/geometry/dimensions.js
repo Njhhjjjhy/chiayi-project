@@ -38,7 +38,7 @@ export const DROPPED_CEILING_Y = 3.4
 // --- Visitor entrance (entrance wall, x = -HW) ---
 // Opening is flush with the front-wall corner. South edge stays where
 // the partition (segment-a) aligns to it.
-export const ENT_START = -HD              // -5, flush with front wall
+const ENT_START = -HD                     // -5, flush with front wall (only used in this file)
 export const ENT_END = -2.15              // south edge (matches segment-a face)
 export const ENT_W = ENT_END - ENT_START  // 2.85
 export const ENT_H = 3.52                 // full room height, no transom
