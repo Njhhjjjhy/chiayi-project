@@ -1,7 +1,7 @@
 // Wall-covering proposal variants. Each variant covers all four walls above the
 // wainscoting (entrance-wall has no wainscot so covers from floor). Door areas
 // are always skipped. Toggle between proposals via the variant picker to A/B.
-export const wallCoveringVariants = {
+const wallCoveringVariants = {
   none: {
     id: 'none',
     label: 'None (bare existing walls)',

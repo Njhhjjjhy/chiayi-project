@@ -1,10 +1,9 @@
 import { createElement, forwardRef } from 'react'
 
-export const FONT_STACK =
+const FONT_STACK =
   '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "PingFang TC", "Noto Sans TC", sans-serif'
 
 export const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)'
-export const EASE_INOUT = 'cubic-bezier(0.4, 0, 0.2, 1)'
 
 const Glass = forwardRef(function Glass(
   { as = 'div', className = '', style, children, ...rest },

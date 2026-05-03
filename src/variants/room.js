@@ -1,8 +1,8 @@
-export const ceilingVariants = {
+const ceilingVariants = {
   mountainTopology: { id: 'mountainTopology', label: 'Mountain topology' },
 }
 
-export const floorVariants = {
+const floorVariants = {
   greyMarble: { id: 'greyMarble', label: 'Grey marble porcelain (existing)' },
 }
 
