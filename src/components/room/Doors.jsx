@@ -31,11 +31,11 @@ export default function Doors() {
           light leaks around the edges from the corridor outside. */}
       <mesh position={[D1_X, D1_H / 2, INSIDE.back + WALL_T / 2]}>
         <boxGeometry args={[D1_W, D1_H, WALL_T]} />
-        <meshStandardMaterial color="#0a0a0a" roughness={0.6} metalness={0.2} />
+        <meshStandardMaterial color="#1a2438" roughness={0.6} metalness={0.2} />
       </mesh>
       <mesh position={[D2_X, D2_H / 2, INSIDE.back + WALL_T / 2]}>
         <boxGeometry args={[D2_W, D2_H, WALL_T]} />
-        <meshStandardMaterial color="#0a0a0a" roughness={0.6} metalness={0.2} />
+        <meshStandardMaterial color="#1a2438" roughness={0.6} metalness={0.2} />
       </mesh>
 
       {/* Silver/stainless service door (window-wall, near front-wall corner) */}
