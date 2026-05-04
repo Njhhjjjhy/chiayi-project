@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Html } from '@react-three/drei'
 import DimensionLine from './DimensionLine.jsx'
 import {
-  HW, WINDOW_PRESET_CAMERA_X,
+  HW, HD, ENT_W, ENT_END, PATHWAY_WIDTH, PATHWAY_SEG2_FACE_X,
 } from '../geometry/dimensions.js'
 
-const PARTITION_COLOR = '#0a8c5b' // green — distinct from room blue / human orange
+const PATHWAY_COLOR = '#0a8c5b' // green — distinct from room blue / human orange
 
 function MaterialNote({ position, children }) {
   return (
@@ -51,7 +51,7 @@ function DimensionToggles({ categories, activeCategories, onToggle }) {
   return (
     <div className="fixed bottom-16 right-4 z-10 select-none">
       <div className="bg-white/95 border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-        <div className="px-3 py-1.5 text-[9px] font-medium uppercase tracking-wider text-gray-400 border-b border-gray-200">
+        <div className="px-3 py-1.5 text-[9px] font-medium tracking-wider text-gray-400 border-b border-gray-200">
           Dimensions
         </div>
         <div className="p-1.5 flex flex-col gap-1">
@@ -76,7 +76,7 @@ function DimensionToggles({ categories, activeCategories, onToggle }) {
 
 const DIM_CATEGORIES = [
   { id: 'room', label: 'Room' },
-  { id: 'partitions', label: 'Partitions' },
+  { id: 'pathway', label: 'Pathway' },
   { id: 'human', label: 'Human reference' },
   { id: 'materials', label: 'Materials' },
 ]
@@ -137,18 +137,35 @@ export default function DimensionLabels({ roomWidth, roomDepth, roomHeight }) {
         </>
       )}
 
-      {/* === PARTITIONS === */}
-      {has('partitions') && (
+      {/* === PATHWAY === */}
+      {has('pathway') && (
         <>
-          {/* Window-wall preset camera setback — distance from window-wall to the
-              x where the camera sits in the window-wall preset */}
+          {/* Pathway width along front-wall (also the visitor entrance width) */}
           <DimensionLine
-            start={[WINDOW_PRESET_CAMERA_X, 0.02, 0]}
+            start={[-HW + 0.5, 0.02, -HD]}
+            end={[-HW + 0.5, 0.02, ENT_END]}
+            label={`${ENT_W.toFixed(2)}m`}
+            offset={0.3}
+            offsetDirection={[-1, 0, 0]}
+            color={PATHWAY_COLOR}
+          />
+          {/* Pathway width along window-wall */}
+          <DimensionLine
+            start={[PATHWAY_SEG2_FACE_X, 0.02, 0]}
             end={[HW, 0.02, 0]}
-            label={`${(HW - WINDOW_PRESET_CAMERA_X).toFixed(2)}m`}
+            label={`${(HW - PATHWAY_SEG2_FACE_X).toFixed(2)}m`}
             offset={0.3}
             offsetDirection={[0, 0, 1]}
-            color={PARTITION_COLOR}
+            color={PATHWAY_COLOR}
+          />
+          {/* Exit gap at back/window-wall corner */}
+          <DimensionLine
+            start={[HW - 0.5, 0.02, HD - PATHWAY_WIDTH]}
+            end={[HW - 0.5, 0.02, HD]}
+            label={`${PATHWAY_WIDTH.toFixed(2)}m`}
+            offset={0.3}
+            offsetDirection={[1, 0, 0]}
+            color={PATHWAY_COLOR}
           />
         </>
       )}
