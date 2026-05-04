@@ -3,10 +3,14 @@ import { curtainMaterial, steelDoorMaterial } from './roomMaterials.js'
 import {
   INSIDE, WALL_T,
   ENT_W, ENT_H, ENT_Z,
-  D1_W, D1_H, D1_X,
-  D2_W, D2_H, D2_X,
+  D1_W, D1_H, D1_X, D1_START_X,
+  D2_W, D2_H, D2_X, D2_END_X,
   STEEL_DOOR_W, STEEL_DOOR_H, STEEL_DOOR_Z,
 } from '../../geometry/dimensions.js'
+
+const KNOB_Y = 1.05               // standard handle height
+const KNOB_INSET = 0.08           // distance from the door's hinge-side edge
+const KNOB_PROJECTION = 0.04      // how far the knob projects from the door face
 
 // Every door-like opening in the room:
 //   - visitor entrance curtain (entrance-wall, full height)
@@ -33,9 +37,21 @@ export default function Doors() {
         <boxGeometry args={[D1_W, D1_H, WALL_T]} />
         <meshStandardMaterial color="#1a2438" roughness={0.6} metalness={0.2} />
       </mesh>
+      {/* D1 doorknob — on the left edge of the door (inner side, closer
+          to D2), projects into the room */}
+      <mesh position={[D1_START_X + KNOB_INSET, KNOB_Y, INSIDE.back - KNOB_PROJECTION]}>
+        <sphereGeometry args={[0.025, 16, 12]} />
+        <meshStandardMaterial color="#888888" roughness={0.3} metalness={0.85} />
+      </mesh>
       <mesh position={[D2_X, D2_H / 2, INSIDE.back + WALL_T / 2]}>
         <boxGeometry args={[D2_W, D2_H, WALL_T]} />
         <meshStandardMaterial color="#1a2438" roughness={0.6} metalness={0.2} />
+      </mesh>
+      {/* D2 doorknob — on the right edge of the door (inner side, away
+          from the entrance-wall corner), projects into the room */}
+      <mesh position={[D2_END_X - KNOB_INSET, KNOB_Y, INSIDE.back - KNOB_PROJECTION]}>
+        <sphereGeometry args={[0.025, 16, 12]} />
+        <meshStandardMaterial color="#888888" roughness={0.3} metalness={0.85} />
       </mesh>
 
       {/* Silver/stainless service door (window-wall, near front-wall corner) */}
