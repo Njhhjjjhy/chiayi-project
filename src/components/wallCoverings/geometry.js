@@ -77,10 +77,15 @@ export function generateCurtainSegments() {
     }
   }
 
-  addSegments('front',    'z', INSIDE.front, +1, -HW, HW, WAINSCOT_H.front)
-  addSegments('back',     'z', INSIDE.back, -1, -HW, HW, WAINSCOT_H.back)
-  addSegments('entrance', 'x', INSIDE.entrance, +1, -HD, HD, WAINSCOT_H.entrance)
-  addSegments('window',   'x', INSIDE.window, -1, -HD, HD, WAINSCOT_H.window)
+  // Each wall covering's panel range extends `offset` past each corner
+  // so adjacent wall coverings overlap in the corner volume — without
+  // this, the 6 cm offset of each panel from its wall surface leaves a
+  // 6 × 6 cm vertical strip of gap at every corner that exposes the
+  // white background through the room enclosure.
+  addSegments('front',    'z', INSIDE.front, +1, -HW - offset, HW + offset, WAINSCOT_H.front)
+  addSegments('back',     'z', INSIDE.back, -1, -HW - offset, HW + offset, WAINSCOT_H.back)
+  addSegments('entrance', 'x', INSIDE.entrance, +1, -HD - offset, HD + offset, WAINSCOT_H.entrance)
+  addSegments('window',   'x', INSIDE.window, -1, -HD - offset, HD + offset, WAINSCOT_H.window)
 
   return segments
 }
