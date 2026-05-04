@@ -59,6 +59,12 @@ export default function Doors() {
         <boxGeometry args={[0.06, STEEL_DOOR_H, STEEL_DOOR_W]} />
         <meshStandardMaterial {...steelDoor} />
       </mesh>
+      {/* Silver door doorknob — on the back-wall edge of the door,
+          projects into the room */}
+      <mesh position={[INSIDE.window - 0.04 - KNOB_PROJECTION, KNOB_Y, STEEL_DOOR_Z + STEEL_DOOR_W / 2 - KNOB_INSET]}>
+        <sphereGeometry args={[0.025, 16, 12]} />
+        <meshStandardMaterial color="#888888" roughness={0.3} metalness={0.85} />
+      </mesh>
     </group>
   )
 }
