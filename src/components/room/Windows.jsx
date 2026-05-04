@@ -25,9 +25,12 @@ const VISIBLE_GLASS = {
 }
 
 export default function Windows() {
-  const { isConstruction, walkMode, activeSceneKey } = useVariant()
-  const showVisible = !walkMode && activeSceneKey === 'window' && !isConstruction
-  const glass = showVisible ? VISIBLE_GLASS : blackoutMaterial(isConstruction)
+  const { isConstruction } = useVariant()
+  // Windows always read as glass from any angle. The inside-blackout
+  // effect during the immersive experience is handled by the theatrical
+  // curtain hanging in front of the main glass on the room side, not by
+  // making the glass itself opaque.
+  const glass = isConstruction ? blackoutMaterial(isConstruction) : VISIBLE_GLASS
 
   return (
     <group>
