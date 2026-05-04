@@ -26,14 +26,16 @@ export default function Doors() {
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
 
-      {/* D1 curtain (floor to door-top) */}
+      {/* D1 curtain (floor to door-top) — full door opening, no insets */}
       <mesh position={[D1_X, D1_H / 2, INSIDE.back - 0.04]}>
-        <boxGeometry args={[D1_W - 0.04, D1_H - 0.04, 0.02]} />
+        <boxGeometry args={[D1_W, D1_H, 0.02]} />
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
-      {/* D2 curtain */}
+      {/* D2 curtain — full door opening, no insets. D2 is flush with the
+          entrance-wall corner; even a small inset on the left exposed the
+          white background through the corner. */}
       <mesh position={[D2_X, D2_H / 2, INSIDE.back - 0.04]}>
-        <boxGeometry args={[D2_W - 0.04, D2_H - 0.04, 0.02]} />
+        <boxGeometry args={[D2_W, D2_H, 0.02]} />
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
 
