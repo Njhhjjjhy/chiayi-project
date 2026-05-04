@@ -24,9 +24,11 @@ export default function Doors() {
 
   return (
     <group>
-      {/* Visitor entrance curtain — full room height, no transom above */}
+      {/* Visitor entrance curtain — full opening, no insets, full room
+          height. Insets exposed white background through the gap on
+          every edge. */}
       <mesh position={[INSIDE.entrance + 0.04, ENT_H / 2, ENT_Z]}>
-        <boxGeometry args={[0.02, ENT_H - 0.04, ENT_W - 0.04]} />
+        <boxGeometry args={[0.02, ENT_H, ENT_W]} />
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
 

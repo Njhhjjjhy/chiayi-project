@@ -3,8 +3,7 @@
 // algorithm — dimensions belong to the whole scene, not just wall coverings.
 
 import {
-  HW, HD, INSIDE, WAINSCOT_H, DOOR_SKIPS, DOOR_TOPS,
-  DROPPED_CEILING_Y,
+  ROOM, HW, HD, INSIDE, WAINSCOT_H, DOOR_SKIPS, DOOR_TOPS,
 } from '../../geometry/dimensions.js'
 
 // Generate curtain segments covering every wall above its wainscot. Two
@@ -35,8 +34,8 @@ export function generateCurtainSegments() {
     }
     if (cursor < hi) ranges.push([cursor, hi])
 
-    const yCenter = (ymin + DROPPED_CEILING_Y) / 2
-    const h = DROPPED_CEILING_Y - ymin
+    const yCenter = (ymin + ROOM.H) / 2
+    const h = ROOM.H - ymin
     for (const [a, b] of ranges) {
       const t = (a + b) / 2
       const w = b - a
@@ -56,14 +55,14 @@ export function generateCurtainSegments() {
     // overhead segments above each door
     for (const { skip: [skipLo, skipHi], top } of sorted) {
       if (skipHi < lo || skipLo > hi) continue
-      if (top >= DROPPED_CEILING_Y) continue
+      if (top >= ROOM.H) continue
       const a = Math.max(skipLo, lo)
       const b = Math.min(skipHi, hi)
       if (b <= a) continue
       const t = (a + b) / 2
       const w = b - a
-      const ohH = DROPPED_CEILING_Y - top
-      const ohY = (top + DROPPED_CEILING_Y) / 2
+      const ohH = ROOM.H - top
+      const ohY = (top + ROOM.H) / 2
       const seg = { wall, w, h: ohH, normalAxis: axisName, normalSign, isOverhead: true }
       if (axisName === 'z') {
         seg.x = t
