@@ -48,8 +48,9 @@ export const ENT_H = ROOM.H               // full working ceiling height, no tra
 export const ENT_Z = (ENT_START + ENT_END) / 2
 
 // --- Column (south side of visitor entrance) ---
-// 40 × 40 cm plywood column, full ROOM.H tall. Outer face flush with
-// the entrance-wall line at x = -HW; front face at the south edge of
+// 40 × 40 cm concrete column — existing structural element of the
+// venue, not part of the plywood build. Outer face flush with the
+// entrance-wall line at x = -HW; front face at the south edge of
 // the entrance opening (z = ENT_END). Together with the
 // entrance-wall-partition it forms the conceptual entrance-wall.
 export const COL_W = 0.40

@@ -34,16 +34,18 @@ export const viewModes = {
 // dimensions change.
 //
 //   - front: camera near back-wall, looking at front-wall centre.
-//     Partition's front-wall side will appear in foreground (not
-//     auto-hidden in current implementation).
+//     Pathway-partition's front-wall side will appear in foreground
+//     (not auto-hidden in current implementation).
 //   - back: camera near front-wall, looking at back-wall centre.
-//     No partition obstruction (partition only has front + window arms).
-//   - window: camera between partition's window-wall arm and the
-//     window-wall itself, so the actual fixtures (small window,
-//     silver door, main glass) read clearly. Theatrical curtain
-//     hidden in this preset.
-//   - entrance: camera on the entrance-wall side of the partition arm
-//     (so partition is behind the camera, not occluding view).
+//     No pathway-partition obstruction (pathway-partition only has
+//     front + window arms).
+//   - window: camera between the pathway-partition's window-wall arm
+//     and the window-wall itself, so the actual fixtures (small
+//     window, silver door, main glass) read clearly. Theatrical
+//     curtain hidden in this preset.
+//   - entrance: camera on the entrance-wall side of the pathway-
+//     partition arm (so the pathway-partition is behind the camera,
+//     not occluding view).
 //   - ceiling: top-down. y = 9 m fits the 8.83 × 8.78 footprint.
 //   - standing: visitor POV — just inside the entrance, at the south
 //     edge of the entrance opening, looking into the room interior.
