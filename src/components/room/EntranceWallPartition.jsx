@@ -1,16 +1,18 @@
 import { useVariant } from '../../hooks/useVariant.js'
 import { wallMaterial } from './roomMaterials.js'
 import ArchEdges from './ArchEdges.jsx'
-import { ROOM, HW, HD, COL_BACK_Z, PLYWOOD_T } from '../../geometry/dimensions.js'
+import { ROOM, HW, HD, ENT_END, PLYWOOD_T } from '../../geometry/dimensions.js'
 
 // The entrance-wall-partition. Same plywood as the pathway-partition.
-// Runs from the back face of the column to the back-wall, parallel
-// to the entrance-wall. Together with the column it forms the
-// conceptual entrance-wall along the left side of the exhibition area.
+// Front edge aligned with the south edge of the visitor entrance
+// opening AND the front face of the column — all three meet at
+// z = ENT_END. Runs from there to the back-wall, parallel to the
+// entrance-wall. Together with the column it forms the conceptual
+// entrance-wall along the left side of the exhibition area.
 
 const HALF_T       = PLYWOOD_T / 2
 
-const FRONT_Z      = COL_BACK_Z                    // back face of column
+const FRONT_Z      = ENT_END                       // aligned with column front face + entrance south edge
 const BACK_Z       = HD                            // back-wall
 const LENGTH       = BACK_Z - FRONT_Z
 const CENTER_Z     = (FRONT_Z + BACK_Z) / 2
