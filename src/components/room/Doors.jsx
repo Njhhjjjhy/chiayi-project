@@ -1,7 +1,7 @@
 import { useVariant } from '../../hooks/useVariant.js'
 import { curtainMaterial, steelDoorMaterial } from './roomMaterials.js'
 import {
-  INSIDE,
+  INSIDE, WALL_T,
   ENT_W, ENT_H, ENT_Z,
   D1_W, D1_H, D1_X,
   D2_W, D2_H, D2_X,
@@ -10,7 +10,7 @@ import {
 
 // Every door-like opening in the room:
 //   - visitor entrance curtain (entrance-wall, full height)
-//   - D1 + D2 swing-door curtains (back-wall, door-top height)
+//   - D1 + D2 staff doors (back-wall, both closed black doors)
 //   - silver service door (window-wall, between small window and main glass)
 
 export default function Doors() {
@@ -26,17 +26,16 @@ export default function Doors() {
         <meshStandardMaterial {...curtain} transparent opacity={0.9} />
       </mesh>
 
-      {/* D1 — brown wooden door with glass panel (right-side staff door,
-          closer to the window-wall) */}
-      <mesh position={[D1_X, D1_H / 2, INSIDE.back - 0.04]}>
-        <boxGeometry args={[D1_W, D1_H, 0.04]} />
-        <meshStandardMaterial color="#5a3a22" roughness={0.7} metalness={0.05} />
+      {/* D1 + D2 — closed black staff doors. Each door fills its opening
+          completely (full width, full height, full wall thickness) so no
+          light leaks around the edges from the corridor outside. */}
+      <mesh position={[D1_X, D1_H / 2, INSIDE.back + WALL_T / 2]}>
+        <boxGeometry args={[D1_W, D1_H, WALL_T]} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.6} metalness={0.2} />
       </mesh>
-      {/* D2 — black metal door (left-side staff door, flush with the
-          entrance-wall corner) */}
-      <mesh position={[D2_X, D2_H / 2, INSIDE.back - 0.04]}>
-        <boxGeometry args={[D2_W, D2_H, 0.04]} />
-        <meshStandardMaterial color="#1a1a1a" roughness={0.5} metalness={0.3} />
+      <mesh position={[D2_X, D2_H / 2, INSIDE.back + WALL_T / 2]}>
+        <boxGeometry args={[D2_W, D2_H, WALL_T]} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.6} metalness={0.2} />
       </mesh>
 
       {/* Silver/stainless service door (window-wall, near front-wall corner) */}
