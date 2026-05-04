@@ -35,11 +35,12 @@ export default function Walls({ width = ROOM.W, depth = ROOM.D, height = ROOM.H 
         <ArchEdges />
       </mesh>
 
-      {/* front-wall (z = -HD) — continuous, extended by WALL_T on each side
-          so the front-wall + entrance-wall corner is sealed (no visible
-          sliver where the two walls' offset bodies don't overlap). */}
-      <mesh position={[0, height / 2, INSIDE.front - WALL_T / 2]} receiveShadow>
-        <boxGeometry args={[width + 2 * WALL_T, height, WALL_T]} />
+      {/* front-wall (z = -HD) — continuous, extended by WALL_T only on the
+          window-wall side to seal that corner. Does NOT extend past the
+          entrance-wall line — the entrance-wall is conceptual (no real
+          building wall) so the front-wall ends at x = -HW. */}
+      <mesh position={[WALL_T / 2, height / 2, INSIDE.front - WALL_T / 2]} receiveShadow>
+        <boxGeometry args={[width + WALL_T, height, WALL_T]} />
         <meshStandardMaterial {...wall} />
         <ArchEdges />
       </mesh>
