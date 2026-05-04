@@ -14,6 +14,8 @@ import ScenePicker from '../components/ScenePicker'
 import TimelineController from '../components/TimelineController'
 import ConstructionToolbar from '../components/ConstructionToolbar'
 import { GuidedTourOverlay } from '../components/GuidedTour.jsx'
+import ModeSwitcher from '../components/ModeSwitcher'
+import FireflyPicker from '../components/FireflyPicker'
 import ExperiencePicker from '../components/proposals/ExperiencePicker.jsx'
 import PlaceholderBanner from '../components/proposals/PlaceholderBanner.jsx'
 import InstructionsOverlay from '../components/proposals/InstructionsOverlay.jsx'
@@ -23,7 +25,7 @@ import { experienceComponents } from '../components/proposals/experiences'
 function Loader() {
   return (
     <div className="fixed inset-0 z-40 bg-black flex items-center justify-center">
-      <div className="text-white/30 text-xs uppercase tracking-widest">Loading...</div>
+      <div className="text-white/30 text-xs tracking-widest">Loading...</div>
     </div>
   )
 }
@@ -40,7 +42,8 @@ function FirefliesInner() {
   const [activeCameraPreset, setActiveCameraPreset] = useState(null)
   const [uiHidden, setUiHidden] = useState(false)
   const [levaHidden, setLevaHidden] = useState(true)
-  const [brightness, setBrightness] = useState(0.4)
+  const [brightness, setBrightness] = useState(1.0)
+  const [mode, setMode] = useState('views')
 
   useEffect(() => {
     function handleKey(e) {
@@ -85,11 +88,13 @@ function FirefliesInner() {
           <VariantSwitcher />
 
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
-            <ExperiencePicker />
-            <ScenePicker onSelect={setActiveCameraPreset} />
+            <ModeSwitcher mode={mode} onChange={setMode} />
+            {mode === 'views' && <ScenePicker onSelect={setActiveCameraPreset} />}
+            {mode === 'lighting' && <ExperiencePicker />}
+            {mode === 'fireflies' && <FireflyPicker />}
           </div>
 
-          <div className="fixed top-4 right-4 z-10 flex flex-col items-end gap-2">
+          <div className="fixed top-20 right-4 z-10 flex flex-col items-end gap-2">
             <BrightnessControl value={brightness} onChange={setBrightness} />
             <ConstructionToolbar />
           </div>

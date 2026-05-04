@@ -13,7 +13,7 @@ export default function ExperiencePicker() {
         return (
           <button
             key={exp.id}
-            onClick={() => navigate(`/fireflies/${exp.id}`)}
+            onClick={() => navigate(active ? '/fireflies' : `/fireflies/${exp.id}`)}
             title={exp.summary}
             style={{
               transitionDuration: '280ms',

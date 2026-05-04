@@ -51,7 +51,7 @@ export default function TimelineController() {
           style={TRANSITION}
           className="pointer-events-auto inline-flex min-h-[44px] items-center gap-3 rounded-t-2xl px-5 cursor-pointer hover:bg-black/55 transition-colors"
         >
-          <span className="text-[12px] uppercase tracking-[0.08em] text-[#a1a1a6]">
+          <span className="text-[12px] tracking-[0.08em] text-[#a1a1a6]">
             {PHASES[currentPhase].label}
           </span>
           <span className="text-[15px]">Show timeline</span>
@@ -80,7 +80,7 @@ export default function TimelineController() {
                 aria-label={`Jump to ${phase.label}`}
                 aria-pressed={active}
                 style={TRANSITION}
-                className={`flex-1 inline-flex items-center justify-center min-h-[44px] rounded-full text-[12px] uppercase tracking-[0.08em] cursor-pointer transition-colors ${
+                className={`flex-1 inline-flex items-center justify-center min-h-[44px] rounded-full text-[12px] tracking-[0.08em] cursor-pointer transition-colors ${
                   active
                     ? 'bg-white/15 text-white'
                     : 'text-white/65 hover:text-white hover:bg-white/[0.08]'
@@ -177,7 +177,7 @@ export default function TimelineController() {
           </div>
 
           <span
-            className="text-[12px] uppercase tracking-[0.08em] text-[#a1a1a6]"
+            className="text-[12px] tracking-[0.08em] text-[#a1a1a6]"
             aria-live="polite"
           >
             {PHASES[currentPhase].label}

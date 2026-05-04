@@ -49,12 +49,14 @@ export const ENT_Z = (ENT_START + ENT_END) / 2
 
 // --- Column (south side of visitor entrance) ---
 // 40 × 40 cm concrete column — existing structural element of the
-// venue, not part of the plywood build. Outer face flush with the
-// entrance-wall line at x = -HW; front face at the south edge of
-// the entrance opening (z = ENT_END). Together with the
-// entrance-wall-partition it forms the conceptual entrance-wall.
+// venue. Sits OUTSIDE the firefly room, in the corridor / bistro
+// area. Its room-facing inner face is flush with the entrance-wall
+// line at x = -HW; its body extends outward (more negative x) into
+// the corridor. Front face at the south edge of the entrance
+// opening (z = ENT_END). Together with the entrance-wall-partition
+// it forms the conceptual entrance-wall.
 export const COL_W = 0.40
-export const COL_CENTER_X = -HW + COL_W / 2     // -4.215
+export const COL_CENTER_X = -HW - COL_W / 2     // -4.615 (body outside the room)
 export const COL_CENTER_Z = ENT_END + COL_W / 2 // -1.79
 export const COL_BACK_Z = ENT_END + COL_W       // -1.59
 

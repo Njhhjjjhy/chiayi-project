@@ -4,11 +4,7 @@ import { useParams } from 'react-router-dom'
 // scrubber. Add an entry here when an experience needs the visitor to
 // know about a key press / click trigger.
 
-const INSTRUCTIONS = {
-  'strobe': 'Press SPACE to strobe',
-  'recalibration': 'Press SPACE to wipe your dark adaption',
-  'dark-pathway': 'Move the camera — the flashlight follows where you look',
-}
+const INSTRUCTIONS = {}
 
 export default function InstructionsOverlay() {
   const { variantId } = useParams()

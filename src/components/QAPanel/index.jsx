@@ -247,7 +247,7 @@ export default function QAPanel() {
 function PanelHeader({ onClose, onSignOut }) {
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
-      <h2 className="text-[12px] uppercase tracking-[0.08em] text-white/55 px-2">
+      <h2 className="text-[12px] tracking-[0.08em] text-white/55 px-2">
         Notes
       </h2>
       <div className="flex items-center gap-1">
@@ -383,7 +383,7 @@ function NewNoteForm({ passphrase, onCreate }) {
   return (
     <form className="pt-6" onSubmit={handleSubmit}>
       <fieldset>
-        <legend className="text-[12px] uppercase tracking-[0.08em] text-white/55 mb-2">
+        <legend className="text-[12px] tracking-[0.08em] text-white/55 mb-2">
           Category
         </legend>
         <div className="flex flex-wrap gap-1.5">
@@ -410,7 +410,7 @@ function NewNoteForm({ passphrase, onCreate }) {
       </fieldset>
 
       <label className="block mt-5">
-        <span className="block text-[12px] uppercase tracking-[0.08em] text-white/55 mb-2">
+        <span className="block text-[12px] tracking-[0.08em] text-white/55 mb-2">
           Where in the room?
         </span>
         <select
@@ -429,7 +429,7 @@ function NewNoteForm({ passphrase, onCreate }) {
       </label>
 
       <label className="block mt-5">
-        <span className="block text-[12px] uppercase tracking-[0.08em] text-white/55 mb-2">
+        <span className="block text-[12px] tracking-[0.08em] text-white/55 mb-2">
           Note
         </span>
         <textarea
@@ -546,7 +546,7 @@ function NoteRow({ note, onToggle, onDelete }) {
   const loc = ROOM_LOCATIONS.find((l) => l.value === note.location)
   return (
     <li className={`py-4 ${note.done ? 'opacity-55' : ''}`}>
-      <div className="flex flex-wrap items-center gap-3 text-[12px] uppercase tracking-[0.08em]">
+      <div className="flex flex-wrap items-center gap-3 text-[12px] tracking-[0.08em]">
         {cat && <span className="text-white/85">{cat.label}</span>}
         {loc && <span className="text-white/55">{loc.label}</span>}
         <span className="ml-auto text-white/55 normal-case tracking-normal">

@@ -1,15 +1,14 @@
 import { useVariant } from '../../hooks/useVariant.js'
 import { wallMaterial } from './roomMaterials.js'
 import ArchEdges from './ArchEdges.jsx'
-import { ROOM, HW, HD, ENT_END, COL_W, PLYWOOD_T } from '../../geometry/dimensions.js'
+import { ROOM, HW, HD, ENT_END, PLYWOOD_T } from '../../geometry/dimensions.js'
 
 // The entrance-wall-partition. Same plywood as the pathway-partition.
-// Three faces line up to form one continuous plane facing into the
-// room, with no visible step:
-//   - the south edge of the visitor entrance opening (z = ENT_END)
-//   - the column's room-facing face
-//   - this partition's room-facing face
-// All meet at z = ENT_END, x = -HW + COL_W (the column's inner face).
+// Sits on the entrance-wall line (x = -HW) with its room-facing
+// inner face exactly on that line; its body extends OUTWARD (away
+// from the room) by the plywood thickness. This puts the partition's
+// inner face on the same plane as the column's inner face — together
+// they form one continuous wall surface from inside the room.
 
 const HALF_T       = PLYWOOD_T / 2
 
@@ -18,10 +17,9 @@ const BACK_Z       = HD                            // back-wall
 const LENGTH       = BACK_Z - FRONT_Z
 const CENTER_Z     = (FRONT_Z + BACK_Z) / 2
 
-// Inner (room-facing) face flush with the column's inner face, so
-// the partition and column read as one continuous wall plane from
-// inside the room. The partition's outer face sits 6 cm behind that.
-const INNER_X      = -HW + COL_W                   // column's inner face
+// Room-facing inner face on the entrance-wall line; body extends
+// outward into the corridor (matches the column).
+const INNER_X      = -HW
 const CENTER_X     = INNER_X - HALF_T
 
 export default function EntranceWallPartition() {

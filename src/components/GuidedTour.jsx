@@ -118,7 +118,7 @@ export function GuidedTourOverlay() {
               {step.title}
             </div>
             <div
-              className="text-white/40 text-xs md:text-sm tracking-widest uppercase"
+              className="text-white/40 text-xs md:text-sm tracking-widest"
               style={{ textShadow: '0 0 20px rgba(0,0,0,0.9)' }}
             >
               {step.caption}
@@ -127,7 +127,7 @@ export function GuidedTourOverlay() {
         ) : (
           <>
             <div
-              className="text-white/70 text-lg font-light tracking-widest uppercase mb-2"
+              className="text-white/70 text-lg font-light tracking-widest mb-2"
               style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7)' }}
             >
               {step.title}
@@ -150,7 +150,7 @@ export function GuidedTourOverlay() {
             style={{ width: `${progress}%` }}
           />
         </div>
-        <div className="text-center mt-2 text-[9px] text-white/20 uppercase tracking-widest">
+        <div className="text-center mt-2 text-[9px] text-white/20 tracking-widest">
           {currentStep + 1} / {totalSteps}
         </div>
       </div>

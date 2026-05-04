@@ -106,14 +106,10 @@ const CEILING_COMPONENTS = {
 }
 
 export default function Ceiling() {
-  const { selections, viewMode, walkMode, activeSceneKey } = useVariant()
+  const { selections, viewMode } = useVariant()
   const isConstruction = viewMode === 'construction'
   const variantId = selections.ceiling || DEFAULT_VARIANTS.ceiling
   const Component = CEILING_COMPONENTS[variantId] || CEILING_COMPONENTS[DEFAULT_VARIANTS.ceiling]
-
-  // Ceiling preset = top-down plan view from above. Hide the ceiling
-  // mesh so the camera can see into the room.
-  if (!walkMode && activeSceneKey === 'ceiling') return null
 
   return <Component isConstruction={isConstruction} ceilingOpacity={1} />
 }

@@ -10,7 +10,7 @@ export default function BrightnessControl({ value, onChange }) {
   return (
     <Glass className="select-none rounded-2xl px-4 py-3 w-56">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[11px] uppercase tracking-wider text-white/60">Review brightness</span>
+        <span className="text-[11px] tracking-wider text-white/60">Review brightness</span>
         <span className="text-[11px] tabular-nums text-white/80">{value.toFixed(2)}</span>
       </div>
       <input

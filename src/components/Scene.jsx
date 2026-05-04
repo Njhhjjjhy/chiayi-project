@@ -67,7 +67,9 @@ export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeig
   const lighting = useLightingState()
   const { camera } = useThree()
 
-  const bg = isConstruction ? '#e8e8e8' : isLight ? '#f5f2ed' : '#000000'
+  // Outside of the exhibition area is always white. The exhibition's
+  // darkness lives inside the room walls, not in the surrounding world.
+  const bg = '#ffffff'
 
   // Apply camera preset
   useEffect(() => {
@@ -86,8 +88,9 @@ export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeig
       {/* Scene background (declarative — replaces scene.background mutation) */}
       <color attach="background" args={[bg]} />
 
-      {/* Fog — only in experience mode */}
-      {isExperience && <fogExp2 attach="fog" args={['#000000', 0.08]} />}
+      {/* Fog disabled — was darkening the whole 3D scene to pure black,
+          hiding the room geometry from the review camera. The exhibition
+          interior reads dark from the room materials and dim ambient. */}
 
       {/* Camera controls — orbit (default) or first-person walk */}
       {walkMode ? (
@@ -144,6 +147,11 @@ export default function Scene({ roomWidth = ROOM.W, roomDepth = ROOM.D, roomHeig
       ) : (
         <>
           <ambientLight color={lighting.ambientColor} intensity={lighting.ambientIntensity} />
+
+          {/* Review baseline — keeps the room readable inside experience
+              mode regardless of the slider position. Without it, the room
+              renders effectively black on first load. */}
+          <ambientLight color="#ffffff" intensity={0.8} />
 
           {/* Moonlight directional — faint, during blue hour and darkness */}
           {lighting.phaseIndex >= 1 && (

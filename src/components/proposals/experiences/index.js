@@ -5,16 +5,12 @@
 // Experience ids without an entry here render the bare scene only and
 // the placeholder banner is shown.
 
-import CompressedDay from './CompressedDay.jsx'
-import Strobe from './Strobe.jsx'
-import Recalibration from './Recalibration.jsx'
-import MirroredSelf from './MirroredSelf.jsx'
-import DarkPathway from './DarkPathway.jsx'
+import LastLight from './LastLight.jsx'
+import Underwater from './Underwater.jsx'
+import Void from './Void.jsx'
 
 export const experienceComponents = {
-  'compressed-day': CompressedDay,
-  'strobe': Strobe,
-  'recalibration': Recalibration,
-  'mirrored-self': MirroredSelf,
-  'dark-pathway': DarkPathway,
+  'last-light': LastLight,
+  'underwater': Underwater,
+  'void': Void,
 }
