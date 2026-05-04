@@ -45,12 +45,14 @@ Dark wood band at the bottom of three walls — heights vary. The entrance-wall 
 
 ## Visitor flow elements
 
-- **Pathway** — the narrow walking strip wrapping the partition along its front-wall and window-wall sides. Visitors enter through the visitor entrance, walk around the partition, and exit at the back/window-wall corner. Width 1.35 m (`PATHWAY_WIDTH`).
-- **Partition** — the L-shaped plywood wall inside the exhibition area that the pathway wraps around. Component: `Pathway.jsx`. Built from plywood-on-stud, 12 cm thick, 3.4 m tall (`PATHWAY_HEIGHT`), matte black paint.
-- **Entrance-wall-partition** — a separate plywood partition that creates the conceptual entrance-wall along the left side of the exhibition area. Component: `EntranceWallPartition.jsx`. 60 mm thick, full ROOM.H tall, runs from the south edge of the entrance opening to the back-wall. Used together with the column to define the entrance opening.
-- **Column** — small upright plywood element on the entrance-wall side, 40 × 40 cm in plan, full ceiling height. Outer face flush with the entrance-wall line; front face at the south edge of the visitor entrance opening. The visitor entrance is the gap between the column and the front-wall. Component: `Column.jsx`.
-- **Forest** — the open space inside the exhibition area, bounded by the partition, entrance-wall-partition, and column. The dark inner sanctum where the fireflies live.
-- **Exhibition-area** — the rectangular zone bounded by the front-wall, back-wall, window-wall, and the entrance-wall-partition + column line on the entrance-wall side. Contains exactly two spaces: pathway and forest.
+There are **two partitions** in the room. Both are 60 mm plywood, full ceiling height, matte black paint — same sheet stock for both.
+
+- **Pathway** — the walking strip that visitors travel along. Wraps the pathway-partition along its front-wall and window-wall sides. Visitors enter through the visitor entrance, walk along the pathway, and exit into the forest at the back/window-wall corner.
+- **Pathway-partition** — the L-shaped plywood wall that defines the pathway. Component: `Pathway.jsx`. 60 mm thick, full ceiling height. Two segments: front-wall side and window-wall side. Always call this "pathway-partition" — never just "partition".
+- **Entrance-wall-partition** — the long plywood wall on the entrance-wall side. Component: `EntranceWallPartition.jsx`. 60 mm thick, full ceiling height. Runs from the back face of the column to the back-wall. Together with the column it forms the conceptual entrance-wall.
+- **Column** — 40 × 40 cm plywood column at the south side of the visitor entrance, full ceiling height. Outer face flush with the entrance-wall line; front face at the south edge of the visitor entrance opening. The visitor entrance is the gap between the column and the front-wall. Component: `Column.jsx`.
+- **Forest** — the open space inside the exhibition area, bounded by the pathway-partition, the entrance-wall-partition, and the column. The dark inner sanctum where the fireflies live.
+- **Exhibition-area** — the rectangular zone bounded by the front-wall, back-wall, window-wall, and the entrance-wall-partition + column line on the entrance-wall side. Contains two spaces: pathway and forest.
 - **Theatrical curtain** — the fabric curtain layer (the inner fabric that fireflies sit behind). Component: `TheatricalCurtain.jsx`.
 
 ## Wall coverings
@@ -68,7 +70,7 @@ The LEDs behind the fabric. Distributed in 60 × 60 cm squares on the ceiling, e
 If Corbett writes... | He probably means...
 --- | ---
 "the corridor" / "the entry pathway" | pathway
-"the corridor partitions" / "Segment 1 / 2" | partition (specifically the front-wall or window-wall side of it)
+"the corridor partitions" / "Segment 1 / 2" | pathway-partition (specifically the front-wall or window-wall side of it)
 "the partitions that close the open section next to the entrance" | entrance-wall-partition (the long plywood line on the entrance-wall side)
 "the wall where you come in" | entrance-wall (a conceptual term — formed by the column + the entrance-wall-partition)
 "the wall with all the windows" | window-wall

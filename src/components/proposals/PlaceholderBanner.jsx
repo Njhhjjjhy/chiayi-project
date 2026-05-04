@@ -11,7 +11,7 @@ export default function PlaceholderBanner() {
   if (!exp || exp.status === 'built') return null
 
   return (
-    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-10 px-3 py-1.5 bg-black/60 border border-amber-300/30 backdrop-blur-sm rounded text-[10px] uppercase tracking-widest text-amber-200/80 pointer-events-none">
+    <div className="fixed top-32 left-1/2 -translate-x-1/2 z-10 px-3 py-1.5 bg-black/60 border border-amber-300/30 backdrop-blur-sm rounded text-[10px] uppercase tracking-widest text-amber-200/80 pointer-events-none">
       {exp.label} — not yet built · bare room shown
     </div>
   )

@@ -6,7 +6,7 @@ export default function ScenePicker({ onSelect }) {
   const { walkMode, setWalkMode, activeSceneKey, setActiveSceneKey } = useVariant()
 
   return (
-    <Glass className="fixed top-4 left-1/2 -translate-x-1/2 z-10 select-none rounded-full flex items-center gap-1 p-1">
+    <Glass className="select-none rounded-full flex items-center gap-1 p-1">
       {Object.entries(cameraPresets).map(([key, preset]) => {
         const active = activeSceneKey === key
         return (

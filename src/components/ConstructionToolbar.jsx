@@ -183,7 +183,7 @@ export default function ConstructionToolbar() {
   }
 
   return (
-    <Glass className="fixed top-4 right-4 z-10 select-none rounded-2xl overflow-hidden w-64">
+    <Glass className="select-none rounded-2xl overflow-hidden w-64">
       <div className="px-4 py-3 text-[12px] font-medium uppercase tracking-[0.08em] text-white/55 border-b border-white/10">
         Construction tools
       </div>

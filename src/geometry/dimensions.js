@@ -118,14 +118,19 @@ export const PLENUM_DROP_Z = PLENUM_MAIN_Z
 export const PLENUM_DROP_Y =
   PLENUM_MAIN_Y - PLENUM_MAIN_HEIGHT_Y / 2 - PLENUM_DROP_HEIGHT_Y / 2
 
+// --- Plywood (used by every plywood-on-stud partition) ---
+// Both the pathway-partition and the entrance-wall-partition are
+// built from the same plywood sheet stock.
+export const PLYWOOD_T = 0.06
+
 // --- Pathway dimensions ---
-// L-shaped guided pathway (Pathway.jsx) wrapping the front-wall and
-// window-wall sides of the partition. The window-wall side is pulled
-// inward to clear the HVAC plenum (plenum extends to x = 2.615), so
-// the pathway along that wall is wider than PATHWAY_WIDTH.
+// L-shaped pathway-partition (Pathway.jsx) wrapping the front-wall
+// and window-wall sides. The window-wall side is pulled inward to
+// clear the HVAC plenum (plenum extends to x = 2.615), so the
+// pathway along that wall is wider than PATHWAY_WIDTH.
 export const PATHWAY_WIDTH = 1.35
-export const PATHWAY_HEIGHT = 3.4               // up to underside of working ceiling
-export const PATHWAY_SEG2_FACE_X = 2.5          // window-wall partition face, plenum-cleared
+export const PATHWAY_HEIGHT = ROOM.H            // pathway-partition reaches the ceiling
+export const PATHWAY_SEG2_FACE_X = 2.5          // window-wall pathway-partition face, plenum-cleared
 
 // --- Camera preset constants ---
 // camera x for window preset. revisit now that the old partition arm

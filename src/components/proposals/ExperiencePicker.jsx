@@ -7,13 +7,13 @@ export default function ExperiencePicker() {
   const { variantId } = useParams()
 
   return (
-    <Glass className="fixed top-4 left-1/2 -translate-x-1/2 z-10 select-none rounded-full flex items-center gap-1 p-1">
+    <Glass className="select-none rounded-full flex items-center gap-1 p-1">
       {experiences.map((exp) => {
         const active = variantId === exp.id
         return (
           <button
             key={exp.id}
-            onClick={() => navigate(`/proposals/${exp.id}`)}
+            onClick={() => navigate(`/fireflies/${exp.id}`)}
             title={exp.summary}
             style={{
               transitionDuration: '280ms',

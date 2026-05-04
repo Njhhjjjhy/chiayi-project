@@ -1,27 +1,24 @@
 import {
-  HW, HD, WALL_T,
+  HW, HD, PLYWOOD_T,
   PATHWAY_WIDTH, PATHWAY_HEIGHT, PATHWAY_SEG2_FACE_X,
   ENT_END,
 } from '../../geometry/dimensions.js'
 import { useVariant } from '../../hooks/useVariant.js'
 import ArchEdges from './ArchEdges.jsx'
 
-// The pathway: an L-shaped guided corridor formed by two partition
-// segments. Visitors enter at the entrance, walk along the front-wall
-// (segment 1), turn right at the front/window-wall corner into
-// segment 2 along the window-wall, then exit into the open forest at
-// the back/window-wall corner.
+// The pathway-partition: an L-shaped plywood wall in two segments.
+// Visitors enter at the entrance, walk along the front-wall (segment
+// 1), turn right at the front/window-wall corner into segment 2
+// along the window-wall, then exit into the open forest at the
+// back/window-wall corner.
 //
-// Partitions are 12 cm thick (matching WALL_T) — modelled as
-// plywood-on-stud interior partitions, the standard for exhibition
-// build-outs. The plywood is finished in matte black paint, same
-// paint colour family as the existing concrete walls so the room
-// reads as one continuous dark surface.
+// Plywood, 6 cm thick. Matte black paint, same paint colour family
+// as the existing concrete walls so the room reads as one continuous
+// dark surface.
 //
 // Always rendered — no toggles, no left/right variants.
 
-const PARTITION_THICKNESS  = WALL_T // 0.12 m, matches room walls
-const HALF_THICK           = PARTITION_THICKNESS / 2
+const HALF_THICK           = PLYWOOD_T / 2
 
 const CARDS_PER_SEG = 3
 const CARD_W        = 0.42
@@ -56,14 +53,14 @@ const SEG2_Z_END   = HD - PATHWAY_WIDTH - HALF_THICK
 const SEG2_LENGTH  = SEG2_Z_END - SEG2_Z_START
 const SEG2_Z_CENTER = (SEG2_Z_START + SEG2_Z_END) / 2
 
-// Plywood partition finished in matte black paint. Same paint colour
-// family as the concrete walls but slightly lighter and a bit smoother
-// — the plywood substrate gives the painted surface a fractional sheen
-// that the pathway lights catch, so the partitions read as separate
-// volumes from the walls without breaking the unified black palette.
-// Switches to wireframe in construction mode so the partition system
-// reads consistently with the wireframe walls.
-function partitionMaterial(isConstruction) {
+// Plywood finished in matte black paint. Same paint colour family
+// as the concrete walls but slightly lighter and a bit smoother —
+// the plywood substrate gives the painted surface a fractional
+// sheen that the pathway lights catch, so the pathway-partition
+// reads as a separate volume from the walls without breaking the
+// unified black palette. Switches to wireframe in construction mode
+// so the pathway-partition reads consistently with the wireframe walls.
+function pathwayPartitionMaterial(isConstruction) {
   return isConstruction
     ? { color: '#dcdcdc', roughness: 0.9, metalness: 0 }
     : { color: '#1c1c1c', roughness: 0.55, metalness: 0 }
@@ -93,7 +90,7 @@ const LIGHT_Y = 1.8
 
 export default function Pathway() {
   const { isConstruction } = useVariant()
-  const partition = partitionMaterial(isConstruction)
+  const pathwayPartition = pathwayPartitionMaterial(isConstruction)
   const card = cardMaterial(isConstruction)
 
   const seg1Cards = makeCardPositions(SEG1_X_START + 1.0, SEG1_X_END - 1.0, CARDS_PER_SEG)
@@ -107,8 +104,8 @@ export default function Pathway() {
         castShadow
         receiveShadow
       >
-        <boxGeometry args={[SEG1_LENGTH, PATHWAY_HEIGHT, PARTITION_THICKNESS]} />
-        <meshStandardMaterial {...partition} />
+        <boxGeometry args={[SEG1_LENGTH, PATHWAY_HEIGHT, PLYWOOD_T]} />
+        <meshStandardMaterial {...pathwayPartition} />
         <ArchEdges color="#0a8c5b" />
       </mesh>
       {seg1Cards.map((x, i) => (
@@ -130,8 +127,8 @@ export default function Pathway() {
         castShadow
         receiveShadow
       >
-        <boxGeometry args={[PARTITION_THICKNESS, PATHWAY_HEIGHT, SEG2_LENGTH]} />
-        <meshStandardMaterial {...partition} />
+        <boxGeometry args={[PLYWOOD_T, PATHWAY_HEIGHT, SEG2_LENGTH]} />
+        <meshStandardMaterial {...pathwayPartition} />
         <ArchEdges color="#0a8c5b" />
       </mesh>
       {seg2Cards.map((z, i) => (

@@ -1,9 +1,15 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import QAPanel from './components/QAPanel'
 
-const ThreeDPreview = lazy(() => import('./pages/ThreeDPreview'))
-const ProposalsPage = lazy(() => import('./pages/ProposalsPage'))
+const FirefliesPage = lazy(() => import('./pages/FirefliesPage'))
+
+const DEFAULT_VARIANT = 'compressed-day'
+
+function ProposalsRedirect() {
+  const { variantId } = useParams()
+  return <Navigate to={`/fireflies/${variantId || DEFAULT_VARIANT}`} replace />
+}
 
 function PageLoader() {
   return (
@@ -23,11 +29,13 @@ export default function App() {
     <>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route index element={<Navigate to="/3d" replace />} />
-          <Route path="3d" element={<ThreeDPreview />} />
-          <Route path="proposals" element={<Navigate to="/proposals/compressed-day" replace />} />
-          <Route path="proposals/:variantId" element={<ProposalsPage />} />
-          <Route path="*" element={<Navigate to="/3d" replace />} />
+          <Route index element={<Navigate to={`/fireflies/${DEFAULT_VARIANT}`} replace />} />
+          <Route path="fireflies" element={<Navigate to={`/fireflies/${DEFAULT_VARIANT}`} replace />} />
+          <Route path="fireflies/:variantId" element={<FirefliesPage />} />
+          <Route path="3d" element={<Navigate to={`/fireflies/${DEFAULT_VARIANT}`} replace />} />
+          <Route path="proposals" element={<Navigate to={`/fireflies/${DEFAULT_VARIANT}`} replace />} />
+          <Route path="proposals/:variantId" element={<ProposalsRedirect />} />
+          <Route path="*" element={<Navigate to={`/fireflies/${DEFAULT_VARIANT}`} replace />} />
         </Routes>
       </Suspense>
       <QAPanel />

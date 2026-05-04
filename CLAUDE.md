@@ -71,7 +71,9 @@ No designer, artist, studio, or specific-artwork names appear anywhere in this c
 When interpreting QA notes from Corbett (or any informal language about room elements), read `docs/room-glossary.md` first. It maps every wall / fixture / fabric / firefly group to its canonical name and code reference, plus a translation cheatsheet for common informal phrases.
 
 ### Naming rule (locked)
-Every room element has one canonical name with a hyphen: front-wall, back-wall, window-wall, entrance-wall, entrance-wall-partition, pathway, forest, exhibition-area, hvac-plenum, silver-service-door, etc. Use these everywhere — comments, doc text, dropdown labels, file names. Old names like "corridor", "Segment 1/2/3", "EntryPathway" are forbidden — see `docs/room-glossary.md` for the translation table when reading old QA notes.
+Every room element has one canonical name with a hyphen: front-wall, back-wall, window-wall, entrance-wall, pathway, pathway-partition, entrance-wall-partition, column, forest, exhibition-area, hvac-plenum, silver-service-door, etc. Use these everywhere — comments, doc text, dropdown labels, file names. Old names like "corridor", "Segment 1/2/3", "EntryPathway" are forbidden — see `docs/room-glossary.md` for the translation table when reading old QA notes.
+
+**There are two partitions** — pathway-partition and entrance-wall-partition. Never say just "partition" alone — always qualify which one. The walking strip is always called "pathway", never "walking strip" or "corridor".
 
 ### Real-world room sizes (locked)
 The room is rectangular: 8.83 m (front-wall and back-wall) × 8.78 m (entrance-wall and window-wall) × 3.52 m tall (working ceiling, after beams). Total height to the original structural ceiling is 4.2 m, but only 3.52 m is modelled. Visitor entrance is 2.4 m wide × full-height. Source of truth lives in `src/geometry/dimensions.js` — every other position derives from it. Don't hardcode numbers.
