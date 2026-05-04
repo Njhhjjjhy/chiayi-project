@@ -2,10 +2,10 @@
 // If you change names here, update docs/room-glossary.md to match.
 
 export const ROOM_LOCATIONS = [
-  { value: 'entrance-wall', label: 'Entrance wall' },
-  { value: 'window-wall', label: 'Window wall' },
-  { value: 'front-wall', label: 'Front wall' },
-  { value: 'back-wall', label: 'Back wall' },
+  { value: 'entrance-wall', label: 'Entrance-wall' },
+  { value: 'window-wall', label: 'Window-wall' },
+  { value: 'front-wall', label: 'Front-wall' },
+  { value: 'back-wall', label: 'Back-wall' },
   { value: 'ceiling', label: 'Ceiling' },
   { value: 'floor', label: 'Floor' },
   { value: 'visitor-entrance', label: 'Visitor entrance' },

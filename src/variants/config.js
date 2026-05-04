@@ -49,14 +49,14 @@ export const viewModes = {
 //     edge of the entrance opening, looking into the room interior.
 export const cameraPresets = {
   ceiling:  { label: 'Ceiling',       position: [0.5, 9, 0.5],                                target: [0, 0, 0] },
-  front:    { label: 'Front wall',    position: [0, 1.6, HD - 0.3],                           target: [0, 1.6, -HD] },
-  back:     { label: 'Back wall',     position: [0, 1.6, -HD + 0.3],                          target: [0, 1.6, HD] },
+  front:    { label: 'Front-wall',    position: [0, 1.6, HD - 0.3],                           target: [0, 1.6, -HD] },
+  back:     { label: 'Back-wall',     position: [0, 1.6, -HD + 0.3],                          target: [0, 1.6, HD] },
   window:   {
-    label: 'Window wall',
+    label: 'Window-wall',
     position: [WINDOW_PRESET_CAMERA_X, 1.6, 0],
     target:   [HW, 1.6, 0],
   },
-  entrance: { label: 'Entrance wall', position: [HW / 2, 1.6, 0],                             target: [-HW, 1.6, 0] },
+  entrance: { label: 'Entrance-wall', position: [HW / 2, 1.6, 0],                             target: [-HW, 1.6, 0] },
   standing: { label: 'Standing',      position: [-HW + 0.5, 1.6, -HD + ENT_W],                target: [0, 1.6, 0] },
 }
 
