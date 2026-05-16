@@ -14,12 +14,12 @@
 
 ## How visitors move
 
-- Identical to fireflies-folded-sky: entrance-wall/back-wall corner → along back-wall → turn along window-wall → exit at column/front-wall gap into forest → gift area.
+- Identical to fireflies-suspended-sky: entrance-wall/back-wall corner → along back-wall → turn along window-wall → exit at column/front-wall gap into forest → gift area.
 - One-way.
 
 ## Tunnel (5–7 min)
 
-- Identical to fireflies-folded-sky: shoes off, foam and fake grass, 10 flashlights, wall panels, phones in tunnel only.
+- Identical to fireflies-suspended-sky: shoes off, foam and fake grass, 10 flashlights, wall panels, phones in tunnel only.
 - Final panel: soft hint about settling the beam.
 
 ---
@@ -74,14 +74,14 @@
 
 ## Luffa wall
 
-- Identical to fireflies-folded-sky.
+- Identical to fireflies-suspended-sky.
 - Bark of reachable branches adds an additional tactile element.
 
 ## Photo opportunities
 
 - Tunnel panels only.
 
-## What makes this different from fireflies-folded-sky
+## What makes this different from fireflies-suspended-sky
 
 - Fireflies physically closer — branches almost within reach.
 - Synchrony has genuine 3D depth across panels and branches.

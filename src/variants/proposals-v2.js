@@ -7,13 +7,14 @@
 // Adding a new proposal here automatically exposes it to the switcher.
 
 export const proposalVariants = {
-  'fireflies-folded-sky': {
-    id: 'fireflies-folded-sky',
-    label: 'Fireflies folded sky',
+  'fireflies-suspended-sky': {
+    id: 'fireflies-suspended-sky',
+    label: 'Fireflies suspended sky',
     hasBranches: false,
     wallLight: 'sundown',
     defaultFirefly: 'awakening',
     isDefault: true,
+    // TODO: flashlight spec — IR wavelength, body glow method, charging method, supplier
   },
   'fireflies-within-reach': {
     id: 'fireflies-within-reach',
@@ -22,6 +23,7 @@ export const proposalVariants = {
     wallLight: 'horizon-line',
     defaultFirefly: 'drifting-swarm',
     isDefault: false,
+    // TODO: flashlight spec — IR wavelength, body glow method, charging method, supplier
   },
 }
 

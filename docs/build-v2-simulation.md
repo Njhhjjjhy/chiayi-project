@@ -2,7 +2,7 @@
 
 ## What this builds
 
-This is a ground-up spatial rebuild of the 3D simulation plus a new proposal variant system. The existing room geometry was built on a different coordinate system and a different physical understanding of the space. Both are now wrong. This prompt replaces them with a verified, locked spatial spec and introduces a UI toggle that lets the user switch between the two real design proposals — `fireflies-folded-sky` and `fireflies-within-reach` — directly in the browser.
+This is a ground-up spatial rebuild of the 3D simulation plus a new proposal variant system. The existing room geometry was built on a different coordinate system and a different physical understanding of the space. Both are now wrong. This prompt replaces them with a verified, locked spatial spec and introduces a UI toggle that lets the user switch between the two real design proposals — `fireflies-suspended-sky` and `fireflies-within-reach` — directly in the browser.
 
 **Do not preserve any existing geometry values. Every position, dimension, and camera preset in the codebase will change.**
 
@@ -26,7 +26,7 @@ Read every file below in full. Then report:
 Start by reading these three reference documents — they are the authoritative source for all spatial decisions in this build:
 
 - `docs/firefly-room-floor-plan.md` — canonical metric spatial reference. Every dimension, zone, and partition position comes from here.
-- `docs/fireflies-folded-sky-v4.md` — the `fireflies-folded-sky` proposal this build simulates.
+- `docs/fireflies-suspended-sky-v4.md` — the `fireflies-suspended-sky` proposal this build simulates.
 - `docs/fireflies-within-reach-v4.md` — the `fireflies-within-reach` proposal this build simulates.
 
 Then read the codebase files and report:
@@ -377,9 +377,9 @@ Construction mode: panel material switches to `color="#eeeeee"` with no emissive
 // Canonical registry for the two real design proposals.
 
 export const proposalVariants = {
-  'fireflies-folded-sky': {
-    id: 'fireflies-folded-sky',
-    label: 'Fireflies folded sky',
+  'fireflies-suspended-sky': {
+    id: 'fireflies-suspended-sky',
+    label: 'Fireflies suspended sky',
     hasBranches: false,
     wallLight: 'sundown',
     isDefault: true,
@@ -497,7 +497,7 @@ Mount inside `src/components/Room.jsx`.
 
 Reads `wallLight` from `useProposal()`. Renders ambient lighting bars along the four forest walls.
 
-`wallLight === 'sundown'` (`fireflies-folded-sky`):
+`wallLight === 'sundown'` (`fireflies-suspended-sky`):
 - Y = 0.05. Material: `color="#ff8c00"`, `emissive="#ff8c00"`, `emissiveIntensity={0.15}`.
 
 `wallLight === 'horizon-line'` (`fireflies-within-reach`):
