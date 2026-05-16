@@ -21,7 +21,7 @@ export default function ScenePicker({ onSelect }) {
               transitionDuration: '280ms',
               transitionTimingFunction: EASE_OUT,
             }}
-            className={`min-h-[44px] px-4 rounded-full text-[15px] whitespace-nowrap cursor-pointer transition-colors ${
+            className={`min-h-[44px] px-4 rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
               active
                 ? 'bg-white/15 text-white'
                 : 'text-white/75 hover:text-white hover:bg-white/[0.08]'

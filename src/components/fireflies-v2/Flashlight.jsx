@@ -8,6 +8,11 @@ import {
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
   PANEL_Y_MID,
 } from './surfacePositions-v2.js'
+import {
+  WALL_T, PARTITION_T,
+  ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z, COLUMN_X,
+  FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
+} from '../../geometry/dimensions-v2.js'
 
 // Flashlight beam wakes whichever panel its centre lands on, plus a
 // 40 % chance to cascade to a neighbouring panel. Beam radius 60 cm,
@@ -17,11 +22,20 @@ import {
 // concept), so neighbour edges are computed from panel-centre distance.
 // 2.4 m matches the v1 cascade radius.
 //
-// The beam is always positioned on the panel mid-Y plane regardless of
-// camera angle. For top-down or angled cameras the cursor ray crosses
-// that plane directly. For horizontal cameras the ray is parallel to
-// the plane, so we project the cursor's XZ direction at a fixed
-// distance and clamp the result to the forest bounds.
+// Beam target is the nearest forward hit among six bounded surfaces:
+//   1. Panel plane    — Y = PANEL_Y_MID, clamped to forest XZ.
+//   2. Floor          — Y = 0, whole room.
+//   3. Pathway-partition-vertical    — X = FOREST_X_START + PARTITION_T.
+//   4. Front-wall                    — X = ROOM.W - WALL_T.
+//   5. Entrance-wall-partition       — Z = PARTITION_T,                X ∈ [ENTRY_GAP_WIDTH, COLUMN_X].
+//   6. Pathway-partition-horizontal  — Z = PATHWAY_PARTITION_Z - PARTITION_T, same X range.
+//
+// Each surface is a rectangle in world space; a ray-plane intersection
+// is only accepted when the hit lies inside its rectangle. Picking the
+// smallest valid t means the beam catches whatever the cursor lands on
+// first — ceiling for top-down shots, partition / wall / floor for eye-
+// level shots, etc. If no surface qualifies (cursor pointed outside the
+// room) the old forward-project + clamp-to-forest fallback kicks in.
 
 const BEAM_RADIUS = 0.6
 const WAKE_TIME = 0.05
@@ -36,6 +50,12 @@ const FOREST_Z_MAX = FOREST_CENTER_Z + FOREST_SPAN_Z / 2
 const HORIZONTAL_FALLBACK_DIST = 5
 const MAX_HIT_DISTANCE = 30
 
+// Forest-facing surfaces of the four vertical boundaries.
+const X_PATHWAY_PARTITION = FOREST_X_START + PARTITION_T
+const X_FRONT_WALL        = ROOM.W - WALL_T
+const Z_ENT_PARTITION     = PARTITION_T
+const Z_HORIZ_PARTITION   = PATHWAY_PARTITION_Z - PARTITION_T
+
 const _raycaster = new THREE.Raycaster()
 const _target = new THREE.Vector3()
 const _hit = new THREE.Vector3()
@@ -48,19 +68,81 @@ function clampToForest(x, z) {
   ]
 }
 
-function raycastToCeiling(origin, dir, out) {
-  // Cross the panel mid-Y plane in either direction (above-the-room
-  // top-down cameras and below-the-plane eye-level cameras both work).
+function raycastForestSurfaces(origin, dir, out) {
+  let bestT = MAX_HIT_DISTANCE
+  let bestX = 0, bestY = 0, bestZ = 0
+  let found = false
+
+  // Panel plane — Y = PANEL_Y_MID, hit accepted only inside the forest XZ.
   if (Math.abs(dir.y) > 1e-3) {
     const t = (PANEL_Y_MID - origin.y) / dir.y
-    if (t > 0 && t < MAX_HIT_DISTANCE) {
-      const [cx, cz] = clampToForest(origin.x + t * dir.x, origin.z + t * dir.z)
-      out.set(cx, PANEL_Y_MID, cz)
-      return true
+    if (t > 0 && t < bestT) {
+      const x = origin.x + t * dir.x
+      const z = origin.z + t * dir.z
+      if (x >= FOREST_X_START && x <= FOREST_X_END && z >= FOREST_Z_START && z <= FOREST_Z_END) {
+        bestT = t; bestX = x; bestY = PANEL_Y_MID; bestZ = z; found = true
+      }
+    }
+    // Floor — Y = 0, whole room.
+    const tF = -origin.y / dir.y
+    if (tF > 0 && tF < bestT) {
+      const x = origin.x + tF * dir.x
+      const z = origin.z + tF * dir.z
+      if (x >= 0 && x <= ROOM.W && z >= 0 && z <= ROOM.D) {
+        bestT = tF; bestX = x; bestY = 0; bestZ = z; found = true
+      }
     }
   }
-  // Horizontal camera fallback: project the XZ direction at a fixed
-  // distance and lift to panel height.
+
+  if (Math.abs(dir.x) > 1e-3) {
+    // Pathway-partition-vertical — X = X_PATHWAY_PARTITION, runs floor→ceiling along Z ∈ [0, PATHWAY_PARTITION_Z].
+    const tP = (X_PATHWAY_PARTITION - origin.x) / dir.x
+    if (tP > 0 && tP < bestT) {
+      const y = origin.y + tP * dir.y
+      const z = origin.z + tP * dir.z
+      if (y >= 0 && y <= ROOM.H && z >= 0 && z <= PATHWAY_PARTITION_Z) {
+        bestT = tP; bestX = X_PATHWAY_PARTITION; bestY = y; bestZ = z; found = true
+      }
+    }
+    // Front-wall — X = X_FRONT_WALL, whole-room Y/Z.
+    const tF = (X_FRONT_WALL - origin.x) / dir.x
+    if (tF > 0 && tF < bestT) {
+      const y = origin.y + tF * dir.y
+      const z = origin.z + tF * dir.z
+      if (y >= 0 && y <= ROOM.H && z >= 0 && z <= ROOM.D) {
+        bestT = tF; bestX = X_FRONT_WALL; bestY = y; bestZ = z; found = true
+      }
+    }
+  }
+
+  if (Math.abs(dir.z) > 1e-3) {
+    // Entrance-wall-partition — Z = Z_ENT_PARTITION, X ∈ [ENTRY_GAP_WIDTH, COLUMN_X].
+    const tE = (Z_ENT_PARTITION - origin.z) / dir.z
+    if (tE > 0 && tE < bestT) {
+      const x = origin.x + tE * dir.x
+      const y = origin.y + tE * dir.y
+      if (x >= ENTRY_GAP_WIDTH && x <= COLUMN_X && y >= 0 && y <= ROOM.H) {
+        bestT = tE; bestX = x; bestY = y; bestZ = Z_ENT_PARTITION; found = true
+      }
+    }
+    // Pathway-partition-horizontal — Z = Z_HORIZ_PARTITION, same X range.
+    const tH = (Z_HORIZ_PARTITION - origin.z) / dir.z
+    if (tH > 0 && tH < bestT) {
+      const x = origin.x + tH * dir.x
+      const y = origin.y + tH * dir.y
+      if (x >= ENTRY_GAP_WIDTH && x <= COLUMN_X && y >= 0 && y <= ROOM.H) {
+        bestT = tH; bestX = x; bestY = y; bestZ = Z_HORIZ_PARTITION; found = true
+      }
+    }
+  }
+
+  if (found) {
+    out.set(bestX, bestY, bestZ)
+    return true
+  }
+
+  // Last-ditch fallback: cursor pointed clean outside the room. Forward-
+  // project, clamp to forest at panel height so the reticle stays on screen.
   const [cx, cz] = clampToForest(
     origin.x + HORIZONTAL_FALLBACK_DIST * dir.x,
     origin.z + HORIZONTAL_FALLBACK_DIST * dir.z,
@@ -117,7 +199,7 @@ export default function Flashlight({ masterOpacity = 1 }) {
     const t = now
 
     _raycaster.setFromCamera(pointer, camera)
-    const hit = raycastToCeiling(_raycaster.ray.origin, _raycaster.ray.direction, _hit)
+    const hit = raycastForestSurfaces(_raycaster.ray.origin, _raycaster.ray.direction, _hit)
     if (hit) _target.copy(_hit)
 
     if (reticleRef.current) {

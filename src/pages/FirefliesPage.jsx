@@ -24,8 +24,11 @@ import { experienceComponents } from '../components/proposals/experiences'
 
 function Loader() {
   return (
-    <div className="fixed inset-0 z-40 bg-black flex items-center justify-center">
-      <div className="text-white/30 text-xs tracking-widest">Loading...</div>
+    <div
+      className="fixed inset-0 z-40 flex items-center justify-center"
+      style={{ backgroundColor: 'var(--color-bg)' }}
+    >
+      <div className="text-white/40 text-sm tracking-widest">Loading...</div>
     </div>
   )
 }
@@ -55,7 +58,10 @@ function FirefliesInner() {
   }, [])
 
   return (
-    <div className="relative h-screen w-screen bg-black">
+    <div
+      className="relative h-screen w-screen"
+      style={{ backgroundColor: 'var(--color-bg)' }}
+    >
       <Leva hidden={levaHidden} collapsed={false} />
 
       <Suspense fallback={<Loader />}>
@@ -67,7 +73,7 @@ function FirefliesInner() {
             far: 100,
           }}
           gl={{ preserveDrawingBuffer: true, antialias: true }}
-          className="!absolute inset-0"
+          className="absolute! inset-0"
         >
           <Scene
             roomWidth={roomWidth}
@@ -108,7 +114,7 @@ function FirefliesInner() {
       <GuidedTourOverlay />
 
       {uiHidden && (
-        <div className="fixed bottom-4 right-4 z-10 text-[10px] text-white/10 pointer-events-none">
+        <div className="fixed bottom-4 right-4 z-10 text-sm text-white/40 pointer-events-none">
           Press H to show controls
         </div>
       )}

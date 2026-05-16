@@ -23,6 +23,9 @@ export default function LuffaWall() {
         rotation={[0, -Math.PI / 2, 0]}
       >
         <planeGeometry args={[2.0, 1.8]} />
+        {/* lit-no-bloom: deeper amber than a paper-lantern read. The
+            rendering-upgrade plan proposed #fff0cc × 1.4 here; deferred
+            as a design decision pending client review. */}
         <meshStandardMaterial
           color="#3a2a10"
           emissive="#5a3a10"

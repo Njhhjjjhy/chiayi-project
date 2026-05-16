@@ -31,6 +31,7 @@ const PANEL_SPEC = [
   { count: 5,  size: 0.90, ledCols: 6, ledRows: 5 }, // 30 LEDs
 ]
 
+// ambient-visible: dark plywood panel body, just lifted off pure black.
 const PANEL_MATERIAL = {
   color: '#111111',
   emissive: '#111111',
@@ -39,16 +40,23 @@ const PANEL_MATERIAL = {
   metalness: 0,
 }
 
+// blooms: intensity 5 with toneMapped:false pushes luminance past the
+// bloom threshold (1.0) regardless of the AgX pass.
 const LED_MATERIAL = {
-  color: '#00FF00',
-  emissive: '#00FF00',
-  emissiveIntensity: 1.5,
+  color: '#00ff00',
+  emissive: '#00ff00',
+  emissiveIntensity: 5,
+  toneMapped: false,
   roughness: 0.5,
   metalness: 0,
 }
 
+// ambient-visible: cables would crush to pure black without a small
+// emissive lift now that the renderer runs flat into AgX.
 const CABLE_MATERIAL = {
   color: '#333333',
+  emissive: '#333333',
+  emissiveIntensity: 0.05,
   roughness: 0.6,
   metalness: 0.3,
 }

@@ -21,7 +21,7 @@ export default function ModeSwitcher({ mode, onChange }) {
             key={m.id}
             onClick={() => onChange(m.id)}
             style={TRANSITION}
-            className={`min-h-[44px] px-4 rounded-full text-[13px] tracking-[0.08em] whitespace-nowrap cursor-pointer transition-colors ${
+            className={`min-h-[44px] px-4 rounded-full text-sm tracking-[0.08em] whitespace-nowrap cursor-pointer transition-colors ${
               active
                 ? 'bg-white/15 text-white'
                 : 'text-white/60 hover:text-white hover:bg-white/[0.08]'

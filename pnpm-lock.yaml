@@ -29,6 +29,9 @@ importers:
       leva:
         specifier: ^0.10.1
         version: 0.10.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      n8ao:
+        specifier: ^1.10.1
+        version: 1.10.1(postprocessing@6.39.1(three@0.183.2))(three@0.183.2)
       postprocessing:
         specifier: ^6.39.0
         version: 6.39.1(three@0.183.2)

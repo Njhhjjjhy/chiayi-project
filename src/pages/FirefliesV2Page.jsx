@@ -1,8 +1,5 @@
-import * as THREE from 'three'
-import { Canvas, useThree } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing'
-import { BlendFunction } from 'postprocessing'
 import { Suspense, useEffect, useMemo } from 'react'
 import { useSearchParams, useParams, Link } from 'react-router-dom'
 import { ROOM } from '../geometry/dimensions-v2.js'
@@ -13,36 +10,23 @@ import { useProposal } from '../hooks/useProposal-v2.js'
 import { proposalVariants, defaultProposalId } from '../variants/proposals-v2.js'
 import ProposalSwitcher from '../components/proposals-v2/ProposalSwitcher.jsx'
 import Room from '../components/room-v2/Room.jsx'
+import { PostEffects } from '../postfx/PostEffects.jsx'
 
 // v2 verification scaffold. Wraps everything in ProposalProvider so the
 // proposal switcher, Branches, and WallLighting can read the active
 // proposal. URL :variantId param maps to a known proposal id; unknown
 // or absent values fall back to the default proposal.
 //
-// Lighting and tone mapping are intentionally bright/Linear for this
-// verification pass so dark spec materials are easy to inspect. Final
-// lighting design comes later.
+// The post-processing stack in PostEffects owns tone mapping (AgX); the
+// Canvas runs NoToneMapping via the `flat` prop. Lighting is intentionally
+// bright for verification so dark spec materials are easy to inspect.
 //
-// Viewpoint switcher reads from cameraPresets — six canonical views
+// Viewpoint switcher reads from cameraPresets – six canonical views
 // (ceiling, back, front, window, entrance, standing). Default lands on
 // 'standing' since that's the most natural eye-level introduction shot.
 
 const DEFAULT_VIEW = 'standing'
 const DEFAULT_FOV = 50
-
-// Sets the renderer's tone mapping at runtime so toggling modes doesn't
-// require remounting the Canvas (which would reset every firefly's
-// in-progress animation).
-function ToneMappingSetter({ isExperience }) {
-  const gl = useThree((s) => s.gl)
-  /* eslint-disable react-hooks/immutability */
-  useEffect(() => {
-    gl.toneMapping = isExperience ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping
-    gl.toneMappingExposure = isExperience ? 1.2 : 1.0
-  }, [isExperience, gl])
-  /* eslint-enable react-hooks/immutability */
-  return null
-}
 
 function Loader() {
   return (
@@ -116,22 +100,18 @@ function FirefliesV2Inner() {
       <Suspense fallback={<Loader />}>
         <Canvas
           key={canvasKey}
+          flat
+          dpr={Math.min(window.devicePixelRatio, 1.5)}
           camera={{
             position: preset.position,
             fov: DEFAULT_FOV,
             near: 0.05,
             far: 200,
           }}
-          gl={{
-            preserveDrawingBuffer: true,
-            antialias: true,
-            toneMapping: THREE.NoToneMapping,
-          }}
+          gl={{ antialias: false, powerPreference: 'high-performance', toneMappingExposure: 0.8 }}
           className="absolute! inset-0"
         >
           <color attach="background" args={[outsideColor]} />
-
-          <ToneMappingSetter isExperience={isExperience} />
 
           <ambientLight intensity={isExperience ? 0.01 : 2.4} color="#ffffff" />
           {!isExperience && (
@@ -155,27 +135,7 @@ function FirefliesV2Inner() {
 
           <Room curtainOff={curtainOff} fireflyVariant={fireflyVariant} />
 
-          {isExperience && (
-            <EffectComposer>
-              <Bloom
-                luminanceThreshold={0.05}
-                luminanceSmoothing={0.9}
-                intensity={0.3}
-                radius={0.15}
-                mipmapBlur
-              />
-              <Vignette
-                offset={0.3}
-                darkness={0.6}
-                blendFunction={BlendFunction.NORMAL}
-              />
-              <Noise
-                premultiply
-                blendFunction={BlendFunction.ADD}
-                opacity={0.03}
-              />
-            </EffectComposer>
-          )}
+          <PostEffects />
         </Canvas>
       </Suspense>
 

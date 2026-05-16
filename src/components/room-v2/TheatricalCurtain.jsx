@@ -25,9 +25,11 @@ export default function TheatricalCurtain() {
       ]}
     >
       <planeGeometry args={[ROOM.W, ROOM.H]} />
+      {/* ambient-visible: dark navy fabric, lifted off pure black so AgX
+          can show fold detail rather than a flat shadow shape. */}
       <meshStandardMaterial
-        color="#0a1a2e"
-        emissive="#0a1a2e"
+        color="#0a0f1c"
+        emissive="#0a0f1c"
         emissiveIntensity={0.06}
         roughness={0.9}
         side={THREE.DoubleSide}
