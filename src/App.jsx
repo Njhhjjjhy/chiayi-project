@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import QAPanel from './components/QAPanel'
 
 const FirefliesPage = lazy(() => import('./pages/FirefliesPage'))
+const FirefliesV2Page = lazy(() => import('./pages/FirefliesV2Page'))
 
 const DEFAULT_VARIANT = 'last-light'
 
@@ -32,6 +33,8 @@ export default function App() {
           <Route index element={<Navigate to="/fireflies" replace />} />
           <Route path="fireflies" element={<FirefliesPage />} />
           <Route path="fireflies/:variantId" element={<FirefliesPage />} />
+          <Route path="fireflies-v2" element={<FirefliesV2Page />} />
+          <Route path="fireflies-v2/:variantId" element={<FirefliesV2Page />} />
           <Route path="3d" element={<Navigate to="/fireflies" replace />} />
           <Route path="proposals" element={<Navigate to="/fireflies" replace />} />
           <Route path="proposals/:variantId" element={<ProposalsRedirect />} />
