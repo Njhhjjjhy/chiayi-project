@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
+import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing'
+import { BlendFunction } from 'postprocessing'
 import { Suspense, useEffect, useMemo } from 'react'
 import { useSearchParams, useParams, Link } from 'react-router-dom'
 import { ROOM } from '../geometry/dimensions-v2.js'
@@ -100,8 +102,17 @@ function FirefliesV2Inner() {
     return `?${params.toString()}`
   }
 
+  // Outside-the-room background: white during verification (lets the room
+  // outline read against a clean ground), near-black in experience mode
+  // (so the visitor entry opening doesn't punch a bright void through the
+  // dark interior).
+  const outsideColor = isExperience ? '#0a0a0a' : '#ffffff'
+
   return (
-    <div className="relative h-screen w-screen bg-white">
+    <div
+      className="relative h-screen w-screen"
+      style={{ backgroundColor: outsideColor }}
+    >
       <Suspense fallback={<Loader />}>
         <Canvas
           key={canvasKey}
@@ -118,7 +129,7 @@ function FirefliesV2Inner() {
           }}
           className="absolute! inset-0"
         >
-          <color attach="background" args={['#ffffff']} />
+          <color attach="background" args={[outsideColor]} />
 
           <ToneMappingSetter isExperience={isExperience} />
 
@@ -143,6 +154,28 @@ function FirefliesV2Inner() {
           />
 
           <Room curtainOff={curtainOff} fireflyVariant={fireflyVariant} />
+
+          {isExperience && (
+            <EffectComposer>
+              <Bloom
+                luminanceThreshold={0.05}
+                luminanceSmoothing={0.9}
+                intensity={0.3}
+                radius={0.15}
+                mipmapBlur
+              />
+              <Vignette
+                offset={0.3}
+                darkness={0.6}
+                blendFunction={BlendFunction.NORMAL}
+              />
+              <Noise
+                premultiply
+                blendFunction={BlendFunction.ADD}
+                opacity={0.03}
+              />
+            </EffectComposer>
+          )}
         </Canvas>
       </Suspense>
 
