@@ -1,5 +1,9 @@
 # Fireflies
 
+## Deployment policy (NEVER VIOLATE)
+
+**NEVER commit, push, or deploy without an explicit instruction from the user for that specific change.** A previous "push this" is NOT a standing order for future changes. Each commit, push, and deploy must be explicitly authorized for the specific change at hand. Default behavior is: make the change locally, leave it uncommitted, and let the user verify in the browser. The user reviews UI changes visually before anything goes to git. When in doubt, stop and ask.
+
 ## How to talk to the user (read this first)
 
 **The user is a designer, not a developer.** Never use code jargon, file names, function names, or technical shorthand in conversation. Describe everything in plain or design terms — what the user would *see, feel, or do*, not how the code does it.

@@ -1,93 +1,43 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { Suspense, useEffect, useMemo } from 'react'
-import { useSearchParams, useParams, Link } from 'react-router-dom'
+import { Suspense, useEffect, useMemo, useState } from 'react'
+import { useSearchParams, useParams } from 'react-router-dom'
 import { ROOM } from '../geometry/dimensions-v2.js'
 import { cameraPresets } from '../variants/config-v2.js'
-import { fireflyVariantList } from '../variants/fireflies-v2.js'
 import { ProposalProvider } from '../hooks/ProposalProvider-v2.jsx'
+import { TimelineProvider } from '../hooks/TimelineProvider.jsx'
 import { useProposal } from '../hooks/useProposal-v2.js'
 import { proposalVariants, defaultProposalId } from '../variants/proposals-v2.js'
-import ProposalSwitcher from '../components/proposals-v2/ProposalSwitcher.jsx'
 import Room from '../components/room-v2/Room.jsx'
 import { PostEffects } from '../postfx/PostEffects.jsx'
+import V2VariantSwitcher from '../components/proposals-v2/V2VariantSwitcher.jsx'
+import V2ScenePicker from '../components/proposals-v2/V2ScenePicker.jsx'
+import V2FireflyPicker from '../components/proposals-v2/V2FireflyPicker.jsx'
+import V2LightingPicker from '../components/proposals-v2/V2LightingPicker.jsx'
+import ModeSwitcher from '../components/ModeSwitcher'
+import BrightnessControl from '../components/proposals/BrightnessControl.jsx'
+import TimelineController from '../components/TimelineController'
 import VersionSwitcher from '../components/VersionSwitcher.jsx'
-import Glass, { EASE_OUT } from '../components/Glass'
 
-const TRANSITION = {
-  transitionDuration: '280ms',
-  transitionTimingFunction: EASE_OUT,
-}
-
-// Glass pill row used for both viewpoint and firefly-variant selection,
-// matching v1's ScenePicker / FireflyPicker styling exactly.
-function PillRow({ items, activeId, urlFor }) {
-  return (
-    <Glass className="rounded-full flex items-center gap-1 p-1">
-      {items.map(({ id, label }) => {
-        const active = activeId === id
-        return (
-          <Link
-            key={id}
-            to={urlFor(id)}
-            style={TRANSITION}
-            className={`min-h-[44px] px-4 flex items-center rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
-              active
-                ? 'bg-white/15 text-white'
-                : 'text-white/75 hover:text-white hover:bg-white/[0.08]'
-            }`}
-          >
-            {label}
-          </Link>
-        )
-      })}
-    </Glass>
-  )
-}
-
-// Smaller Glass toggle for binary states (curtain on/off, experience mode).
-function TogglePill({ to, active, children }) {
-  return (
-    <Link
-      to={to}
-      style={TRANSITION}
-      className={`min-h-[44px] px-4 flex items-center rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
-        active
-          ? 'bg-white/15 text-white'
-          : 'text-white/75 hover:text-white hover:bg-white/[0.08]'
-      }`}
-    >
-      {children}
-    </Link>
-  )
-}
-
-// v2 verification scaffold. Wraps everything in ProposalProvider so the
-// proposal switcher, Branches, and WallLighting can read the active
-// proposal. URL :variantId param maps to a known proposal id; unknown
-// or absent values fall back to the default proposal.
-//
-// The post-processing stack in PostEffects owns tone mapping (AgX); the
-// Canvas runs NoToneMapping via the `flat` prop. Lighting is intentionally
-// bright for verification so dark spec materials are easy to inspect.
-//
-// Viewpoint switcher reads from cameraPresets – six canonical views
-// (ceiling, back, front, window, entrance, standing). Default lands on
-// 'standing' since that's the most natural eye-level introduction shot.
+// v2 page. Layout mirrors v1 exactly: top-left Variants panel,
+// top-center ModeSwitcher + the matching picker row, top-right
+// Notes + version switch + brightness slider, bottom-center
+// timeline. Same Glass aesthetic throughout.
 
 const DEFAULT_VIEW = 'standing'
 const DEFAULT_FOV = 50
 
 function Loader() {
   return (
-    <div className="fixed inset-0 z-40 bg-white flex items-center justify-center">
-      <div className="text-gray-400 text-xs tracking-widest">Loading...</div>
+    <div
+      className="fixed inset-0 z-40 flex items-center justify-center"
+      style={{ backgroundColor: 'var(--color-bg)' }}
+    >
+      <div className="text-white/40 text-sm tracking-widest">Loading...</div>
     </div>
   )
 }
 
-// Reads :variantId from the URL and pushes it into the proposal state.
-// Has to live inside ProposalProvider to call useProposal().
 function ActiveProposalSync() {
   const { variantId } = useParams()
   const { setProposalId } = useProposal()
@@ -110,36 +60,25 @@ function FirefliesV2Inner() {
   const curtainOff = searchParams.get('curtain') === 'off'
   const isExperience = searchParams.get('mode') === 'experience'
   const { proposalId, defaultFirefly } = useProposal()
-  // URL param overrides proposal default; explicit 'off' keeps the
-  // static LEDs visible even on a proposal that boots with fireflies.
   const urlFirefly = searchParams.get('firefly')
   const fireflyVariant = urlFirefly !== null ? urlFirefly : (defaultFirefly ?? 'off')
 
-  // Re-mount Canvas + Room when preset or proposal changes so camera
-  // and toggleable geometry pick up fresh.
   const canvasKey = useMemo(() => `${viewKey}-${proposalId}`, [viewKey, proposalId])
 
-  // Helpers for building viewpoint + curtain + firefly + mode URLs that
-  // preserve each other's state, so toggling one doesn't drop the others.
-  const urlFor = (overrides) => {
-    const params = new URLSearchParams()
-    params.set('view', overrides.view ?? viewKey)
-    const c = overrides.curtain !== undefined ? overrides.curtain : (curtainOff ? 'off' : null)
-    if (c) params.set('curtain', c)
-    // firefly: pass any string (incl. 'off') to set the param explicitly.
-    // urlFirefly captures the current URL value (null when absent) so
-    // we preserve absence as absence on viewpoint/curtain/mode toggles.
-    const f = overrides.firefly !== undefined ? overrides.firefly : urlFirefly
-    if (f) params.set('firefly', f)
-    const m = overrides.mode !== undefined ? overrides.mode : (isExperience ? 'experience' : null)
-    if (m) params.set('mode', m)
-    return `?${params.toString()}`
-  }
+  // Top-center mode tab — controls which picker row shows below the
+  // ModeSwitcher. Local state only, matching v1's pattern.
+  const [mode, setMode] = useState('views')
+
+  // Brightness override — multiplies the ambient light intensity so the
+  // reviewer can lift the scene without committing to a different lighting
+  // mode. Visual parity with v1's BrightnessControl.
+  const [brightness, setBrightness] = useState(1.0)
+
+  const ambientBase = isExperience ? 0.01 : 2.4
+  const ambientIntensity = ambientBase * brightness
 
   // Outside-the-room background: white during verification (lets the room
-  // outline read against a clean ground), near-black in experience mode
-  // (so the visitor entry opening doesn't punch a bright void through the
-  // dark interior).
+  // outline read against a clean ground), near-black in experience mode.
   const outsideColor = isExperience ? '#0a0a0a' : '#ffffff'
 
   return (
@@ -163,7 +102,7 @@ function FirefliesV2Inner() {
         >
           <color attach="background" args={[outsideColor]} />
 
-          <ambientLight intensity={isExperience ? 0.01 : 2.4} color="#ffffff" />
+          <ambientLight intensity={ambientIntensity} color="#ffffff" />
           {!isExperience && (
             <>
               <directionalLight position={[6, 14, 6]} intensity={1.2} />
@@ -189,41 +128,25 @@ function FirefliesV2Inner() {
         </Canvas>
       </Suspense>
 
-      <ProposalSwitcher />
-      <VersionSwitcher current="v2" />
+      {/* Top-left: Variants Glass panel (matches v1) */}
+      <V2VariantSwitcher />
 
-      {/* Top-center chrome — same Glass aesthetic as v1's ScenePicker /
-          FireflyPicker rows. Viewpoint, firefly variant, and the
-          curtain / experience-mode toggles stacked. */}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-auto select-none">
-        <PillRow
-          items={Object.entries(cameraPresets).map(([key, p]) => ({ id: key, label: p.label }))}
-          activeId={viewKey}
-          urlFor={(key) => urlFor({ view: key })}
-        />
-        <PillRow
-          items={[
-            { id: 'off', label: 'Static LEDs' },
-            ...fireflyVariantList.map((v) => ({ id: v.id, label: v.label })),
-          ]}
-          activeId={fireflyVariant}
-          urlFor={(id) => urlFor({ firefly: id })}
-        />
-        <Glass className="rounded-full flex items-center gap-1 p-1">
-          <TogglePill
-            to={urlFor({ curtain: curtainOff ? null : 'off' })}
-            active={curtainOff}
-          >
-            Curtain {curtainOff ? 'off' : 'on'}
-          </TogglePill>
-          <TogglePill
-            to={urlFor({ mode: isExperience ? null : 'experience' })}
-            active={isExperience}
-          >
-            Experience mode
-          </TogglePill>
-        </Glass>
+      {/* Top-center: ModeSwitcher + matching picker row (matches v1) */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+        <ModeSwitcher mode={mode} onChange={setMode} />
+        {mode === 'views' && <V2ScenePicker />}
+        {mode === 'lighting' && <V2LightingPicker />}
+        {mode === 'fireflies' && <V2FireflyPicker />}
       </div>
+
+      {/* Top-right: version switcher next to Notes, brightness below */}
+      <VersionSwitcher current="v2" />
+      <div className="fixed top-20 right-4 z-10 flex flex-col items-end gap-2">
+        <BrightnessControl value={brightness} onChange={setBrightness} />
+      </div>
+
+      {/* Bottom: timeline (matches v1) */}
+      <TimelineController />
     </div>
   )
 }
@@ -231,8 +154,10 @@ function FirefliesV2Inner() {
 export default function FirefliesV2Page() {
   return (
     <ProposalProvider>
-      <ActiveProposalSync />
-      <FirefliesV2Inner />
+      <TimelineProvider>
+        <ActiveProposalSync />
+        <FirefliesV2Inner />
+      </TimelineProvider>
     </ProposalProvider>
   )
 }
