@@ -16,6 +16,7 @@ import ConstructionToolbar from '../components/ConstructionToolbar'
 import { GuidedTourOverlay } from '../components/GuidedTour.jsx'
 import ModeSwitcher from '../components/ModeSwitcher'
 import FireflyPicker from '../components/FireflyPicker'
+import VersionSwitcher from '../components/VersionSwitcher'
 import ExperiencePicker from '../components/proposals/ExperiencePicker.jsx'
 import PlaceholderBanner from '../components/proposals/PlaceholderBanner.jsx'
 import InstructionsOverlay from '../components/proposals/InstructionsOverlay.jsx'
@@ -91,6 +92,7 @@ function FirefliesInner() {
 
       {!uiHidden && !tourActive && (
         <>
+          <VersionSwitcher current="v1" variant="dark" />
           <VariantSwitcher />
 
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">

@@ -11,6 +11,7 @@ import { proposalVariants, defaultProposalId } from '../variants/proposals-v2.js
 import ProposalSwitcher from '../components/proposals-v2/ProposalSwitcher.jsx'
 import Room from '../components/room-v2/Room.jsx'
 import { PostEffects } from '../postfx/PostEffects.jsx'
+import VersionSwitcher from '../components/VersionSwitcher.jsx'
 
 // v2 verification scaffold. Wraps everything in ProposalProvider so the
 // proposal switcher, Branches, and WallLighting can read the active
@@ -140,6 +141,7 @@ function FirefliesV2Inner() {
       </Suspense>
 
       <ProposalSwitcher />
+      <VersionSwitcher current="v2" variant={isExperience ? 'dark' : 'light'} />
 
       {/* Verification chrome — bottom-left. Two rows: viewpoint + curtain
           on top, firefly variant switcher below. */}

@@ -5,11 +5,9 @@ import QAPanel from './components/QAPanel'
 const FirefliesPage = lazy(() => import('./pages/FirefliesPage'))
 const FirefliesV2Page = lazy(() => import('./pages/FirefliesV2Page'))
 
-const DEFAULT_VARIANT = 'last-light'
-
 function ProposalsRedirect() {
   const { variantId } = useParams()
-  return <Navigate to={`/fireflies/${variantId || DEFAULT_VARIANT}`} replace />
+  return <Navigate to={`/fireflies-v2/${variantId || ''}`} replace />
 }
 
 function PageLoader() {
@@ -30,15 +28,15 @@ export default function App() {
     <>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route index element={<Navigate to="/fireflies" replace />} />
+          <Route index element={<Navigate to="/fireflies-v2" replace />} />
           <Route path="fireflies" element={<FirefliesPage />} />
           <Route path="fireflies/:variantId" element={<FirefliesPage />} />
           <Route path="fireflies-v2" element={<FirefliesV2Page />} />
           <Route path="fireflies-v2/:variantId" element={<FirefliesV2Page />} />
-          <Route path="3d" element={<Navigate to="/fireflies" replace />} />
-          <Route path="proposals" element={<Navigate to="/fireflies" replace />} />
+          <Route path="3d" element={<Navigate to="/fireflies-v2" replace />} />
+          <Route path="proposals" element={<Navigate to="/fireflies-v2" replace />} />
           <Route path="proposals/:variantId" element={<ProposalsRedirect />} />
-          <Route path="*" element={<Navigate to="/fireflies" replace />} />
+          <Route path="*" element={<Navigate to="/fireflies-v2" replace />} />
         </Routes>
       </Suspense>
       <QAPanel />
