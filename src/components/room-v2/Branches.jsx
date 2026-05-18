@@ -78,12 +78,13 @@ function Branch({ branch, map, normalMap }) {
   )
 }
 
-export default function Branches() {
-  const { hasBranches } = useProposal()
+// Inner component does the texture load. Only mounted when the active
+// proposal asks for branches — keeps the bark texture request out of
+// the suspense chain on proposals (and the deployment) that don't have
+// the files. The texture folder is gitignored at 265 MB.
+function BranchesInner() {
   const branches = useMemo(() => generateBranches(), [])
   const [map, normalMap] = useTexture([BARK_COLOR, BARK_NORMAL])
-
-  if (!hasBranches) return null
 
   return (
     <group>
@@ -92,4 +93,10 @@ export default function Branches() {
       ))}
     </group>
   )
+}
+
+export default function Branches() {
+  const { hasBranches } = useProposal()
+  if (!hasBranches) return null
+  return <BranchesInner />
 }
