@@ -12,6 +12,55 @@ import ProposalSwitcher from '../components/proposals-v2/ProposalSwitcher.jsx'
 import Room from '../components/room-v2/Room.jsx'
 import { PostEffects } from '../postfx/PostEffects.jsx'
 import VersionSwitcher from '../components/VersionSwitcher.jsx'
+import Glass, { EASE_OUT } from '../components/Glass'
+
+const TRANSITION = {
+  transitionDuration: '280ms',
+  transitionTimingFunction: EASE_OUT,
+}
+
+// Glass pill row used for both viewpoint and firefly-variant selection,
+// matching v1's ScenePicker / FireflyPicker styling exactly.
+function PillRow({ items, activeId, urlFor }) {
+  return (
+    <Glass className="rounded-full flex items-center gap-1 p-1">
+      {items.map(({ id, label }) => {
+        const active = activeId === id
+        return (
+          <Link
+            key={id}
+            to={urlFor(id)}
+            style={TRANSITION}
+            className={`min-h-[44px] px-4 flex items-center rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
+              active
+                ? 'bg-white/15 text-white'
+                : 'text-white/75 hover:text-white hover:bg-white/[0.08]'
+            }`}
+          >
+            {label}
+          </Link>
+        )
+      })}
+    </Glass>
+  )
+}
+
+// Smaller Glass toggle for binary states (curtain on/off, experience mode).
+function TogglePill({ to, active, children }) {
+  return (
+    <Link
+      to={to}
+      style={TRANSITION}
+      className={`min-h-[44px] px-4 flex items-center rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
+        active
+          ? 'bg-white/15 text-white'
+          : 'text-white/75 hover:text-white hover:bg-white/[0.08]'
+      }`}
+    >
+      {children}
+    </Link>
+  )
+}
 
 // v2 verification scaffold. Wraps everything in ProposalProvider so the
 // proposal switcher, Branches, and WallLighting can read the active
@@ -141,70 +190,39 @@ function FirefliesV2Inner() {
       </Suspense>
 
       <ProposalSwitcher />
-      <VersionSwitcher current="v2" variant={isExperience ? 'dark' : 'light'} />
+      <VersionSwitcher current="v2" />
 
-      {/* Verification chrome — bottom-left. Two rows: viewpoint + curtain
-          on top, firefly variant switcher below. */}
-      <div className="fixed bottom-3 left-3 z-10 flex flex-col gap-1 pointer-events-none">
-        <div className="text-[10px] text-gray-500 font-mono">
-          fireflies v2 — {preset.label} · {proposalId}
-          {curtainOff && ' · curtain off'}
-          {fireflyVariant !== 'off' && ` · firefly: ${fireflyVariant}`}
-          {isExperience && ' · experience mode'}
-        </div>
-        <div className="flex flex-wrap gap-1 pointer-events-auto max-w-xl">
-          {Object.entries(cameraPresets).map(([key, p]) => (
-            <Link
-              key={key}
-              to={urlFor({ view: key })}
-              className={`text-[10px] font-mono px-2 py-1 rounded border ${
-                viewKey === key
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
-              }`}
-            >
-              {p.label}
-            </Link>
-          ))}
-          <Link
+      {/* Top-center chrome — same Glass aesthetic as v1's ScenePicker /
+          FireflyPicker rows. Viewpoint, firefly variant, and the
+          curtain / experience-mode toggles stacked. */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-auto select-none">
+        <PillRow
+          items={Object.entries(cameraPresets).map(([key, p]) => ({ id: key, label: p.label }))}
+          activeId={viewKey}
+          urlFor={(key) => urlFor({ view: key })}
+        />
+        <PillRow
+          items={[
+            { id: 'off', label: 'Static LEDs' },
+            ...fireflyVariantList.map((v) => ({ id: v.id, label: v.label })),
+          ]}
+          activeId={fireflyVariant}
+          urlFor={(id) => urlFor({ firefly: id })}
+        />
+        <Glass className="rounded-full flex items-center gap-1 p-1">
+          <TogglePill
             to={urlFor({ curtain: curtainOff ? null : 'off' })}
-            className={`text-[10px] font-mono px-2 py-1 rounded border ml-2 ${
-              curtainOff
-                ? 'bg-gray-900 text-white border-gray-900'
-                : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
-            }`}
+            active={curtainOff}
           >
             Curtain {curtainOff ? 'off' : 'on'}
-          </Link>
-          <Link
+          </TogglePill>
+          <TogglePill
             to={urlFor({ mode: isExperience ? null : 'experience' })}
-            className={`text-[10px] font-mono px-2 py-1 rounded border ${
-              isExperience
-                ? 'bg-gray-900 text-white border-gray-900'
-                : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
-            }`}
+            active={isExperience}
           >
             Experience mode
-          </Link>
-        </div>
-        <div className="flex flex-wrap gap-1 pointer-events-auto max-w-xl">
-          {[{ id: 'off', label: 'Static LEDs' }, ...fireflyVariantList.map((v) => ({ id: v.id, label: v.label }))].map(({ id, label }) => {
-            const active = fireflyVariant === id
-            return (
-              <Link
-                key={id}
-                to={urlFor({ firefly: id })}
-                className={`text-[10px] font-mono px-2 py-1 rounded border ${
-                  active
-                    ? 'bg-gray-900 text-white border-gray-900'
-                    : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
-                }`}
-              >
-                {label}
-              </Link>
-            )
-          })}
-        </div>
+          </TogglePill>
+        </Glass>
       </div>
     </div>
   )
