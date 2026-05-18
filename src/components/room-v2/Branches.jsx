@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTexture } from '@react-three/drei'
 import { useProposal } from '../../hooks/useProposal-v2.js'
 import {
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
@@ -11,11 +10,6 @@ import {
 //
 // Position: random XZ inside the forest zone, Y between 2.0 and 2.8.
 // Length 0.8–1.4 m per branch, random Y rotation, all horizontal.
-//
-// Bark textures: Bark007 from ambientCG (verified present in chunk-1
-// flag check). Color + GL-convention normal map. Branches use the same
-// emissive offset trick as the walls so they don't crush to pure black
-// under ACES at ambient 0.01.
 
 const BRANCH_COUNT = 20
 const Y_MIN = 2.0
@@ -25,9 +19,6 @@ const LEN_MAX = 1.4
 const TOP_RADIUS = 0.015
 const BOTTOM_RADIUS = 0.025
 const SEED = 99
-
-const BARK_COLOR = '/textures/Bark007/Bark007_2K-JPG_Color.jpg'
-const BARK_NORMAL = '/textures/Bark007/Bark007_2K-JPG_NormalGL.jpg'
 
 function makeRng(seed) {
   let s = seed
@@ -40,9 +31,6 @@ function makeRng(seed) {
 function generateBranches() {
   const rng = makeRng(SEED)
   const branches = []
-  // Inset by the worst-case half-extent (half of the longest possible
-  // branch) so a branch tip can't poke past a forest boundary regardless
-  // of which way it rotates around Y.
   const HALF_MAX = LEN_MAX / 2
   const xMin = FOREST_X_START + HALF_MAX
   const xMax = FOREST_X_END - HALF_MAX
@@ -60,17 +48,16 @@ function generateBranches() {
   return branches
 }
 
-function Branch({ branch, map, normalMap }) {
+function Branch({ branch }) {
   return (
     <group position={[branch.x, branch.y, branch.z]} rotation={[0, branch.rotY, 0]}>
       <mesh rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[TOP_RADIUS, BOTTOM_RADIUS, branch.length, 6]} />
+        <cylinderGeometry args={[TOP_RADIUS, BOTTOM_RADIUS, branch.length, 8]} />
         <meshStandardMaterial
-          map={map}
-          normalMap={normalMap}
-          emissive="#001100"
-          emissiveIntensity={0.05}
-          roughness={0.9}
+          color="#3a2d1f"
+          emissive="#1a1208"
+          emissiveIntensity={0.08}
+          roughness={0.95}
           metalness={0}
         />
       </mesh>
@@ -78,25 +65,15 @@ function Branch({ branch, map, normalMap }) {
   )
 }
 
-// Inner component does the texture load. Only mounted when the active
-// proposal asks for branches — keeps the bark texture request out of
-// the suspense chain on proposals (and the deployment) that don't have
-// the files. The texture folder is gitignored at 265 MB.
-function BranchesInner() {
+export default function Branches() {
+  const { hasBranches } = useProposal()
   const branches = useMemo(() => generateBranches(), [])
-  const [map, normalMap] = useTexture([BARK_COLOR, BARK_NORMAL])
-
+  if (!hasBranches) return null
   return (
     <group>
       {branches.map((b, i) => (
-        <Branch key={i} branch={b} map={map} normalMap={normalMap} />
+        <Branch key={i} branch={b} />
       ))}
     </group>
   )
-}
-
-export default function Branches() {
-  const { hasBranches } = useProposal()
-  if (!hasBranches) return null
-  return <BranchesInner />
 }

@@ -21,7 +21,7 @@ function CategorySection({ label, items, activeId, urlFor }) {
       <button
         onClick={() => setOpen(!open)}
         style={TRANSITION}
-        className="w-full flex items-center justify-between px-4 min-h-[44px] text-left text-[15px] text-white/90 hover:bg-white/[0.06] cursor-pointer transition-colors"
+        className="w-full flex items-center justify-between px-4 min-h-[44px] text-left text-[15px] text-white hover:bg-white/[0.08] cursor-pointer transition-colors"
       >
         <span>{label}</span>
         {open ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -37,8 +37,8 @@ function CategorySection({ label, items, activeId, urlFor }) {
                 style={TRANSITION}
                 className={`block text-left text-[15px] min-h-[40px] flex items-center px-3 rounded-full cursor-pointer transition-colors ${
                   isActive
-                    ? 'bg-white/15 text-white'
-                    : 'text-white/75 hover:text-white hover:bg-white/[0.06]'
+                    ? 'bg-white/20 text-white'
+                    : 'text-white/85 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {item.label}
@@ -74,7 +74,7 @@ export default function V2VariantSwitcher() {
         <button
           onClick={() => setCollapsed(!collapsed)}
           style={TRANSITION}
-          className="w-full flex items-center justify-between px-4 min-h-[44px] text-[12px] tracking-[0.08em] text-white/85 hover:text-white hover:bg-white/[0.06] cursor-pointer transition-colors"
+          className="w-full flex items-center justify-between px-4 min-h-[44px] text-sm tracking-[0.08em] text-white hover:bg-white/10 cursor-pointer transition-colors"
         >
           <span>Variants</span>
           {collapsed ? <ChevronDown size={12} /> : <ChevronUp size={12} />}

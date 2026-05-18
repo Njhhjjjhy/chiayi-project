@@ -39,8 +39,8 @@ export default function V2FireflyPicker() {
             style={TRANSITION}
             className={`min-h-[44px] px-4 flex items-center rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
               active
-                ? 'bg-white/15 text-white'
-                : 'text-white/75 hover:text-white hover:bg-white/[0.08]'
+                ? 'bg-white/20 text-white'
+                : 'text-white/85 hover:text-white hover:bg-white/10'
             }`}
           >
             {label}

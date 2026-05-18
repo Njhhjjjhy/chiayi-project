@@ -20,7 +20,7 @@ const Glass = forwardRef(function Glass(
         letterSpacing: '-0.01em',
         ...style,
       },
-      className: `bg-black/45 border border-white/[0.12] text-[#f5f5f7] ${className}`,
+      className: `bg-black/80 border border-white/[0.18] text-[#f5f5f7] ${className}`,
       ...rest,
     },
     children,

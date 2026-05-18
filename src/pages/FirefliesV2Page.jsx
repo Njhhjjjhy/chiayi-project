@@ -33,7 +33,7 @@ function Loader() {
       className="fixed inset-0 z-40 flex items-center justify-center"
       style={{ backgroundColor: 'var(--color-bg)' }}
     >
-      <div className="text-white/40 text-sm tracking-widest">Loading...</div>
+      <div className="text-white/85 text-sm tracking-widest">Loading...</div>
     </div>
   )
 }
