@@ -11,7 +11,7 @@ const TRANSITION = {
   transitionTimingFunction: EASE_OUT,
 }
 
-export default function V2LightingPicker() {
+export default function LightingPicker() {
   const [searchParams] = useSearchParams()
   const curtainOff = searchParams.get('curtain') === 'off'
   const isExperience = searchParams.get('mode') === 'experience'

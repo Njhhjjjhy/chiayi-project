@@ -10,10 +10,10 @@ import { useProposal } from '../hooks/useProposal.js'
 import { proposalVariants, defaultProposalId } from '../variants/proposals.js'
 import Room from '../components/room/Room.jsx'
 import { PostEffects } from '../postfx/PostEffects.jsx'
-import V2VariantSwitcher from '../components/proposals/V2VariantSwitcher.jsx'
-import V2ScenePicker from '../components/proposals/V2ScenePicker.jsx'
-import V2FireflyPicker from '../components/proposals/V2FireflyPicker.jsx'
-import V2LightingPicker from '../components/proposals/V2LightingPicker.jsx'
+import VariantSwitcher from '../components/proposals/VariantSwitcher.jsx'
+import ScenePicker from '../components/proposals/ScenePicker.jsx'
+import FireflyPicker from '../components/proposals/FireflyPicker.jsx'
+import LightingPicker from '../components/proposals/LightingPicker.jsx'
 import ModeSwitcher from '../components/ModeSwitcher'
 import BrightnessControl from '../components/proposals/BrightnessControl.jsx'
 import TimelineController from '../components/TimelineController'
@@ -51,7 +51,7 @@ function ActiveProposalSync() {
   return null
 }
 
-function FirefliesV2Inner() {
+function FirefliesInner() {
   const [searchParams] = useSearchParams()
   const viewKey = searchParams.get('view') ?? DEFAULT_VIEW
   const preset = cameraPresets[viewKey] ?? cameraPresets[DEFAULT_VIEW]
@@ -127,14 +127,14 @@ function FirefliesV2Inner() {
       </Suspense>
 
       {/* Top-left: Variants Glass panel (matches v1) */}
-      <V2VariantSwitcher />
+      <VariantSwitcher />
 
       {/* Top-center: ModeSwitcher + matching picker row (matches v1) */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
         <ModeSwitcher mode={mode} onChange={setMode} />
-        {mode === 'views' && <V2ScenePicker />}
-        {mode === 'lighting' && <V2LightingPicker />}
-        {mode === 'fireflies' && <V2FireflyPicker />}
+        {mode === 'views' && <ScenePicker />}
+        {mode === 'lighting' && <LightingPicker />}
+        {mode === 'fireflies' && <FireflyPicker />}
       </div>
 
       {/* Top-right: brightness slider */}
@@ -148,12 +148,12 @@ function FirefliesV2Inner() {
   )
 }
 
-export default function FirefliesV2Page() {
+export default function FirefliesPage() {
   return (
     <ProposalProvider>
       <TimelineProvider>
         <ActiveProposalSync />
-        <FirefliesV2Inner />
+        <FirefliesInner />
       </TimelineProvider>
     </ProposalProvider>
   )

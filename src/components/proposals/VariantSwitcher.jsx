@@ -51,7 +51,7 @@ function CategorySection({ label, items, activeId, urlFor }) {
   )
 }
 
-export default function V2VariantSwitcher() {
+export default function VariantSwitcher() {
   const { proposalId } = useProposal()
   const [searchParams] = useSearchParams()
   const [collapsed, setCollapsed] = useState(false)
