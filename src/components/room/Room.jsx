@@ -10,7 +10,7 @@ import Ceiling from './Ceiling.jsx'
 import Branches from './Branches.jsx'
 import WallLighting from './WallLighting.jsx'
 import LuffaWall from './LuffaWall.jsx'
-import FireflySystem from '../fireflies-v2/FireflySystem.jsx'
+import FireflySystem from '../fireflies/FireflySystem.jsx'
 
 // v2 room wrapper. Mounts every piece of the canonical room geometry
 // in one group so consumers only need to render <Room /> and don't

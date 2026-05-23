@@ -1,12 +1,12 @@
-import Awakening from '../components/fireflies-v2/Awakening.jsx'
-import Flashlight from '../components/fireflies-v2/Flashlight.jsx'
-import DriftingSwarm from '../components/fireflies-v2/DriftingSwarm.jsx'
-import PulseWave from '../components/fireflies-v2/PulseWave.jsx'
-import Heartbeat from '../components/fireflies-v2/Heartbeat.jsx'
+import Awakening from '../components/fireflies/Awakening.jsx'
+import Flashlight from '../components/fireflies/Flashlight.jsx'
+import DriftingSwarm from '../components/fireflies/DriftingSwarm.jsx'
+import PulseWave from '../components/fireflies/PulseWave.jsx'
+import Heartbeat from '../components/fireflies/Heartbeat.jsx'
 
 // Canonical registry for v2 firefly variants. Mirrors v1's fireflies.js
 // shape so adding a new behaviour is the same recipe: file in
-// components/fireflies-v2/, entry below, set isDefault: true on one.
+// components/fireflies/, entry below, set isDefault: true on one.
 
 export const fireflyVariants = {
   awakening: {

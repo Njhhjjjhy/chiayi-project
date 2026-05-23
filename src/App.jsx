@@ -2,11 +2,11 @@ import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import QAPanel from './components/QAPanel'
 
-const FirefliesV2Page = lazy(() => import('./pages/FirefliesV2Page'))
+const FirefliesPage = lazy(() => import('./pages/FirefliesPage'))
 
 function FirefliesRedirect() {
   const { variantId } = useParams()
-  return <Navigate to={`/fireflies-v2/${variantId || ''}`} replace />
+  return <Navigate to={`/fireflies/${variantId || ''}`} replace />
 }
 
 function PageLoader() {
@@ -27,15 +27,15 @@ export default function App() {
     <>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route index element={<Navigate to="/fireflies-v2" replace />} />
-          <Route path="fireflies-v2" element={<FirefliesV2Page />} />
-          <Route path="fireflies-v2/:variantId" element={<FirefliesV2Page />} />
-          <Route path="fireflies" element={<Navigate to="/fireflies-v2" replace />} />
-          <Route path="fireflies/:variantId" element={<FirefliesRedirect />} />
-          <Route path="3d" element={<Navigate to="/fireflies-v2" replace />} />
-          <Route path="proposals" element={<Navigate to="/fireflies-v2" replace />} />
+          <Route index element={<Navigate to="/fireflies" replace />} />
+          <Route path="fireflies" element={<FirefliesPage />} />
+          <Route path="fireflies/:variantId" element={<FirefliesPage />} />
+          <Route path="fireflies-v2" element={<Navigate to="/fireflies" replace />} />
+          <Route path="fireflies-v2/:variantId" element={<FirefliesRedirect />} />
+          <Route path="3d" element={<Navigate to="/fireflies" replace />} />
+          <Route path="proposals" element={<Navigate to="/fireflies" replace />} />
           <Route path="proposals/:variantId" element={<FirefliesRedirect />} />
-          <Route path="*" element={<Navigate to="/fireflies-v2" replace />} />
+          <Route path="*" element={<Navigate to="/fireflies" replace />} />
         </Routes>
       </Suspense>
       <QAPanel />

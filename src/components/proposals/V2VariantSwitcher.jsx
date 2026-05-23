@@ -65,7 +65,7 @@ export default function V2VariantSwitcher() {
     if (curtain) params.set('curtain', curtain)
     if (mode) params.set('mode', mode)
     const qs = params.toString()
-    return `/fireflies-v2/${newProposalId}${qs ? `?${qs}` : ''}`
+    return `/fireflies/${newProposalId}${qs ? `?${qs}` : ''}`
   }
 
   return (
