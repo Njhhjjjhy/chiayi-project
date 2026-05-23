@@ -20,8 +20,8 @@ dist/
 showcase/
 .vercel
 
-# PBR textures (265MB, downloaded via download-textures.sh)
-public/textures/
+# PBR textures (265MB, downloaded reference material — kept local, not deployed)
+reference/textures/
 
 # Research-trip reference videos (150MB — kept local, frames extracted to frames_views/)
 reference/research-trip-20260418/*.mp4
