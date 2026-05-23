@@ -15,14 +15,12 @@ import V2ScenePicker from '../components/proposals-v2/V2ScenePicker.jsx'
 import V2FireflyPicker from '../components/proposals-v2/V2FireflyPicker.jsx'
 import V2LightingPicker from '../components/proposals-v2/V2LightingPicker.jsx'
 import ModeSwitcher from '../components/ModeSwitcher'
-import BrightnessControl from '../components/proposals/BrightnessControl.jsx'
+import BrightnessControl from '../components/proposals-v2/BrightnessControl.jsx'
 import TimelineController from '../components/TimelineController'
-import VersionSwitcher from '../components/VersionSwitcher.jsx'
 
-// v2 page. Layout mirrors v1 exactly: top-left Variants panel,
-// top-center ModeSwitcher + the matching picker row, top-right
-// Notes + version switch + brightness slider, bottom-center
-// timeline. Same Glass aesthetic throughout.
+// Layout: top-left Variants panel, top-center ModeSwitcher + the
+// matching picker row, top-right Notes + brightness slider,
+// bottom-center timeline. Glass aesthetic throughout.
 
 const DEFAULT_VIEW = 'standing'
 const DEFAULT_FOV = 50
@@ -139,8 +137,7 @@ function FirefliesV2Inner() {
         {mode === 'fireflies' && <V2FireflyPicker />}
       </div>
 
-      {/* Top-right: version switcher next to Notes, brightness below */}
-      <VersionSwitcher current="v2" />
+      {/* Top-right: brightness slider */}
       <div className="fixed top-20 right-4 z-10 flex flex-col items-end gap-2">
         <BrightnessControl value={brightness} onChange={setBrightness} />
       </div>
