@@ -1,4 +1,4 @@
-import { fireflyComponentMap } from '../../variants/fireflies-v2.js'
+import { fireflyComponentMap } from '../../variants/fireflies.js'
 
 // Dispatches to the right firefly variant component. 'off' (or any
 // unknown id) renders nothing — the static panel LEDs in Ceiling.jsx

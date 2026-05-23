@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { ROOM, WALL_T } from '../../geometry/dimensions-v2.js'
+import { ROOM, WALL_T } from '../../geometry/dimensions.js'
 
 // Warm-lit placeholder panel against the front-wall, inside the forest.
 // Stand-in for a hand-woven fibre wall feature the final installation

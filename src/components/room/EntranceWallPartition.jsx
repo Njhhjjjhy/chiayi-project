@@ -2,7 +2,7 @@ import {
   ROOM, PARTITION_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z,
   COLUMN_X,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // Three plywood partitions, 18 mm thick, floor to working ceiling.
 // Together they enclose the L-shaped pathway and close the entrance-wall

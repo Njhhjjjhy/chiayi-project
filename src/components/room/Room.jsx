@@ -16,7 +16,7 @@ import FireflySystem from '../fireflies/FireflySystem.jsx'
 // in one group so consumers only need to render <Room /> and don't
 // have to track which sub-components exist.
 //
-// Coordinate system (parallel to dimensions-v2.js):
+// Coordinate system (parallel to dimensions.js):
 //   Origin (0, 0, 0) sits at the back-wall / entrance-wall corner.
 //   X axis → positive toward front-wall.    back-wall at X = 0,           front-wall at X = ROOM.W.
 //   Y axis → up.                            floor at Y = 0,                working ceiling at Y = ROOM.H.

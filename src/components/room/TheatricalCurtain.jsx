@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { ROOM, WALL_T } from '../../geometry/dimensions-v2.js'
+import { ROOM, WALL_T } from '../../geometry/dimensions.js'
 
 // Dark navy fabric plane hanging 4 cm in front of the window-wall's
 // room-facing surface, full room width × room height. Always rendered —

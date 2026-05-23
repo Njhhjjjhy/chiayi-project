@@ -1,4 +1,4 @@
-import { ROOM, WALL_T } from '../../geometry/dimensions-v2.js'
+import { ROOM, WALL_T } from '../../geometry/dimensions.js'
 
 // Three real walls of the exhibition room: back, front, and window.
 // The entrance-wall is not a real wall — it is built from three plywood

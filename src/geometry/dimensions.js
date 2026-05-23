@@ -1,5 +1,5 @@
 // v2 coordinate system — parallel to dimensions.js, consumed only by
-// the /fireflies-v2 route. Existing dimensions.js stays the source of
+// the /fireflies route. Existing dimensions.js stays the source of
 // truth for /fireflies until the v2 build is complete.
 //
 // Origin (0, 0, 0) sits at the back-wall / entrance-wall corner.

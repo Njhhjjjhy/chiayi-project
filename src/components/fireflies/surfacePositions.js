@@ -2,7 +2,7 @@ import {
   ROOM,
   FOREST_X_START, FOREST_X_END,
   FOREST_Z_START, FOREST_Z_END,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // v2 firefly surface positions. Mirrors Ceiling.jsx's panel generation
 // so the firefly system targets the exact same LEDs the static ceiling

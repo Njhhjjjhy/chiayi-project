@@ -1,5 +1,5 @@
 // Canonical registry for the two real design proposals shown in the
-// /fireflies-v2 route. The proposal switcher reads this list to render
+// /fireflies route. The proposal switcher reads this list to render
 // its toggle, and downstream components (Branches, WallLighting) read
 // the active proposal's `hasBranches` and `wallLight` flags via the
 // ProposalProvider context.

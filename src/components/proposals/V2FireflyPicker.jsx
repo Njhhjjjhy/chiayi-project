@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import { fireflyVariantList } from '../../variants/fireflies-v2.js'
-import { useProposal } from '../../hooks/useProposal-v2.js'
+import { fireflyVariantList } from '../../variants/fireflies.js'
+import { useProposal } from '../../hooks/useProposal.js'
 import Glass, { EASE_OUT } from '../Glass'
 
 // Top-center Glass pill row. Same visual as v1's FireflyPicker, using

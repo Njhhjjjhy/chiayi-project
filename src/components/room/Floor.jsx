@@ -1,4 +1,4 @@
-import { ROOM } from '../../geometry/dimensions-v2.js'
+import { ROOM } from '../../geometry/dimensions.js'
 
 // Flat dark floor plane covering the full room footprint at Y = 0.
 // Standard structural emissive material at half the wall intensity, so

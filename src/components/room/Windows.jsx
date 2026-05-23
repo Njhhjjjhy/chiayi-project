@@ -5,7 +5,7 @@ import {
   WW_DOOR2_X, WW_DOOR2_W, WW_DOOR2_H,
   WW_WIN1_X, WW_WIN1_W, WW_WIN1_H, WW_WIN1_SILL,
   WW_WIN2_X, WW_WIN2_W, WW_WIN2_H, WW_WIN2_SILL,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // Two doors and two windows on the window-wall (Z = ROOM.D face).
 // All four are rendered as flat fill planes slightly lighter than the

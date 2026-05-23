@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useProposal } from '../../hooks/useProposal-v2.js'
-import { proposalVariantList } from '../../variants/proposals-v2.js'
+import { useProposal } from '../../hooks/useProposal.js'
+import { proposalVariantList } from '../../variants/proposals.js'
 import Glass, { EASE_OUT, ChevronUp, ChevronDown } from '../Glass'
 
 // Top-left Glass panel matching v1's VariantSwitcher visual. Collapsible

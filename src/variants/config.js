@@ -1,6 +1,6 @@
-import { ROOM, PATHWAY_PARTITION_Z } from '../geometry/dimensions-v2.js'
+import { ROOM, PATHWAY_PARTITION_Z } from '../geometry/dimensions.js'
 
-// Camera presets for /fireflies-v2. Six standard architectural views.
+// Camera presets for /fireflies. Six standard architectural views.
 // Convention: the preset name is the wall the camera is LOOKING AT.
 //
 // Two prior Option A passes:

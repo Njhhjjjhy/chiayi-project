@@ -5,7 +5,7 @@ import {
   getLedSurface, makeRng,
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
-} from './surfacePositions-v2.js'
+} from './surfacePositions.js'
 
 // One firefly lights up first, then a wave of awakening expands outward
 // in widening rings until every LED is on. Total fill time ~15 s. Once

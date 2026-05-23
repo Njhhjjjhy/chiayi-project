@@ -1,4 +1,4 @@
-import { ROOM, COLUMN_X, COLUMN_W, COLUMN_D } from '../../geometry/dimensions-v2.js'
+import { ROOM, COLUMN_X, COLUMN_W, COLUMN_D } from '../../geometry/dimensions.js'
 
 // Existing structural concrete column sitting on the entrance-wall line.
 // Its left face is at X = COLUMN_X = 6.43, right face at X = 6.73, creating

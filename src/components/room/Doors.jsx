@@ -3,7 +3,7 @@ import {
   WALL_T,
   D1_Z, D1_W, D1_H,
   D2_Z, D2_W, D2_H,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // D1 and D2 staff doors on the back-wall (X = 0 face). Existing building
 // elements, not part of the visitor route. Rendered here as flat fill

@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { useProposal } from '../../hooks/useProposal-v2.js'
+import { useProposal } from '../../hooks/useProposal.js'
 import {
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // 20 dried-bamboo / hardwood branches rigged horizontally below the
 // panel ceiling. Only rendered for proposals with hasBranches=true

@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import { cameraPresets } from '../../variants/config-v2.js'
+import { cameraPresets } from '../../variants/config.js'
 import Glass, { EASE_OUT } from '../Glass'
 
 // Top-center Glass pill row. Same visual as v1's ScenePicker, using

@@ -30,8 +30,6 @@ export default function App() {
           <Route index element={<Navigate to="/fireflies" replace />} />
           <Route path="fireflies" element={<FirefliesPage />} />
           <Route path="fireflies/:variantId" element={<FirefliesPage />} />
-          <Route path="fireflies-v2" element={<Navigate to="/fireflies" replace />} />
-          <Route path="fireflies-v2/:variantId" element={<FirefliesRedirect />} />
           <Route path="3d" element={<Navigate to="/fireflies" replace />} />
           <Route path="proposals" element={<Navigate to="/fireflies" replace />} />
           <Route path="proposals/:variantId" element={<FirefliesRedirect />} />

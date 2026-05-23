@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { ProposalContext } from './useProposal-v2.js'
-import { proposalVariants, defaultProposalId } from '../variants/proposals-v2.js'
+import { ProposalContext } from './useProposal.js'
+import { proposalVariants, defaultProposalId } from '../variants/proposals.js'
 
 // Holds the active proposal id and exposes the active proposal's flags
 // (`hasBranches`, `wallLight`) to consumers via ProposalContext.

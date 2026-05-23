@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import {
   ROOM,
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // FlatPanelCeiling — 25 plywood panels suspended at varying heights and
 // slight tilts across the forest zone. Each panel carries a jittered grid

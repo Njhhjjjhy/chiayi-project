@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
-import { getLedSurface, makeRng } from './surfacePositions-v2.js'
+import { getLedSurface, makeRng } from './surfacePositions.js'
 
 // Every LED in the room pulses in unison at ~70 BPM. Two pulses per
 // cycle (lub-dub) so the rhythm reads as a heartbeat rather than a

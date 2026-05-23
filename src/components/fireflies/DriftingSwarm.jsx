@@ -5,7 +5,7 @@ import {
   getLedSurface, makeRng,
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
-} from './surfacePositions-v2.js'
+} from './surfacePositions.js'
 
 // Five glowing swarms drift slowly through the room. Each lights every
 // LED inside a ~1 m sphere around its centre, so visitors see five

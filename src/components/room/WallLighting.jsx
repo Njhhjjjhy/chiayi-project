@@ -1,10 +1,10 @@
-import { useProposal } from '../../hooks/useProposal-v2.js'
+import { useProposal } from '../../hooks/useProposal.js'
 import {
   ROOM, WALL_T, PARTITION_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z,
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
   COLUMN_X,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // Hidden-LED-style ambient lighting along the four forest boundaries.
 // Renders four thin bars per proposal's wallLight style.

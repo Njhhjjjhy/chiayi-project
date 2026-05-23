@@ -7,12 +7,12 @@ import {
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
   PANEL_Y_MID,
-} from './surfacePositions-v2.js'
+} from './surfacePositions.js'
 import {
   WALL_T, PARTITION_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z, COLUMN_X,
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
-} from '../../geometry/dimensions-v2.js'
+} from '../../geometry/dimensions.js'
 
 // Flashlight beam wakes whichever panel its centre lands on, plus a
 // 40 % chance to cascade to a neighbouring panel. Beam radius 60 cm,

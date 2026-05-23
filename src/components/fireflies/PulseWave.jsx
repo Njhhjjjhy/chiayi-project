@@ -5,7 +5,7 @@ import {
   getLedSurface, makeRng,
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
-} from './surfacePositions-v2.js'
+} from './surfacePositions.js'
 
 // Every 15 s a wave radiates outward from a random point on the
 // ceiling. The wave travels as a 3D sphere of light. Between waves a
