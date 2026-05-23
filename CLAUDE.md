@@ -94,15 +94,15 @@ Never claim to have read documentation or URLs that weren't actually retrieved. 
 
 ## Folder map
 
-- `src/components/` – top-level UI components (3D scene chrome, panels, overlays).
-- `src/components/room/` – physical room geometry (walls, ceiling, doors, windows, wainscot, HVAC, curtain).
-- `src/components/fireflies/` – firefly system (LED behind fabric simulation: surface positions, particles, behavior modules).
-- `src/components/wallCoverings/` – proposal variants for wall covering (e.g. bamboo lattice).
-- `src/components/proposals/` – `/proposals` sandbox for experience proposals (picker + experience modules).
+- `src/components/` – top-level UI components (Glass primitive, mode switcher, timeline, QA panel).
+- `src/components/room/` – physical room geometry (walls, ceiling, doors, windows, curtain, partitions, column, branches, luffa wall, wall lighting).
+- `src/components/fireflies/` – firefly system (LED behind fabric simulation: surface positions, particles, behavior modules — awakening, drifting swarm, flashlight, heartbeat, pulse wave).
+- `src/components/proposals/` – the four chrome panels overlaid on the 3D scene: VariantSwitcher (top-left proposal toggle), ScenePicker, FireflyPicker, LightingPicker (top-center mode pickers), BrightnessControl (top-right slider).
 - `src/components/QAPanel/` – shared QA notes panel backed by Vercel Blob.
-- `src/pages/` – `/3d` (private 3D preview) and `/proposals` (experience sandbox).
-- `src/hooks/` – context providers and hooks (variant, timeline, tour, measure, lighting state).
-- `src/variants/` – named option sets the variant picker selects between.
+- `src/pages/FirefliesPage.jsx` – the single page (URL `/fireflies`). All other URLs redirect here.
+- `src/postfx/PostEffects.jsx` – post-processing pass (AgX tone mapping + bloom).
+- `src/hooks/` – context providers and hooks (proposal, timeline).
+- `src/variants/` – named option sets: `proposals.js`, `fireflies.js`, `config.js` (camera presets).
 - `src/geometry/dimensions.js` – single source of truth for room measurements (cm → scene units).
 - `src/styles/index.css` – design tokens (CSS variables) + base styles.
 - `api/` – Vercel functions (`notes.js`, `upload.js`) backing the QA panel via `@vercel/blob`.
