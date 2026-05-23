@@ -141,18 +141,18 @@ export default function QAPanel() {
 
   return (
     <>
-      {/* Floating trigger — quiet glass pill so it sits beside other tools */}
+      {/* Floating trigger — sits to the left of the settings panel */}
       <Glass
         as="button"
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open notes"
         style={TRANSITION}
-        className="fixed top-4 right-4 z-40 inline-flex min-h-[44px] items-center gap-2 rounded-full px-5 cursor-pointer hover:bg-black/55 transition-colors"
+        className="fixed top-3 right-[448px] z-10 inline-flex min-h-[44px] items-center gap-2.5 rounded-2xl px-5 cursor-pointer hover:bg-black/55 transition-colors"
       >
-        <span className="text-[15px]">Notes</span>
+        <span className="text-[13px]">Notes</span>
         {openCount > 0 && (
-          <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-white px-2 text-[12px] font-medium text-black">
+          <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-white px-1.5 text-[11px] font-medium text-black">
             {openCount}
           </span>
         )}

@@ -49,7 +49,7 @@ export default function TimelineController() {
           onClick={() => setCollapsedAndStore(false)}
           aria-label="Show timeline"
           style={TRANSITION}
-          className="pointer-events-auto inline-flex min-h-[44px] items-center gap-3 rounded-t-2xl px-5 cursor-pointer hover:bg-black/55 transition-colors"
+          className="pointer-events-auto inline-flex min-h-[44px] items-center gap-3 rounded-t-2xl px-6 cursor-pointer hover:bg-black/55 transition-colors"
         >
           <span className="text-sm tracking-[0.08em] text-white/85">
             {PHASES[currentPhase].label}
@@ -68,9 +68,9 @@ export default function TimelineController() {
       onPointerDown={(e) => e.stopPropagation()}
       onPointerMove={(e) => e.stopPropagation()}
     >
-      <Glass className="rounded-2xl px-3 py-3">
+      <Glass className="rounded-2xl px-4 py-4">
         {/* Phase labels */}
-        <div className="flex items-center gap-1 mb-2">
+        <div className="flex items-center gap-1.5 mb-3">
           {PHASES.map((phase, i) => {
             const active = currentPhase === i
             return (
@@ -80,7 +80,7 @@ export default function TimelineController() {
                 aria-label={`Jump to ${phase.label}`}
                 aria-pressed={active}
                 style={TRANSITION}
-                className={`flex-1 inline-flex items-center justify-center min-h-[44px] rounded-full text-sm tracking-[0.08em] cursor-pointer transition-colors ${
+                className={`flex-1 inline-flex items-center justify-center min-h-[44px] rounded-full text-[13px] tracking-[0.04em] cursor-pointer transition-colors ${
                   active
                     ? 'bg-white/20 text-white'
                     : 'text-white/85 hover:text-white hover:bg-white/10'
@@ -95,14 +95,14 @@ export default function TimelineController() {
             onClick={() => setCollapsedAndStore(true)}
             aria-label="Hide timeline"
             style={TRANSITION}
-            className="ml-1 inline-flex min-h-[44px] items-center px-4 rounded-full text-[15px] text-white hover:bg-white/10 transition-colors cursor-pointer"
+            className="ml-1 inline-flex min-h-[44px] items-center px-5 rounded-full text-[13px] text-white hover:bg-white/10 transition-colors cursor-pointer"
           >
             Hide
           </button>
         </div>
 
         {/* Scrubber */}
-        <div className="relative my-3">
+        <div className="relative my-4">
           <div className="absolute top-0 left-0 right-0 h-full flex pointer-events-none">
             {[0.25, 0.5, 0.75].map((mark) => (
               <div
@@ -137,8 +137,8 @@ export default function TimelineController() {
         </div>
 
         {/* Controls row */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={toggle}
@@ -150,7 +150,7 @@ export default function TimelineController() {
             </button>
 
             <div
-              className="flex items-center gap-0.5 rounded-full p-0.5 border border-white/15"
+              className="flex items-center gap-1 rounded-full p-0.5 border border-white/15"
               role="group"
               aria-label="Playback speed"
             >
@@ -163,7 +163,7 @@ export default function TimelineController() {
                     aria-label={`Speed ${s}`}
                     aria-pressed={active}
                     style={TRANSITION}
-                    className={`inline-flex min-h-[40px] min-w-[44px] items-center justify-center rounded-full px-3 text-sm cursor-pointer transition-colors ${
+                    className={`inline-flex min-h-[40px] min-w-[44px] items-center justify-center rounded-full px-3.5 text-[13px] cursor-pointer transition-colors ${
                       active
                         ? 'bg-white/20 text-white'
                         : 'text-white/85 hover:text-white'
@@ -177,7 +177,7 @@ export default function TimelineController() {
           </div>
 
           <span
-            className="text-sm tracking-[0.08em] text-white/85"
+            className="text-[13px] tracking-[0.04em] text-white/85"
             aria-live="polite"
           >
             {PHASES[currentPhase].label}

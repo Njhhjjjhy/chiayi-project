@@ -12,6 +12,7 @@ import {
   WALL_T, PARTITION_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z, COLUMN_X,
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
+  FIREFLY_COLOR,
 } from '../../geometry/dimensions.js'
 
 // Flashlight beam wakes whichever panel its centre lands on, plus a
@@ -37,6 +38,7 @@ import {
 // level shots, etc. If no surface qualifies (cursor pointed outside the
 // room) the old forward-project + clamp-to-forest fallback kicks in.
 
+const _FIREFLY_RGB = new THREE.Color(FIREFLY_COLOR)
 const BEAM_RADIUS = 0.6
 const WAKE_TIME = 0.05
 const FADE_TIME = 6.0
@@ -151,13 +153,13 @@ function raycastForestSurfaces(origin, dir, out) {
   return true
 }
 
-export default function Flashlight({ masterOpacity = 1 }) {
+export default function Flashlight({ masterOpacity = 1, ceilingVariant }) {
   const reticleRef = useRef()
   const reticleRingRef = useRef()
   const lastTimeRef = useRef(null)
 
   const state = useMemo(() => {
-    const dist = getLedSurface()
+    const dist = getLedSurface(ceilingVariant)
     const rng = makeRng(202)
     const n = dist.count
     const u = dist.unitCount
@@ -168,9 +170,9 @@ export default function Flashlight({ masterOpacity = 1 }) {
 
     for (let i = 0; i < n; i++) {
       ledPhase[i] = rng() * Math.PI * 2
-      colors[i * 3]     = 0.60 + rng() * 0.20
-      colors[i * 3 + 1] = 1.00
-      colors[i * 3 + 2] = 0.50 + rng() * 0.20
+      colors[i * 3]     = _FIREFLY_RGB.r
+      colors[i * 3 + 1] = _FIREFLY_RGB.g
+      colors[i * 3 + 2] = _FIREFLY_RGB.b
     }
 
     const neighbours = Array.from({ length: u }, () => [])
@@ -187,7 +189,7 @@ export default function Flashlight({ masterOpacity = 1 }) {
     }
 
     return { dist, colors, opacities, wake, ledPhase, neighbours, rng }
-  }, [])
+  }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
   useFrame(({ camera, pointer }) => {

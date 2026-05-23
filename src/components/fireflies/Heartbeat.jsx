@@ -1,12 +1,15 @@
 import { useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
+import * as THREE from 'three'
 import { getLedSurface, makeRng } from './surfacePositions.js'
+import { FIREFLY_COLOR } from '../../geometry/dimensions.js'
 
 // Every LED in the room pulses in unison at ~70 BPM. Two pulses per
 // cycle (lub-dub) so the rhythm reads as a heartbeat rather than a
 // steady sine.
 
+const _FIREFLY_RGB = new THREE.Color(FIREFLY_COLOR)
 const HEART_BPM = 70
 const HEART_HZ = HEART_BPM / 60
 
@@ -19,9 +22,9 @@ function heartbeatEnvelope(phase) {
   return 0.10
 }
 
-export default function Heartbeat({ masterOpacity = 1 }) {
+export default function Heartbeat({ masterOpacity = 1, ceilingVariant }) {
   const state = useMemo(() => {
-    const dist = getLedSurface()
+    const dist = getLedSurface(ceilingVariant)
     const rng = makeRng(505)
     const n = dist.count
     const colors = new Float32Array(n * 3)
@@ -29,14 +32,14 @@ export default function Heartbeat({ masterOpacity = 1 }) {
     const intensityVar = new Float32Array(n)
 
     for (let i = 0; i < n; i++) {
-      colors[i * 3]     = 0.60 + rng() * 0.20
-      colors[i * 3 + 1] = 1.00
-      colors[i * 3 + 2] = 0.50 + rng() * 0.20
+      colors[i * 3]     = _FIREFLY_RGB.r
+      colors[i * 3 + 1] = _FIREFLY_RGB.g
+      colors[i * 3 + 2] = _FIREFLY_RGB.b
       intensityVar[i] = 0.85 + rng() * 0.15
     }
 
     return { dist, colors, opacities, intensityVar }
-  }, [])
+  }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
   useFrame(() => {

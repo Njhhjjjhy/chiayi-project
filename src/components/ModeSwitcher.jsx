@@ -9,6 +9,9 @@ const MODES = [
   { id: 'views', label: 'Views' },
   { id: 'lighting', label: 'Lighting experience' },
   { id: 'fireflies', label: 'Fireflies' },
+  { id: 'wayfind', label: 'Wayfinding' },
+  { id: 'loofah', label: 'Loofah' },
+  { id: 'ceiling', label: 'Ceiling' },
 ]
 
 export default function ModeSwitcher({ mode, onChange }) {
@@ -21,10 +24,10 @@ export default function ModeSwitcher({ mode, onChange }) {
             key={m.id}
             onClick={() => onChange(m.id)}
             style={TRANSITION}
-            className={`min-h-[44px] px-4 rounded-full text-sm tracking-[0.08em] whitespace-nowrap cursor-pointer transition-colors ${
+            className={`min-h-11 px-4 rounded-full text-sm tracking-[0.08em] whitespace-nowrap cursor-pointer transition-colors ${
               active
                 ? 'bg-white/20 text-white'
-                : 'text-white/80 hover:text-white hover:bg-white/[0.08]'
+                : 'text-white/80 hover:text-white hover:bg-white/8'
             }`}
           >
             {m.label}

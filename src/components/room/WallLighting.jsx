@@ -1,6 +1,6 @@
 import { useProposal } from '../../hooks/useProposal.js'
 import {
-  ROOM, WALL_T, PARTITION_T,
+  ROOM, WALL_T, PARTITION_T, CABINET_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z,
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
   COLUMN_X,
@@ -50,11 +50,15 @@ export default function WallLighting() {
   const style = STYLES[wallLight]
   if (!style) return null
 
-  // Interior faces of each forest boundary.
-  const X_BACK_FACE  = FOREST_X_START + PARTITION_T // pathway-partition-vertical's forest-side face
-  const X_FRONT_FACE = ROOM.W - WALL_T               // front-wall's forest-side face
-  const Z_ENTRY_FACE = PARTITION_T                    // entrance-wall-partition's forest-side face
-  const Z_WIN_FACE   = PATHWAY_PARTITION_Z - PARTITION_T // pathway-partition-horizontal's forest-side face
+  // Interior faces of each forest boundary. Three of the four faces sit
+  // on a cabinet partition's forest-facing side (X = 2.0, Z = 0.5, Z = 6.78);
+  // the bar is offset PARTITION_T + BAR_OFFSET further into the forest,
+  // preserving the original visual relationship of the bar to the surface
+  // it edges.
+  const X_BACK_FACE  = FOREST_X_START + CABINET_T + PARTITION_T // pathway-partition-vertical's forest-side face
+  const X_FRONT_FACE = ROOM.W - WALL_T                           // front-wall's forest-side face
+  const Z_ENTRY_FACE = CABINET_T + PARTITION_T                    // entrance-wall-partition's forest-side face
+  const Z_WIN_FACE   = PATHWAY_PARTITION_Z - CABINET_T - PARTITION_T // pathway-partition-horizontal's forest-side face
 
   // Centre Z for bars that run the full forest depth along an X-aligned wall.
   const FULL_FOREST_Z_CENTER = (FOREST_Z_START + FOREST_Z_END) / 2

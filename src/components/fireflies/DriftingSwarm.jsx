@@ -1,17 +1,20 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
+import * as THREE from 'three'
 import {
   getLedSurface, makeRng,
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
 } from './surfacePositions.js'
+import { FIREFLY_COLOR } from '../../geometry/dimensions.js'
 
 // Five glowing swarms drift slowly through the room. Each lights every
 // LED inside a ~1 m sphere around its centre, so visitors see five
 // clusters of ~50 LEDs at a time. When a swarm moves on, the LEDs it
 // lit fade slowly — a visible trail reads as motion.
 
+const _FIREFLY_RGB = new THREE.Color(FIREFLY_COLOR)
 const SWARM_COUNT = 5
 const SWARM_RADIUS = 1.0
 const SWARM_SPEED = 0.3
@@ -38,27 +41,27 @@ function makeSwarm(rng) {
   }
 }
 
-export default function DriftingSwarm({ masterOpacity = 1 }) {
+export default function DriftingSwarm({ masterOpacity = 1, ceilingVariant }) {
   const lastTimeRef = useRef(null)
 
   const state = useMemo(() => {
-    const dist = getLedSurface()
+    const dist = getLedSurface(ceilingVariant)
     const rng = makeRng(303)
     const n = dist.count
     const colors = new Float32Array(n * 3)
     const opacities = new Float32Array(n)
 
     for (let i = 0; i < n; i++) {
-      colors[i * 3]     = 0.60 + rng() * 0.20
-      colors[i * 3 + 1] = 1.00
-      colors[i * 3 + 2] = 0.50 + rng() * 0.20
+      colors[i * 3]     = _FIREFLY_RGB.r
+      colors[i * 3 + 1] = _FIREFLY_RGB.g
+      colors[i * 3 + 2] = _FIREFLY_RGB.b
     }
 
     const swarms = []
     for (let i = 0; i < SWARM_COUNT; i++) swarms.push(makeSwarm(rng))
 
     return { dist, colors, opacities, swarms, rng }
-  }, [])
+  }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
   useFrame(() => {

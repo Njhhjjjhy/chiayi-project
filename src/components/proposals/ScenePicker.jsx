@@ -31,7 +31,7 @@ export default function ScenePicker() {
             key={key}
             to={urlFor(key)}
             style={TRANSITION}
-            className={`min-h-[44px] px-4 flex items-center rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
+            className={`min-h-11 px-4 flex items-center rounded-full text-sm whitespace-nowrap cursor-pointer transition-colors ${
               active
                 ? 'bg-white/20 text-white'
                 : 'text-white/85 hover:text-white hover:bg-white/10'

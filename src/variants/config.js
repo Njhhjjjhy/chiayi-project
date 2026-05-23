@@ -24,10 +24,11 @@ export const cameraPresets = {
     target:   [0,            1.6, ROOM.D / 2],
   },
   front: {
-    // Camera nudged past the pathway-partition-vertical (X = 1.5) so
-    // the view isn't blocked by the partition the visitor first sees.
+    // Camera nudged past the pathway-partition-vertical cabinet (forest
+    // face X = 2.0) so the view isn't blocked by the cabinet the visitor
+    // first sees.
     label: 'Front-wall',
-    position: [1.7,    1.6, ROOM.D / 2],
+    position: [2.1,    1.6, ROOM.D / 2],
     target:   [ROOM.W, 1.6, ROOM.D / 2],
   },
   window: {
@@ -55,5 +56,36 @@ export const cameraPresets = {
     label: 'Standing',
     position: [0.75, 1.6, 0.4],
     target:   [0.75, 1.6, PATHWAY_PARTITION_Z],
+  },
+
+  'arches-walk-through': {
+    label: 'Arches walk through',
+    position: [5.0, 1.6, 3.0],
+    target:   [7.5, 1.2, 5.0],
+  },
+  'arches-topdown': {
+    label: 'Arches topdown',
+    position: [5.4, 8.0, 3.6],
+    target:   [5.4, 0.0, 3.6],
+  },
+  'flock-looking-up': {
+    label: 'Flock looking up',
+    position: [5.0, 0.5, 3.5],
+    target:   [5.0, 3.5, 3.5],
+  },
+  'flock-side': {
+    label: 'Flock side',
+    position: [2.5, 1.6, 3.5],
+    target:   [8.0, 2.6, 3.5],
+  },
+  'nesting-between': {
+    label: 'Nesting between',
+    position: [4.0, 0.4, 2.5],
+    target:   [4.0, 3.5, 2.5],
+  },
+  'nesting-overhead': {
+    label: 'Nesting overhead',
+    position: [5.5, 4.0, 3.5],
+    target:   [5.5, 0.0, 3.5],
   },
 }

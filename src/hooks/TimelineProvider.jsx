@@ -54,6 +54,23 @@ export function TimelineProvider({ children }) {
     return () => window.removeEventListener('skipToFireflies', handleSkip)
   }, [])
 
+  // Listen for setTimelineTime event — used by capture scripts to sweep
+  // the arc. Dispatch like:
+  //   window.dispatchEvent(new CustomEvent('setTimelineTime', {
+  //     detail: { time: 0.3 },
+  //   }))
+  useEffect(() => {
+    function handleSetTime(e) {
+      const t = e?.detail?.time
+      if (typeof t === 'number' && t >= 0 && t <= 1) {
+        setTime(t)
+        setPlaying(false)
+      }
+    }
+    window.addEventListener('setTimelineTime', handleSetTime)
+    return () => window.removeEventListener('setTimelineTime', handleSetTime)
+  }, [])
+
   return (
     <TimelineContext.Provider
       value={{ time, setTime, playing, play, pause, toggle, speed, setSpeed, jumpToPhase }}

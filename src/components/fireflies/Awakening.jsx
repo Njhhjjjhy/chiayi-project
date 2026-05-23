@@ -6,18 +6,21 @@ import {
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
 } from './surfacePositions.js'
+import { FIREFLY_COLOR } from '../../geometry/dimensions.js'
+import * as THREE from 'three'
 
 // One firefly lights up first, then a wave of awakening expands outward
 // in widening rings until every LED is on. Total fill time ~15 s. Once
 // fully lit, every LED settles into a long, slow breath.
 
+const _FIREFLY_RGB = new THREE.Color(FIREFLY_COLOR)
 const BUILDUP_SECONDS = 15
 
-export default function Awakening({ masterOpacity = 1 }) {
+export default function Awakening({ masterOpacity = 1, ceilingVariant }) {
   const mountTime = useRef(null)
 
   const state = useMemo(() => {
-    const dist = getLedSurface()
+    const dist = getLedSurface(ceilingVariant)
     const rng = makeRng(101)
     const n = dist.count
     const offsets = new Float32Array(n)
@@ -46,13 +49,13 @@ export default function Awakening({ masterOpacity = 1 }) {
       appearTime[i] = (distFromOrigin[i] / maxDist) * BUILDUP_SECONDS
       periods[i] = 4.0 + rng() * 4.0
       offsets[i] = rng() * periods[i]
-      colors[i * 3]     = 0.60 + rng() * 0.20
-      colors[i * 3 + 1] = 1.00
-      colors[i * 3 + 2] = 0.50 + rng() * 0.20
+      colors[i * 3]     = _FIREFLY_RGB.r
+      colors[i * 3 + 1] = _FIREFLY_RGB.g
+      colors[i * 3 + 2] = _FIREFLY_RGB.b
     }
 
     return { dist, offsets, periods, colors, opacities, appearTime }
-  }, [])
+  }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
   useFrame(() => {

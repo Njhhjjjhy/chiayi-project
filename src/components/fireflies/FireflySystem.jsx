@@ -5,9 +5,9 @@ import { fireflyComponentMap } from '../../variants/fireflies.js'
 // remain visible in that case so the verification page can compare
 // the static layout against each animated variant side-by-side.
 
-export default function FireflySystem({ variantId, masterOpacity = 1 }) {
+export default function FireflySystem({ variantId, masterOpacity = 1, ceilingVariant }) {
   if (!variantId || variantId === 'off') return null
   const Component = fireflyComponentMap[variantId]
   if (!Component) return null
-  return <Component masterOpacity={masterOpacity} />
+  return <Component masterOpacity={masterOpacity} ceilingVariant={ceilingVariant} />
 }

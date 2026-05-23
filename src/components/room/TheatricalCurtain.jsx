@@ -1,35 +1,40 @@
 import * as THREE from 'three'
-import { ROOM, WALL_T } from '../../geometry/dimensions.js'
 
-// Dark navy fabric plane hanging 4 cm in front of the window-wall's
-// room-facing surface, full room width × room height. Always rendered —
-// the curtain is a permanent part of the canonical room, not a togglable
-// proposal element.
+// Dark navy fabric plane hanging on a track. Used for all three
+// blackout curtains (window, entrance, exit) — the constants for each
+// curtain's position and size live in dimensions.js.
 //
-// Window-wall room-facing surface is at Z = ROOM.D - WALL_T. The curtain
-// sits 4 cm further into the room from that surface so it reads as
-// visibly hanging, not pressed against the wall.
+// orientation:
+//   'window-wall'    plane in its default orientation (front face +Z).
+//                    Used for the curtain hanging in front of the
+//                    window-wall (visitor stands at lower Z).
+//   'entrance-wall'  plane rotated 180° around Y (front face -Z). Used
+//                    for the curtains hanging in front of the entrance-
+//                    wall openings (visitor stands at higher Z).
 //
-// DoubleSide so the curtain reads from both sides; the spec says it
-// faces inward (-Z) but DoubleSide avoids any rotation ambiguity.
+// DoubleSide means both faces render regardless of orientation; the
+// rotation is preserved to document the design intent and so any future
+// single-sided material swap keeps the correct facing.
 
-const CURTAIN_OFFSET = 0.04 // metres in front of window-wall surface
+const MATERIAL_COLOR = '#0a0f1c'
 
-export default function TheatricalCurtain() {
+export default function TheatricalCurtain({
+  width,
+  height,
+  centerX,
+  centerY,
+  centerZ,
+  orientation = 'window-wall',
+}) {
+  const rotationY = orientation === 'entrance-wall' ? Math.PI : 0
   return (
-    <mesh
-      position={[
-        ROOM.W / 2,
-        ROOM.H / 2,
-        ROOM.D - WALL_T - CURTAIN_OFFSET,
-      ]}
-    >
-      <planeGeometry args={[ROOM.W, ROOM.H]} />
+    <mesh position={[centerX, centerY, centerZ]} rotation={[0, rotationY, 0]}>
+      <planeGeometry args={[width, height]} />
       {/* ambient-visible: dark navy fabric, lifted off pure black so AgX
           can show fold detail rather than a flat shadow shape. */}
       <meshStandardMaterial
-        color="#0a0f1c"
-        emissive="#0a0f1c"
+        color={MATERIAL_COLOR}
+        emissive={MATERIAL_COLOR}
         emissiveIntensity={0.06}
         roughness={0.9}
         side={THREE.DoubleSide}

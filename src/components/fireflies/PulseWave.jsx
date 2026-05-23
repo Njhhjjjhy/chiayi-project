@@ -1,16 +1,19 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
+import * as THREE from 'three'
 import {
   getLedSurface, makeRng,
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
 } from './surfacePositions.js'
+import { FIREFLY_COLOR } from '../../geometry/dimensions.js'
 
 // Every 15 s a wave radiates outward from a random point on the
 // ceiling. The wave travels as a 3D sphere of light. Between waves a
 // small subset of LEDs twinkles softly.
 
+const _FIREFLY_RGB = new THREE.Color(FIREFLY_COLOR)
 const WAVE_INTERVAL = 15
 const WAVE_DURATION = 6
 const WAVE_WIDTH = 1.5
@@ -18,11 +21,11 @@ const WAVE_INTENSITY = 1.0
 const WAVE_RADIUS_MAX = 14
 const BASELINE_FRACTION = 0.04
 
-export default function PulseWave({ masterOpacity = 1 }) {
+export default function PulseWave({ masterOpacity = 1, ceilingVariant }) {
   const mutable = useRef({ lastWaveTime: -WAVE_DURATION, originX: 0, originY: ROOM.H, originZ: 0 })
 
   const state = useMemo(() => {
-    const dist = getLedSurface()
+    const dist = getLedSurface(ceilingVariant)
     const rng = makeRng(404)
     const n = dist.count
     const opacities = new Float32Array(n)
@@ -31,9 +34,9 @@ export default function PulseWave({ masterOpacity = 1 }) {
     const isBaseline = new Uint8Array(n)
 
     for (let i = 0; i < n; i++) {
-      colors[i * 3]     = 0.60 + rng() * 0.20
-      colors[i * 3 + 1] = 1.00
-      colors[i * 3 + 2] = 0.50 + rng() * 0.20
+      colors[i * 3]     = _FIREFLY_RGB.r
+      colors[i * 3 + 1] = _FIREFLY_RGB.g
+      colors[i * 3 + 2] = _FIREFLY_RGB.b
       basePhases[i] = rng() * Math.PI * 2
     }
 
@@ -47,7 +50,7 @@ export default function PulseWave({ masterOpacity = 1 }) {
     for (let i = 0; i < baselineCount; i++) isBaseline[indices[i]] = 1
 
     return { dist, opacities, colors, basePhases, isBaseline, rng }
-  }, [])
+  }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
   useFrame(() => {
