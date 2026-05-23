@@ -24,7 +24,7 @@ showcase/
 public/textures/
 
 # Research-trip reference videos (150MB — kept local, frames extracted to frames_views/)
-public/research-trip-20260418/*.mp4
+reference/research-trip-20260418/*.mp4
 
 # AI tool artifacts
 .agents/
