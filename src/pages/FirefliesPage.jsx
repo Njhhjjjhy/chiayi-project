@@ -22,6 +22,17 @@ import ExperienceLighting from '../components/lighting/ExperienceLighting.jsx'
 const DEFAULT_VIEW = 'standing'
 const DEFAULT_FOV = 50
 
+// Parse a comma-separated triplet "x,y,z" into [x, y, z], or null on
+// any malformed input. Used by the ?campos= and ?camtarget= URL params
+// to drive one-off design-review captures without adding a permanent
+// preset to the dropdown.
+function parseTriplet(raw) {
+  if (!raw) return null
+  const parts = raw.split(',').map((s) => parseFloat(s))
+  if (parts.length !== 3 || parts.some((n) => !Number.isFinite(n))) return null
+  return parts
+}
+
 function Loader() {
   return (
     <div
@@ -93,8 +104,10 @@ function FirefliesInner() {
     return [cx, 1.6, cz]
   }, [isCornerCompare, loofahCorner])
 
-  const cameraPosition = preset.position
-  const orbitTarget = isCornerCompare ? cornerTarget : preset.target
+  const camPosOverride = parseTriplet(searchParams.get('campos'))
+  const camTargetOverride = parseTriplet(searchParams.get('camtarget'))
+  const cameraPosition = camPosOverride ?? preset.position
+  const orbitTarget = camTargetOverride ?? (isCornerCompare ? cornerTarget : preset.target)
   const cameraFov = preset.fov ?? DEFAULT_FOV
 
   const canvasKey = useMemo(() => `${viewKey}-${proposalId}`, [viewKey, proposalId])
