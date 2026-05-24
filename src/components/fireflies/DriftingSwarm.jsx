@@ -1,13 +1,14 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
+import WallFireflies from './WallFireflies.jsx'
 import * as THREE from 'three'
 import {
-  getLedSurface, makeRng,
+  getLedSurface, getWallLedSurface, makeRng,
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
 } from './surfacePositions.js'
-import { FIREFLY_COLOR } from '../../geometry/dimensions.js'
+import { FIREFLY_COLOR, WALL_DOT_BEHAVIOUR_DIM } from '../../geometry/dimensions.js'
 
 // Five glowing swarms drift slowly through the room. Each lights every
 // LED inside a ~1 m sphere around its centre, so visitors see five
@@ -46,10 +47,13 @@ export default function DriftingSwarm({ masterOpacity = 1, ceilingVariant }) {
 
   const state = useMemo(() => {
     const dist = getLedSurface(ceilingVariant)
+    const walls = getWallLedSurface()
     const rng = makeRng(303)
     const n = dist.count
+    const w = walls.count
     const colors = new Float32Array(n * 3)
     const opacities = new Float32Array(n)
+    const wallOpacities = new Float32Array(w)
 
     for (let i = 0; i < n; i++) {
       colors[i * 3]     = _FIREFLY_RGB.r
@@ -60,7 +64,7 @@ export default function DriftingSwarm({ masterOpacity = 1, ceilingVariant }) {
     const swarms = []
     for (let i = 0; i < SWARM_COUNT; i++) swarms.push(makeSwarm(rng))
 
-    return { dist, colors, opacities, swarms, rng }
+    return { dist, walls, colors, opacities, wallOpacities, swarms, rng }
   }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
@@ -117,16 +121,41 @@ export default function DriftingSwarm({ masterOpacity = 1, ceilingVariant }) {
       const rate = target > s.opacities[i] ? RISE_RATE : FALL_RATE
       s.opacities[i] += (target - s.opacities[i]) * Math.min(1, rate * dt)
     }
+
+    const wallPositions = s.walls.positions
+    for (let i = 0; i < s.walls.count; i++) {
+      const px = wallPositions[i * 3]
+      const py = wallPositions[i * 3 + 1]
+      const pz = wallPositions[i * 3 + 2]
+      let best = 0
+      for (const f of s.swarms) {
+        const dx = px - f.x
+        const dy = py - f.y
+        const dz = pz - f.z
+        const d2 = dx * dx + dy * dy + dz * dz
+        if (d2 >= r2) continue
+        const falloff = 1 - Math.sqrt(d2) / SWARM_RADIUS
+        const breath = 0.75 + Math.sin((t + f.breathOffset) * (Math.PI * 2 / f.breathPeriod)) * 0.25
+        const contribution = falloff * breath
+        if (contribution > best) best = contribution
+      }
+      const target = best * masterOpacity * WALL_DOT_BEHAVIOUR_DIM
+      const rate = target > s.wallOpacities[i] ? RISE_RATE : FALL_RATE
+      s.wallOpacities[i] += (target - s.wallOpacities[i]) * Math.min(1, rate * dt)
+    }
   })
   /* eslint-enable react-hooks/immutability */
 
   return (
-    <FireflyParticles
-      count={state.dist.count}
-      positions={state.dist.positions}
-      opacities={state.opacities}
-      colors={state.colors}
-      size={0.003}
-    />
+    <>
+      <FireflyParticles
+        count={state.dist.count}
+        positions={state.dist.positions}
+        opacities={state.opacities}
+        colors={state.colors}
+        size={0.003}
+      />
+      <WallFireflies opacities={state.wallOpacities} />
+    </>
   )
 }

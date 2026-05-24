@@ -315,6 +315,10 @@ export const WALL_DOT_INTENSITY = 1.2
 export const WALL_DOT_BREATHE_PERIOD = 25        // seconds
 export const WALL_DOT_BREATHE_AMPLITUDE = 0.30
 export const WALL_DOT_BASE_SEED = 829            // Park-Miller seed, distinct from existing seeds
+// Wall dots stay ambient relative to the ceiling LEDs when a firefly
+// behaviour drives them — multiplied into the per-dot opacity so the
+// walls always read as supporting cast rather than equal players.
+export const WALL_DOT_BEHAVIOUR_DIM = 0.6
 
 // --- Sculptural ceiling ---
 //

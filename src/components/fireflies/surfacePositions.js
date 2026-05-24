@@ -6,6 +6,7 @@ import {
   CEILING_VARIANT_DEFAULT,
 } from '../../geometry/dimensions.js'
 import { buildCeiling } from '../../geometry/ceilingForms.js'
+import { buildWallDots } from '../../geometry/wallDotPlacement.js'
 
 // Firefly surface positions. Delegates to the sculptural-ceiling
 // pipeline in src/geometry/ceilingForms.js so the static LED renderer
@@ -28,6 +29,13 @@ export { makeRng } from '../../utils/parkMillerRng.js'
 //                  forms that ended up with zero modules — same value)
 export function getLedSurface(variant = CEILING_VARIANT_DEFAULT) {
   return buildCeiling(variant).leds
+}
+
+// Wall dot positions for the side-wall and partition surfaces. Shape
+// mirrors getLedSurface so behaviour modules can run the same per-
+// position spatial logic over both populations.
+export function getWallLedSurface() {
+  return buildWallDots()
 }
 
 // Convenience constants for behaviours that need them.

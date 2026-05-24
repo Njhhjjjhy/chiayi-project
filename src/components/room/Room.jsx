@@ -138,7 +138,7 @@ export default function Room({
       {seatingVariant === 'benches' && <SeatingBenches />}
       {seatingVariant === 'pillows' && <SeatingPillows />}
       <SeatingSpotlights dim={spotlightDim} />
-      <WallGlowDots animated={fireflyActive} />
+      <WallGlowDots hideLeds={fireflyActive} />
       <FireflySystem variantId={fireflyVariant} ceilingVariant={ceilingVariant} />
     </group>
   )

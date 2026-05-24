@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import FireflyParticles from './FireflyParticles.jsx'
+import WallFireflies from './WallFireflies.jsx'
 import * as THREE from 'three'
-import { getLedSurface, makeRng } from './surfacePositions.js'
-import { FIREFLY_COLOR } from '../../geometry/dimensions.js'
+import { getLedSurface, getWallLedSurface, makeRng } from './surfacePositions.js'
+import { FIREFLY_COLOR, WALL_DOT_BEHAVIOUR_DIM } from '../../geometry/dimensions.js'
 
 // Every LED in the room pulses in unison at ~70 BPM. Two pulses per
 // cycle (lub-dub) so the rhythm reads as a heartbeat rather than a
@@ -25,11 +26,15 @@ function heartbeatEnvelope(phase) {
 export default function Heartbeat({ masterOpacity = 1, ceilingVariant }) {
   const state = useMemo(() => {
     const dist = getLedSurface(ceilingVariant)
+    const walls = getWallLedSurface()
     const rng = makeRng(505)
     const n = dist.count
+    const w = walls.count
     const colors = new Float32Array(n * 3)
     const opacities = new Float32Array(n)
+    const wallOpacities = new Float32Array(w)
     const intensityVar = new Float32Array(n)
+    const wallIntensityVar = new Float32Array(w)
 
     for (let i = 0; i < n; i++) {
       colors[i * 3]     = _FIREFLY_RGB.r
@@ -37,8 +42,11 @@ export default function Heartbeat({ masterOpacity = 1, ceilingVariant }) {
       colors[i * 3 + 2] = _FIREFLY_RGB.b
       intensityVar[i] = 0.85 + rng() * 0.15
     }
+    for (let i = 0; i < w; i++) {
+      wallIntensityVar[i] = 0.85 + rng() * 0.15
+    }
 
-    return { dist, colors, opacities, intensityVar }
+    return { dist, walls, colors, opacities, wallOpacities, intensityVar, wallIntensityVar }
   }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
@@ -51,16 +59,22 @@ export default function Heartbeat({ masterOpacity = 1, ceilingVariant }) {
     for (let i = 0; i < s.dist.count; i++) {
       s.opacities[i] = beat * s.intensityVar[i] * masterOpacity
     }
+    for (let i = 0; i < s.walls.count; i++) {
+      s.wallOpacities[i] = beat * s.wallIntensityVar[i] * masterOpacity * WALL_DOT_BEHAVIOUR_DIM
+    }
   })
   /* eslint-enable react-hooks/immutability */
 
   return (
-    <FireflyParticles
-      count={state.dist.count}
-      positions={state.dist.positions}
-      opacities={state.opacities}
-      colors={state.colors}
-      size={0.003}
-    />
+    <>
+      <FireflyParticles
+        count={state.dist.count}
+        positions={state.dist.positions}
+        opacities={state.opacities}
+        colors={state.colors}
+        size={0.003}
+      />
+      <WallFireflies opacities={state.wallOpacities} />
+    </>
   )
 }

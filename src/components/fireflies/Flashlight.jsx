@@ -2,8 +2,9 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import FireflyParticles from './FireflyParticles.jsx'
+import WallFireflies from './WallFireflies.jsx'
 import {
-  getLedSurface, makeRng,
+  getLedSurface, getWallLedSurface, makeRng,
   ROOM,
   FOREST_CENTER_X, FOREST_CENTER_Z, FOREST_SPAN_X, FOREST_SPAN_Z,
   PANEL_Y_MID,
@@ -12,7 +13,7 @@ import {
   WALL_T, PARTITION_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z, COLUMN_X,
   FOREST_X_START, FOREST_X_END, FOREST_Z_START, FOREST_Z_END,
-  FIREFLY_COLOR,
+  FIREFLY_COLOR, WALL_DOT_BEHAVIOUR_DIM,
 } from '../../geometry/dimensions.js'
 
 // Flashlight beam wakes whichever panel its centre lands on, plus a
@@ -160,11 +161,16 @@ export default function Flashlight({ masterOpacity = 1, ceilingVariant }) {
 
   const state = useMemo(() => {
     const dist = getLedSurface(ceilingVariant)
+    const walls = getWallLedSurface()
     const rng = makeRng(202)
     const n = dist.count
+    const w = walls.count
     const u = dist.unitCount
     const colors = new Float32Array(n * 3)
     const opacities = new Float32Array(n)
+    const wallOpacities = new Float32Array(w)
+    const wallWake = new Float32Array(w)
+    const wallPhase = new Float32Array(w)
     const wake = new Float32Array(u)
     const ledPhase = new Float32Array(n)
 
@@ -174,6 +180,7 @@ export default function Flashlight({ masterOpacity = 1, ceilingVariant }) {
       colors[i * 3 + 1] = _FIREFLY_RGB.g
       colors[i * 3 + 2] = _FIREFLY_RGB.b
     }
+    for (let i = 0; i < w; i++) wallPhase[i] = rng() * Math.PI * 2
 
     const neighbours = Array.from({ length: u }, () => [])
     for (let a = 0; a < u; a++) {
@@ -188,7 +195,8 @@ export default function Flashlight({ masterOpacity = 1, ceilingVariant }) {
       }
     }
 
-    return { dist, colors, opacities, wake, ledPhase, neighbours, rng }
+    return { dist, walls, colors, opacities, wallOpacities,
+             wake, wallWake, ledPhase, wallPhase, neighbours, rng }
   }, [ceilingVariant])
 
   /* eslint-disable react-hooks/immutability */
@@ -250,6 +258,23 @@ export default function Flashlight({ masterOpacity = 1, ceilingVariant }) {
       const breath = 0.65 + Math.sin(t * 1.4 + s.ledPhase[i]) * 0.35
       s.opacities[i] = w * breath * masterOpacity
     }
+
+    const wallPositions = s.walls.positions
+    for (let i = 0; i < s.walls.count; i++) {
+      const dx = wallPositions[i * 3]     - _target.x
+      const dy = wallPositions[i * 3 + 1] - _target.y
+      const dz = wallPositions[i * 3 + 2] - _target.z
+      const inside = (dx * dx + dy * dy + dz * dz) < beamR2
+      if (inside) {
+        s.wallWake[i] = Math.min(1, s.wallWake[i] + dt / WAKE_TIME)
+      } else {
+        s.wallWake[i] = Math.max(0, s.wallWake[i] - dt / FADE_TIME)
+      }
+      const wk = s.wallWake[i]
+      if (wk <= 0) { s.wallOpacities[i] = 0; continue }
+      const breath = 0.65 + Math.sin(t * 1.4 + s.wallPhase[i]) * 0.35
+      s.wallOpacities[i] = wk * breath * masterOpacity * WALL_DOT_BEHAVIOUR_DIM
+    }
   })
   /* eslint-enable react-hooks/immutability */
 
@@ -262,6 +287,7 @@ export default function Flashlight({ masterOpacity = 1, ceilingVariant }) {
         colors={state.colors}
         size={0.003}
       />
+      <WallFireflies opacities={state.wallOpacities} />
 
       <mesh ref={reticleRef} renderOrder={999}>
         <sphereGeometry args={[0.04, 12, 12]} />
