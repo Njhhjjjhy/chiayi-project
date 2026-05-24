@@ -480,7 +480,6 @@ export const ARCHES_TUBE_SEGMENTS = 32
 //
 // 110 modules individually suspended on fine threads from the working
 // ceiling, forming an emergent flock shape in the middle volume.
-// Sculptural ceiling forms are hidden for this variant.
 export const FLOCK_RNG_SEED = 419
 export const FLOCK_MODULE_COUNT = 110
 export const FLOCK_Y_MIN = 1.5
