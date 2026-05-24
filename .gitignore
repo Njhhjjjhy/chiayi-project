@@ -39,3 +39,8 @@ public/qa-dev-screenshots/
 
 # Baseline screenshots (local visual diagnostics, not versioned)
 baselines/
+
+# Local-only reference image dumps (kept on disk, not pushed)
+design-references/
+qa/
+meeting-refrence-*.webp

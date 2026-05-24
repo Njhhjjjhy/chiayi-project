@@ -489,11 +489,8 @@ function LoofahPiece({ piece, geometry, normalMap, normalScale }) {
   )
 }
 
-function WallElement({ variant, boxGeo, normalMap, normalScale }) {
-  const pieces = useMemo(() => {
-    if (variant === 'variant2') return generateClusterField()
-    return generateDenseField()
-  }, [variant])
+function WallElement({ boxGeo, normalMap, normalScale }) {
+  const pieces = useMemo(() => generateDenseField(), [])
 
   return (
     <group>
@@ -656,7 +653,7 @@ function CornerColumn({ corner, boxGeo, normalMap, normalScale }) {
 }
 
 // --- Main component ---
-export default function LuffaWall({ variant = 'variant1', corner = 'back-left' }) {
+export default function LuffaWall({ variant = 'variant1' }) {
   const boxGeo = useMemo(() => makeRoundedBoxGeometry(0.15, 4, 4), [])
   const normalMap = useMemo(() => makeLoofahNormalMap(), [])
   const normalScale = useMemo(
@@ -673,7 +670,6 @@ export default function LuffaWall({ variant = 'variant1', corner = 'back-left' }
     <group>
       {variant === 'variant1' && (
         <WallElement
-          variant={variant}
           boxGeo={boxGeo}
           normalMap={normalMap}
           normalScale={normalScale}

@@ -88,4 +88,71 @@ export const cameraPresets = {
     position: [5.5, 4.0, 3.5],
     target:   [5.5, 0.0, 3.5],
   },
+
+  // --- Diagnostic presets (capture-only origin, now dropdown-visible) ---
+  // Each was previously an inline viewKey override in FirefliesPage.jsx.
+  // Migrated here so the dropdown surfaces them under a "Diagnostic"
+  // subheading. `corner-compare` retains a dynamic target override in
+  // FirefliesPage so the target follows the active `?corner=` value;
+  // the position is fixed here.
+  'corner-compare': {
+    label: 'Corner compare',
+    position: [4.4, 1.6, 4.4],
+    target:   [4.4, 1.6, 4.4],
+    group: 'diagnostic',
+  },
+  'close-range-seating': {
+    label: 'Close-range seating',
+    position: [3.5, 1.0, 2.6],
+    target:   [4.2, 0.45, 1.4],
+    group: 'diagnostic',
+  },
+  'seating-spotlight-pool': {
+    label: 'Seating spotlight pool',
+    position: [5.5, 2.6, 1.6],
+    target:   [5.5, 0.0, 4.0],
+    group: 'diagnostic',
+  },
+  'looking-up-from-seating': {
+    label: 'Looking up from seating',
+    position: [5.5, 1.05, 4.0],
+    target:   [5.5, 4.2, 4.0],
+    group: 'diagnostic',
+  },
+  'ceiling-led-density': {
+    label: 'Ceiling LED density',
+    position: [4.4, 6.0, 4.4],
+    target:   [4.4, 0.0, 4.4],
+    group: 'diagnostic',
+  },
+  'loofah-close-range': {
+    label: 'Loofah close range',
+    position: [7.14, 1.2, 3.64],
+    target:   [8.7, 1.2, 3.64],
+    group: 'diagnostic',
+  },
+  'loofah-overview': {
+    label: 'Loofah overview',
+    position: [3.5, 1.8, 4.5],
+    target:   [7.0, 1.2, 2.0],
+    group: 'diagnostic',
+  },
+  'partition-close-range': {
+    label: 'Partition close range',
+    position: [3.965, 1.76, 1.7],
+    target:   [3.965, 1.76, 0.5],
+    group: 'diagnostic',
+  },
+  'partition-corner': {
+    label: 'Partition corner',
+    position: [3.6, 1.4, 2.4],
+    target:   [2.0, 1.4, 0.5],
+    group: 'diagnostic',
+  },
+  'walldots-closerange': {
+    label: 'Wall dots close range',
+    position: [1.32, 2.5, 4.39],
+    target:   [0.12, 2.5, 4.39],
+    group: 'diagnostic',
+  },
 }

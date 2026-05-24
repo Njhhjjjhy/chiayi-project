@@ -13,7 +13,7 @@ All three directions assume:
 - Room composition per doc 1 (room spec).
 - Ceiling per doc 2.
 - Loofah wall per doc 3.
-- Shoes on, marble floor, cabinet partitions.
+- Shoes on, foam mat floor, cabinet partitions.
 
 ## Direction A — `the-room-remembers`
 

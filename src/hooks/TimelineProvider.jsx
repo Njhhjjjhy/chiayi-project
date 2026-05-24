@@ -1,8 +1,22 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { TimelineContext, PHASES, SPEEDS } from './useTimeline.js'
 
+// Lazy init for the `?timeline=` URL param. Read-only on first load —
+// the scrubber does NOT write back to the URL when dragged.
+function readInitialTime() {
+  try {
+    const raw = new URLSearchParams(window.location.search).get('timeline')
+    if (raw === null) return 0
+    const t = parseFloat(raw)
+    if (!Number.isFinite(t)) return 0
+    return Math.max(0, Math.min(1, t))
+  } catch {
+    return 0
+  }
+}
+
 export function TimelineProvider({ children }) {
-  const [time, setTime] = useState(0)
+  const [time, setTime] = useState(readInitialTime)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState('60s')
   const rafRef = useRef(null)

@@ -89,6 +89,26 @@ function Dropdown({ options, current, urlFor }) {
     return () => document.removeEventListener('pointerdown', close)
   }, [open])
 
+  const standard = options.filter((o) => o.group !== 'diagnostic')
+  const diagnostic = options.filter((o) => o.group === 'diagnostic')
+
+  function Item({ opt }) {
+    return (
+      <Link
+        to={urlFor(opt.id)}
+        onClick={() => setOpen(false)}
+        style={TRANSITION}
+        className={`block px-3.5 py-2 text-[13px] whitespace-nowrap cursor-pointer transition-colors ${
+          current === opt.id
+            ? 'bg-white/15 text-white'
+            : 'text-white/50 hover:text-white hover:bg-white/8'
+        }`}
+      >
+        {opt.label}
+      </Link>
+    )
+  }
+
   return (
     <div ref={ref} className="relative">
       <button
@@ -111,21 +131,19 @@ function Dropdown({ options, current, urlFor }) {
             WebkitBackdropFilter: 'blur(24px)',
           }}
         >
-          {options.map((opt) => (
-            <Link
-              key={opt.id}
-              to={urlFor(opt.id)}
-              onClick={() => setOpen(false)}
-              style={TRANSITION}
-              className={`block px-3.5 py-2 text-[13px] whitespace-nowrap cursor-pointer transition-colors ${
-                current === opt.id
-                  ? 'bg-white/15 text-white'
-                  : 'text-white/50 hover:text-white hover:bg-white/8'
-              }`}
-            >
-              {opt.label}
-            </Link>
+          {standard.map((opt) => (
+            <Item key={opt.id} opt={opt} />
           ))}
+          {diagnostic.length > 0 && (
+            <>
+              <div className="mt-1 mb-0.5 mx-2 pt-1.5 border-t border-white/10 text-[10px] tracking-[0.08em] uppercase text-white/30 select-none px-1.5">
+                Diagnostic
+              </div>
+              {diagnostic.map((opt) => (
+                <Item key={opt.id} opt={opt} />
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>
@@ -174,7 +192,11 @@ export default function ControlPanel({ brightness, onBrightnessChange, spotlight
   }
 
   const proposalOptions = proposalVariantList.map((v) => ({ id: v.id, label: v.label }))
-  const cameraOptions = Object.entries(cameraPresets).map(([key, p]) => ({ id: key, label: p.label }))
+  const cameraOptions = Object.entries(cameraPresets).map(([key, p]) => ({
+    id: key,
+    label: p.label,
+    group: p.group,
+  }))
 
   return (
     <>
