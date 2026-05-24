@@ -512,7 +512,7 @@ export const LANTERN_PER_TIER = 5
 export const LANTERN_TIER_HEIGHTS = [1.2, 1.8, 2.4]                   // metres
 export const LANTERN_DIAMETER = 0.2
 export const LANTERN_COLOR = '#f5e6c8'                                // warm cream
-export const LANTERN_OPACITY = 0.85
+export const LANTERN_OPACITY = 1.0
 export const LANTERN_ROUGHNESS = 0.6
 export const LANTERN_METALNESS = 0.0
 export const LANTERN_MIN_PILLAR_SPACING = 1.2                         // metres
@@ -521,6 +521,10 @@ export const LANTERN_LED_EMISSIVE_INTENSITY = 5
 export const LANTERN_LED_TOTAL = 1760
 export const LANTERN_LED_BASE_PER_PILLAR = 117                        // 10 pillars carry this count
 export const LANTERN_LED_REMAINDER_PER_PILLAR = 118                   // 5 pillars carry this count
+// LEDs erupt above the pillar cap as a small volumetric cluster
+// rather than running vertically inside the opaque body.
+export const LANTERN_LED_CLUSTER_RADIUS = 0.12                        // metres
+export const LANTERN_LED_CLUSTER_HEIGHT = 0.2                         // metres
 
 // --- Nesting hybrid LED placement (proposal v4: fireflies-nesting, hybrid mode) ---
 //

@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { buildLanterns } from '../../geometry/lanternPlacement.js'
 import {
-  LANTERN_DIAMETER, LANTERN_COLOR, LANTERN_OPACITY,
+  LANTERN_DIAMETER, LANTERN_COLOR,
   LANTERN_ROUGHNESS, LANTERN_METALNESS,
 } from '../../geometry/dimensions.js'
 
@@ -16,8 +16,6 @@ const PILLAR_MAT = new THREE.MeshStandardMaterial({
   color: LANTERN_COLOR,
   roughness: LANTERN_ROUGHNESS,
   metalness: LANTERN_METALNESS,
-  transparent: true,
-  opacity: LANTERN_OPACITY,
 })
 
 const { pillars } = buildLanterns()

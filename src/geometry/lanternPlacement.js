@@ -5,6 +5,7 @@ import {
   LANTERN_RNG_SEED, LANTERN_PILLAR_COUNT, LANTERN_PER_TIER,
   LANTERN_TIER_HEIGHTS, LANTERN_MIN_PILLAR_SPACING,
   LANTERN_LED_BASE_PER_PILLAR, LANTERN_LED_REMAINDER_PER_PILLAR,
+  LANTERN_LED_CLUSTER_RADIUS, LANTERN_LED_CLUSTER_HEIGHT,
 } from './dimensions.js'
 import { makeRng } from '../utils/parkMillerRng.js'
 import { inForestExclusion } from './forestExclusion.js'
@@ -68,16 +69,26 @@ function generatePillars() {
   return { pillars, attempts }
 }
 
-// LEDs are stacked along the pillar's vertical centre axis with even
-// spacing across the full pillar height (Y from 0 to pillar.height).
+// LEDs erupt above each pillar as a small volumetric cluster. The
+// pillar body is opaque cream so a vertical centre-axis stack would
+// be hidden inside the cylinder. Cluster is a cylinder of radius
+// LANTERN_LED_CLUSTER_RADIUS extending from pillar.height to
+// pillar.height + LANTERN_LED_CLUSTER_HEIGHT, with uniform volume
+// distribution (sqrt(rng) on radius for uniform disc density).
 function generateLEDs(pillars) {
+  const rng = makeRng(LANTERN_RNG_SEED + 1)
   const positions = []
   for (const pillar of pillars) {
     const n = pillar.ledCount
     for (let l = 0; l < n; l++) {
-      const yFrac = (l + 0.5) / n
-      const y = yFrac * pillar.height
-      positions.push(pillar.x, y, pillar.z)
+      const theta = rng() * Math.PI * 2
+      const r = Math.sqrt(rng()) * LANTERN_LED_CLUSTER_RADIUS
+      const yOffset = rng() * LANTERN_LED_CLUSTER_HEIGHT
+      positions.push(
+        pillar.x + r * Math.cos(theta),
+        pillar.height + yOffset,
+        pillar.z + r * Math.sin(theta),
+      )
     }
   }
   return {
