@@ -494,6 +494,10 @@ export const GROVE_STEM_TILT_MAX_DEGREES = 5
 export const GROVE_MIN_STEM_SPACING = 0.4                             // metres
 export const GROVE_LED_PER_STEM = 16
 export const GROVE_LED_CLUSTER_FRACTION = 0.3                         // upper 30% of stem height
+// LED lateral spread around the stem axis. Wider than the stem itself
+// so the cluster reads as a small swarm at the blade tip rather than a
+// glow line embedded on the rod.
+export const GROVE_LED_CLUSTER_RADIUS = 0.08
 export const GROVE_LED_COLOR = '#00ff00'
 export const GROVE_LED_EMISSIVE_INTENSITY = 5
 

@@ -4,9 +4,10 @@ import {
   SEATING_ZONES, CEILING_SEATING_FORM_SKIP_RADIUS,
   GROVE_RNG_SEED, GROVE_STEM_COUNT,
   GROVE_STEM_HEIGHT_MIN, GROVE_STEM_HEIGHT_MAX,
-  GROVE_STEM_DIAMETER, GROVE_STEM_TILT_MAX_DEGREES,
+  GROVE_STEM_TILT_MAX_DEGREES,
   GROVE_MIN_STEM_SPACING,
   GROVE_LED_PER_STEM, GROVE_LED_CLUSTER_FRACTION,
+  GROVE_LED_CLUSTER_RADIUS,
 } from './dimensions.js'
 import { makeRng } from '../utils/parkMillerRng.js'
 import { inForestExclusion } from './forestExclusion.js'
@@ -16,7 +17,6 @@ const FOREST_X_MAX = ROOM.W - WALL_T                           // 8.71
 const FOREST_Z_MIN = CABINET_T                                 // 0.5
 const FOREST_Z_MAX = PATHWAY_PARTITION_Z - CABINET_T           // 6.78
 
-const STEM_RADIUS = GROVE_STEM_DIAMETER / 2
 const TILT_MAX_RAD = (GROVE_STEM_TILT_MAX_DEGREES * Math.PI) / 180
 
 function nearSeatingZone(x, z) {
@@ -95,8 +95,9 @@ function generateLEDs(stems) {
       const yFrac = (l + 0.5) / GROVE_LED_PER_STEM
       const yAxial = segmentBottom + yFrac * segmentLength
 
-      // Lateral jitter inside the stem cross-section
-      const r = Math.sqrt(rng()) * STEM_RADIUS
+      // Lateral spread around the stem axis: LEDs form a small
+      // volumetric cluster at the blade tip, not a glow line on the rod.
+      const r = Math.sqrt(rng()) * GROVE_LED_CLUSTER_RADIUS
       const theta = rng() * Math.PI * 2
       const lx = r * Math.cos(theta)
       const lz = r * Math.sin(theta)
