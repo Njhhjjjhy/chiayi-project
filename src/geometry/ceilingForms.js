@@ -1,7 +1,6 @@
 import {
   ROOM, WALL_T, CABINET_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z,
-  COLUMN_X, COLUMN_W, COLUMN_D,
   CEILING_FORM_COUNT,
   CEILING_FORM_Y_MIN, CEILING_FORM_Y_MAX,
   CEILING_FORM_TILT_MAX,
@@ -24,6 +23,7 @@ import {
   anchorsTooClose,
   getPrimitiveHalfExtents,
 } from './ceilingPrimitives.js'
+import { inForestExclusion } from './forestExclusion.js'
 
 // Sculptural ceiling — procedural pipeline.
 //
@@ -51,18 +51,6 @@ const FOREST_X_MIN = ENTRY_GAP_WIDTH + CABINET_T               // 2.0
 const FOREST_X_MAX = ROOM.W - WALL_T                           // 8.71
 const FOREST_Z_MIN = CABINET_T                                 // 0.5
 const FOREST_Z_MAX = PATHWAY_PARTITION_Z - CABINET_T           // 6.78
-
-const COLUMN_Z_LO = 0
-const COLUMN_Z_HI = COLUMN_D
-
-function inFullExclusion(x, z) {
-  if (x >= ENTRY_GAP_WIDTH && x <= COLUMN_X && z >= 0 && z <= CABINET_T) return true
-  if (x >= ENTRY_GAP_WIDTH && x <= ENTRY_GAP_WIDTH + CABINET_T && z >= 0 && z <= PATHWAY_PARTITION_Z) return true
-  if (x >= ENTRY_GAP_WIDTH && x <= COLUMN_X && z >= PATHWAY_PARTITION_Z - CABINET_T && z <= PATHWAY_PARTITION_Z) return true
-  if (x >= COLUMN_X - COLUMN_W / 2 && x <= COLUMN_X + COLUMN_W / 2 &&
-      z >= COLUMN_Z_LO && z <= COLUMN_Z_HI) return true
-  return false
-}
 
 function nearSeatingZone(x, z) {
   for (const zone of SEATING_ZONES) {
@@ -148,7 +136,7 @@ function generateForms(variant) {
     if (x < FOREST_X_MIN || x > FOREST_X_MAX) continue
     if (z < FOREST_Z_MIN || z > FOREST_Z_MAX) continue
 
-    if (inFullExclusion(x, z)) continue
+    if (inForestExclusion(x, z)) continue
     if (nearSeatingZone(x, z)) continue
 
     let tooClose = false

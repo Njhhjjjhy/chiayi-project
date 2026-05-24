@@ -1,27 +1,18 @@
 import {
   ROOM, WALL_T, CABINET_T,
   ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z,
-  COLUMN_X, COLUMN_W, COLUMN_D,
   CEILING_LEDS_PER_MODULE, CEILING_MODULE_RADIUS,
   FLOCK_RNG_SEED, FLOCK_MODULE_COUNT,
   FLOCK_Y_MIN, FLOCK_Y_MAX, FLOCK_Y_BIAS_CENTER, FLOCK_Y_SIGMA,
   FLOCK_GRID_SPACING, FLOCK_GRID_JITTER,
 } from './dimensions.js'
 import { makeRng } from '../utils/parkMillerRng.js'
+import { inForestExclusion } from './forestExclusion.js'
 
 const FOREST_X_MIN = ENTRY_GAP_WIDTH + CABINET_T
 const FOREST_X_MAX = ROOM.W - WALL_T
 const FOREST_Z_MIN = CABINET_T
 const FOREST_Z_MAX = PATHWAY_PARTITION_Z - CABINET_T
-
-function inExclusion(x, z) {
-  if (x >= ENTRY_GAP_WIDTH && x <= COLUMN_X && z >= 0 && z <= CABINET_T) return true
-  if (x >= ENTRY_GAP_WIDTH && x <= ENTRY_GAP_WIDTH + CABINET_T && z >= 0 && z <= PATHWAY_PARTITION_Z) return true
-  if (x >= ENTRY_GAP_WIDTH && x <= COLUMN_X && z >= PATHWAY_PARTITION_Z - CABINET_T && z <= PATHWAY_PARTITION_Z) return true
-  if (x >= COLUMN_X - COLUMN_W / 2 && x <= COLUMN_X + COLUMN_W / 2 &&
-      z >= 0 && z <= COLUMN_D) return true
-  return false
-}
 
 function generateModules() {
   const rng = makeRng(FLOCK_RNG_SEED)
@@ -33,7 +24,7 @@ function generateModules() {
       const jz = z + (rng() - 0.5) * 2 * FLOCK_GRID_JITTER
       if (jx < FOREST_X_MIN || jx > FOREST_X_MAX) continue
       if (jz < FOREST_Z_MIN || jz > FOREST_Z_MAX) continue
-      if (inExclusion(jx, jz)) continue
+      if (inForestExclusion(jx, jz)) continue
       candidates.push({ x: jx, z: jz })
     }
   }
