@@ -59,16 +59,6 @@ export const cameraPresets = {
     target:   [0.75, 1.6, PATHWAY_PARTITION_Z],
   },
 
-  'arches-walk-through': {
-    label: 'Arches walk through',
-    position: [5.0, 1.6, 3.0],
-    target:   [7.5, 1.2, 5.0],
-  },
-  'arches-topdown': {
-    label: 'Arches topdown',
-    position: [5.4, 8.0, 3.6],
-    target:   [5.4, 0.0, 3.6],
-  },
   'flock-looking-up': {
     label: 'Flock looking up',
     position: [5.0, 0.5, 3.5],

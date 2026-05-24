@@ -19,7 +19,6 @@ export function ProposalProvider({ children }) {
         proposalId,
         setProposalId,
         hasBranches: active.hasBranches,
-        hasArches: active.hasArches ?? false,
         hasNesting: active.hasNesting ?? false,
         ledSurface: active.ledSurface,
         wallLight: active.wallLight,

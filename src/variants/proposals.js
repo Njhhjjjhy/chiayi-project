@@ -27,16 +27,6 @@ export const proposalVariants = {
     isDefault: false,
     // TODO: flashlight spec — IR wavelength, body glow method, charging method, supplier
   },
-  'fireflies-arches': {
-    id: 'fireflies-arches',
-    label: 'Fireflies arches',
-    hasBranches: false,
-    hasArches: true,
-    ledSurface: 'ceiling',
-    wallLight: 'sundown',
-    defaultFirefly: 'awakening',
-    isDefault: false,
-  },
   'fireflies-flock': {
     id: 'fireflies-flock',
     label: 'Fireflies flock',

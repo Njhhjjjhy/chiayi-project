@@ -457,25 +457,6 @@ export const EXIT_CURTAIN_CENTER_X = 7.78                             // (6.73 +
 export const EXIT_CURTAIN_CENTER_Y = ROOM.H / 2
 export const EXIT_CURTAIN_CENTER_Z = CURTAIN_OFFSET                   // 0.04
 
-// --- Arches (proposal v2: fireflies-arches) ---
-//
-// Thin curved metal arches rising from the floor, creating walkable
-// frames. Visitors move through them and look up at the firefly panels
-// through the arch openings. LEDs stay on the ceiling panels.
-export const ARCHES_RNG_SEED = 317
-export const ARCHES_COUNT = 10
-export const ARCHES_TUBE_RADIUS = 0.015                               // 30 mm diameter metal tube
-export const ARCHES_COLOR = '#1a1a1a'
-export const ARCHES_EMISSIVE_INTENSITY = 0.05
-export const ARCHES_ROUGHNESS = 0.7
-export const ARCHES_METALNESS = 0.3
-export const ARCHES_HEIGHT_MIN = 1.5                                  // apex height, metres
-export const ARCHES_HEIGHT_MAX = 2.5
-export const ARCHES_WIDTH_MIN = 1.0                                   // foot-to-foot distance
-export const ARCHES_WIDTH_MAX = 2.0
-export const ARCHES_MIN_SPACING = 0.8
-export const ARCHES_TUBE_SEGMENTS = 32
-
 // --- Flock hangers (proposal v3: fireflies-flock) ---
 //
 // 110 modules individually suspended on fine threads from the working
