@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react'
 import * as THREE from 'three'
 import { buildCeiling } from '../../geometry/ceilingForms.js'
 import { CEILING_VARIANTS, CEILING_VARIANT_DEFAULT } from '../../geometry/dimensions.js'
@@ -46,12 +47,29 @@ function buildInstancedMesh(variant) {
 // Build all three variants up front. Each is deterministic, the cost is
 // negligible (3 × 1,760 instances) and switching variants at runtime
 // becomes a pure object swap.
+//
+// userData.fullCount preserves the original instance count so the
+// nesting-hybrid render-time slice can fall back to the full population
+// for non-hybrid variants without needing a separate cache.
 const INSTANCED_MESH_BY_VARIANT = Object.fromEntries(
-  CEILING_VARIANTS.map((v) => [v, buildInstancedMesh(v)]),
+  CEILING_VARIANTS.map((v) => {
+    const m = buildInstancedMesh(v)
+    m.userData.fullCount = m.count
+    return [v, m]
+  }),
 )
 
-export default function CeilingLEDs({ hideLeds = false, variant = CEILING_VARIANT_DEFAULT }) {
-  if (hideLeds) return null
+export default function CeilingLEDs({ hideLeds = false, variant = CEILING_VARIANT_DEFAULT, ledCount = null }) {
   const mesh = INSTANCED_MESH_BY_VARIANT[variant] || INSTANCED_MESH_BY_VARIANT[CEILING_VARIANT_DEFAULT]
+  // Render-time slice: when ledCount is set the InstancedMesh renders
+  // only the first N instances. The cached instance buffer is left
+  // untouched; only the render count changes. The hybrid nesting
+  // variant uses this to render 1,496 instead of the full 1,760.
+  // Layout-effect timing keeps the count correct before the next r3f
+  // frame paints, avoiding a one-frame flicker on variant switch.
+  useLayoutEffect(() => {
+    mesh.count = ledCount ?? mesh.userData.fullCount
+  }, [mesh, ledCount])
+  if (hideLeds) return null
   return <primitive object={mesh} />
 }

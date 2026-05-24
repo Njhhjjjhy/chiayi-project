@@ -34,6 +34,8 @@ import GroveLEDs from '../fireflies/GroveLEDs.jsx'
 import LanternPillars from './LanternPillars.jsx'
 import LanternLEDs from '../fireflies/LanternLEDs.jsx'
 import NestingForms from './NestingForms.jsx'
+import NestingLEDs from '../fireflies/NestingLEDs.jsx'
+import { NESTING_HYBRID_LED_TOTAL_CEILING } from '../../geometry/dimensions.js'
 
 // v2 room wrapper. Mounts every piece of the canonical room geometry
 // in one group so consumers only need to render <Room /> and don't
@@ -103,7 +105,11 @@ export default function Room({
       <Doors />
       <Windows />
       <SculpturalCeiling variant={ceilingVariant} />
-      <CeilingLEDs hideLeds={fireflyActive || ledSurface !== 'ceiling'} variant={ceilingVariant} />
+      <CeilingLEDs
+        hideLeds={fireflyActive || (ledSurface !== 'ceiling' && ledSurface !== 'nesting-hybrid')}
+        variant={ceilingVariant}
+        ledCount={ledSurface === 'nesting-hybrid' ? NESTING_HYBRID_LED_TOTAL_CEILING : null}
+      />
       {ledSurface === 'flock' && (
         <>
           <FlockHangers />
@@ -122,6 +128,7 @@ export default function Room({
           <LanternLEDs />
         </>
       )}
+      {ledSurface === 'nesting-hybrid' && <NestingLEDs />}
       <NestingForms />
       <Branches />
       <WallLighting />

@@ -518,6 +518,18 @@ export const LANTERN_LED_TOTAL = 1760
 export const LANTERN_LED_BASE_PER_PILLAR = 117                        // 10 pillars carry this count
 export const LANTERN_LED_REMAINDER_PER_PILLAR = 118                   // 5 pillars carry this count
 
+// --- Nesting hybrid LED placement (proposal v4: fireflies-nesting, hybrid mode) ---
+//
+// 15% of total LEDs (264) on bolster upper surfaces, split deterministically
+// across the runtime-resolved bolster count (6 to 8). Remaining 85%
+// (1,496) stay on the ceiling forms. Ceiling renderer truncates its
+// own cached output at the new count.
+export const NESTING_HYBRID_LED_TOTAL_BOLSTERS = 264
+export const NESTING_HYBRID_LED_TOTAL_CEILING = 1496
+export const NESTING_HYBRID_LED_MIN_SPACING = 0.06
+export const NESTING_HYBRID_LED_COLOR = '#00ff00'
+export const NESTING_HYBRID_LED_EMISSIVE_INTENSITY = 5
+
 // --- Nesting forms (proposal v4: fireflies-nesting) ---
 //
 // Large soft bolster cushions on the floor. Visitors lie between them

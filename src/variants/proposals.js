@@ -59,7 +59,7 @@ export const proposalVariants = {
     label: 'Fireflies nesting',
     hasBranches: false,
     hasNesting: true,
-    ledSurface: 'ceiling',
+    ledSurface: 'nesting-hybrid',
     wallLight: 'sundown',
     defaultFirefly: 'off',
     isDefault: false,
