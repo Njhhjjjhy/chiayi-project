@@ -477,6 +477,26 @@ export const FLOCK_GRID_JITTER = 0.2
 // while the flock-side distant view keeps its luminous band reading.
 export const FLOCK_LED_EMISSIVE_INTENSITY = 3
 
+// --- Grove (proposal v5: fireflies-grove) ---
+//
+// 110 floor-rooted stems, 1:1 with firefly modules. Each stem hosts
+// 16 LEDs clustered in its upper portion. Reads as fireflies rising
+// from grass-like blades, vertical glow at the tip of each blade.
+export const GROVE_RNG_SEED = 8810
+export const GROVE_STEM_COUNT = 110
+export const GROVE_STEM_HEIGHT_MIN = 0.8                              // metres
+export const GROVE_STEM_HEIGHT_MAX = 2.4
+export const GROVE_STEM_DIAMETER = 0.008                              // 8 mm thin rod
+export const GROVE_STEM_COLOR = '#1a1a1a'
+export const GROVE_STEM_ROUGHNESS = 0.7
+export const GROVE_STEM_METALNESS = 0.0
+export const GROVE_STEM_TILT_MAX_DEGREES = 5
+export const GROVE_MIN_STEM_SPACING = 0.4                             // metres
+export const GROVE_LED_PER_STEM = 16
+export const GROVE_LED_CLUSTER_FRACTION = 0.3                         // upper 30% of stem height
+export const GROVE_LED_COLOR = '#00ff00'
+export const GROVE_LED_EMISSIVE_INTENSITY = 5
+
 // --- Nesting forms (proposal v4: fireflies-nesting) ---
 //
 // Large soft bolster cushions on the floor. Visitors lie between them

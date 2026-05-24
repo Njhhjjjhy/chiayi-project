@@ -36,6 +36,15 @@ export const proposalVariants = {
     defaultFirefly: 'awakening',
     isDefault: false,
   },
+  'fireflies-grove': {
+    id: 'fireflies-grove',
+    label: 'Fireflies grove',
+    hasBranches: false,
+    ledSurface: 'grove',
+    wallLight: 'sundown',
+    defaultFirefly: 'awakening',
+    isDefault: false,
+  },
   'fireflies-nesting': {
     id: 'fireflies-nesting',
     label: 'Fireflies nesting',
