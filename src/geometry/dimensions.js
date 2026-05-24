@@ -497,6 +497,27 @@ export const GROVE_LED_CLUSTER_FRACTION = 0.3                         // upper 3
 export const GROVE_LED_COLOR = '#00ff00'
 export const GROVE_LED_EMISSIVE_INTENSITY = 5
 
+// --- Lantern (proposal v6: fireflies-lanterns) ---
+//
+// 15 translucent fibre pillars, three height tiers, 5 pillars per
+// tier. LEDs stacked vertically along each pillar centre axis,
+// glowing through the translucent envelope.
+export const LANTERN_RNG_SEED = 8811
+export const LANTERN_PILLAR_COUNT = 15
+export const LANTERN_PER_TIER = 5
+export const LANTERN_TIER_HEIGHTS = [1.2, 1.8, 2.4]                   // metres
+export const LANTERN_DIAMETER = 0.2
+export const LANTERN_COLOR = '#f5e6c8'                                // warm cream
+export const LANTERN_OPACITY = 0.7
+export const LANTERN_ROUGHNESS = 0.6
+export const LANTERN_METALNESS = 0.0
+export const LANTERN_MIN_PILLAR_SPACING = 1.2                         // metres
+export const LANTERN_LED_COLOR = '#00ff00'
+export const LANTERN_LED_EMISSIVE_INTENSITY = 5
+export const LANTERN_LED_TOTAL = 1760
+export const LANTERN_LED_BASE_PER_PILLAR = 117                        // 10 pillars carry this count
+export const LANTERN_LED_REMAINDER_PER_PILLAR = 118                   // 5 pillars carry this count
+
 // --- Nesting forms (proposal v4: fireflies-nesting) ---
 //
 // Large soft bolster cushions on the floor. Visitors lie between them

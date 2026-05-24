@@ -31,6 +31,8 @@ import FlockHangers from './FlockHangers.jsx'
 import FlockLEDs from '../fireflies/FlockLEDs.jsx'
 import GroveStems from './GroveStems.jsx'
 import GroveLEDs from '../fireflies/GroveLEDs.jsx'
+import LanternPillars from './LanternPillars.jsx'
+import LanternLEDs from '../fireflies/LanternLEDs.jsx'
 import NestingForms from './NestingForms.jsx'
 
 // v2 room wrapper. Mounts every piece of the canonical room geometry
@@ -112,6 +114,12 @@ export default function Room({
         <>
           <GroveStems />
           <GroveLEDs />
+        </>
+      )}
+      {ledSurface === 'lanterns' && (
+        <>
+          <LanternPillars />
+          <LanternLEDs />
         </>
       )}
       <NestingForms />
