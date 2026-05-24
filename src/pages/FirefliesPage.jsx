@@ -95,6 +95,7 @@ function FirefliesInner() {
 
   const cameraPosition = preset.position
   const orbitTarget = isCornerCompare ? cornerTarget : preset.target
+  const cameraFov = preset.fov ?? DEFAULT_FOV
 
   const canvasKey = useMemo(() => `${viewKey}-${proposalId}`, [viewKey, proposalId])
 
@@ -119,7 +120,7 @@ function FirefliesInner() {
           dpr={Math.min(window.devicePixelRatio, 1.5)}
           camera={{
             position: cameraPosition,
-            fov: DEFAULT_FOV,
+            fov: cameraFov,
             near: 0.05,
             far: 200,
           }}

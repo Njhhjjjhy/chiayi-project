@@ -17,6 +17,7 @@ export const cameraPresets = {
     label: 'Ceiling',
     position: [ROOM.W / 2, 10, ROOM.D / 2],
     target:   [ROOM.W / 2,  0, ROOM.D / 2],
+    fov: 65,
   },
   back: {
     label: 'Back-wall',

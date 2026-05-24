@@ -324,13 +324,6 @@ export function buildCeiling(variant = CEILING_VARIANT_DEFAULT) {
   const leds = generateLEDs(forms, moduleCounts)
   const result = { forms, moduleCounts, leds }
   _cacheByVariant.set(variant, result)
-  // Temporary diagnostic log (slice 19 step 2 area F). Remove once
-  // designer locks the next move on ceiling form counts.
-  const squareCount = forms.filter((f) => f.kind === 'box').length
-  const oblongCount = forms.length - squareCount
-  console.log(
-    `[ceiling] ${variant}: ${forms.length} forms placed (${squareCount} squares, ${oblongCount} oblongs)`,
-  )
   return result
 }
 
