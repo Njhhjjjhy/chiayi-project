@@ -472,6 +472,10 @@ export const FLOCK_THREAD_COLOR = '#222222'
 export const FLOCK_THREAD_EMISSIVE_INTENSITY = 0.05
 export const FLOCK_GRID_SPACING = 0.5
 export const FLOCK_GRID_JITTER = 0.2
+// Flock LED emissive intensity, decoupled from the ceiling LED value
+// so the close-up flock-looking-up view does not bloom into fat halos
+// while the flock-side distant view keeps its luminous band reading.
+export const FLOCK_LED_EMISSIVE_INTENSITY = 3
 
 // --- Nesting forms (proposal v4: fireflies-nesting) ---
 //

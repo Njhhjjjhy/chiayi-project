@@ -1,15 +1,15 @@
 import * as THREE from 'three'
 import { buildFlock } from '../../geometry/flockPlacement.js'
+import { FLOCK_LED_EMISSIVE_INTENSITY } from '../../geometry/dimensions.js'
 
 const LED_RADIUS = 0.025
 const LED_COLOR = '#00ff00'
-const LED_EMISSIVE_INTENSITY = 5
 
 const LED_GEO = new THREE.SphereGeometry(LED_RADIUS, 8, 8)
 const LED_MAT = new THREE.MeshStandardMaterial({
   color: LED_COLOR,
   emissive: LED_COLOR,
-  emissiveIntensity: LED_EMISSIVE_INTENSITY,
+  emissiveIntensity: FLOCK_LED_EMISSIVE_INTENSITY,
   toneMapped: false,
   roughness: 0.5,
   metalness: 0,
