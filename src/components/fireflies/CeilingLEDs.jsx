@@ -1,7 +1,10 @@
 import { useLayoutEffect } from 'react'
 import * as THREE from 'three'
 import { buildCeiling } from '../../geometry/ceilingForms.js'
-import { CEILING_VARIANTS, CEILING_VARIANT_DEFAULT } from '../../geometry/dimensions.js'
+import {
+  CEILING_VARIANTS, CEILING_VARIANT_DEFAULT,
+  NESTING_HYBRID_LED_TOTAL_CEILING,
+} from '../../geometry/dimensions.js'
 
 // Static green LED population for the sculptural ceiling — variant-
 // aware (slice 9). One InstancedMesh per variant is built eagerly at
@@ -26,15 +29,42 @@ const SHARED_LED_MATERIAL = new THREE.MeshStandardMaterial({
   metalness: 0,
 })
 
+// Build an instance-slot order so that the first
+// NESTING_HYBRID_LED_TOTAL_CEILING slots hold an evenly-distributed
+// subset of the full Poisson-disc array, and the remaining slots hold
+// the leftover positions. With a fractional stride of total / hybrid
+// (≈ 1.176 for 1760 → 1496), src indices are picked as
+// floor(i * total / hybrid) for i in [0, hybrid), guaranteeing 1,496
+// distinct indices spread across the full 0..total-1 range. Non-hybrid
+// renders use all `total` slots so the visual is identical regardless
+// of order; hybrid renders set mesh.count = hybrid and get the
+// interleaved subset for free.
+function buildInterleavedOrder(total, hybrid) {
+  const order = new Array(total)
+  const used = new Uint8Array(total)
+  for (let i = 0; i < hybrid; i++) {
+    const src = Math.floor((i * total) / hybrid)
+    order[i] = src
+    used[src] = 1
+  }
+  let next = hybrid
+  for (let i = 0; i < total; i++) {
+    if (!used[i]) order[next++] = i
+  }
+  return order
+}
+
 function buildInstancedMesh(variant) {
   const { leds } = buildCeiling(variant)
+  const order = buildInterleavedOrder(leds.count, NESTING_HYBRID_LED_TOTAL_CEILING)
   const m = new THREE.InstancedMesh(SHARED_LED_GEO, SHARED_LED_MATERIAL, leds.count)
   const dummy = new THREE.Object3D()
   for (let i = 0; i < leds.count; i++) {
+    const src = order[i]
     dummy.position.set(
-      leds.positions[i * 3 + 0],
-      leds.positions[i * 3 + 1],
-      leds.positions[i * 3 + 2],
+      leds.positions[src * 3 + 0],
+      leds.positions[src * 3 + 1],
+      leds.positions[src * 3 + 2],
     )
     dummy.updateMatrix()
     m.setMatrixAt(i, dummy.matrix)
