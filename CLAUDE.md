@@ -67,8 +67,7 @@ No designer, artist, studio, or specific-artwork names appear anywhere in this c
 ### Tech Stack
 - React 19 + Vite 8 + Tailwind CSS 4
 - Three.js via @react-three/fiber + drei + postprocessing
-- Leva for debug controls
-- React Router for multi-page structure
+- React Router (single page at `/fireflies`; `/3d` and `/proposals` redirect there)
 - Design tokens live as CSS variables in `src/styles/index.css` (`--color-bg`, `--color-text`, `--color-muted`, `--color-dim`, `--color-rule`, `--color-red`, `--color-blue`, `--color-amber`, `--font-serif`, `--font-mono`). Use them via `var(--token)` rather than hardcoded values. Layout/spacing still uses Tailwind utilities inline.
 
 ### Room glossary
@@ -86,7 +85,7 @@ The room is rectangular: 8.83 m (front-wall and back-wall) × 8.78 m (entrance-w
 Walking along the window-wall from the front-wall corner toward the back-wall corner: 119 cm plain wall (with the small 59 × 178 cm window cut in flush-left), then 99 cm silver service door, then 90 cm plain wall, then 570 cm main glass partition that ends flush with the back-wall corner. Total 878 cm.
 
 ### Visual diagnostic snapshots
-The folder `baselines/` (top-level, gitignored) holds PNG screenshots from `scripts/baseline-screenshot.mjs` and `scripts/screenshot-all-presets.mjs`. One PNG per significant change, filename `<YYYY-MM-DD-HHMMSS>-<label>.png`. Used to visually verify geometry changes side-by-side with prior states. Do not commit these.
+The folder `baselines/` (top-level, gitignored) holds PNG screenshots from `scripts/screenshot-all-presets.mjs` and ad-hoc puppeteer captures. One PNG per significant change, filename `<YYYY-MM-DD-HHMMSS>-<label>.png`. Used to visually verify geometry changes side-by-side with prior states. Do not commit these.
 
 ### Honesty about sources
 Never claim to have read documentation or URLs that weren't actually retrieved. WebFetch fails silently on JavaScript-rendered sites (e.g. developer.apple.com) — when that happens, say so explicitly and propose an alternative (puppeteer, user paste, PDF). Distinguish clearly between (a) content actually retrieved from a URL/file and (b) reference info from a Claude skill or training data. Do not substitute one for the other.
@@ -94,21 +93,23 @@ Never claim to have read documentation or URLs that weren't actually retrieved. 
 
 ## Folder map
 
-- `src/components/` – top-level UI components (3D scene chrome, panels, overlays).
-- `src/components/room/` – physical room geometry (walls, ceiling, doors, windows, wainscot, HVAC, curtain).
-- `src/components/fireflies/` – firefly system (LED behind fabric simulation: surface positions, particles, behavior modules).
-- `src/components/wallCoverings/` – proposal variants for wall covering (e.g. bamboo lattice).
-- `src/components/proposals/` – `/proposals` sandbox for experience proposals (picker + experience modules).
+- `src/components/` – top-level UI components (control panel, timeline controller).
+- `src/components/room/` – physical room geometry (walls, ceiling, doors, windows, partitions, curtains, loofah wall, seating, lantern pillars, grove stems, flock hangers, nesting forms).
+- `src/components/fireflies/` – firefly system: ceiling LEDs, wall LEDs, particle renderer, behaviour modules (Awakening, Flashlight, Heartbeat, DriftingSwarm, PulseWave), and the `FireflySystem` dispatch.
+- `src/components/lighting/` – lighting fixtures and shaders that are not the LEDs themselves (experience lighting, seating spotlights, pathway edge lights, wall glow dots, wall lighting).
 - `src/components/QAPanel/` – shared QA notes panel backed by Vercel Blob.
-- `src/pages/` – `/3d` (private 3D preview) and `/proposals` (experience sandbox).
-- `src/hooks/` – context providers and hooks (variant, timeline, tour, measure, lighting state).
-- `src/variants/` – named option sets the variant picker selects between.
-- `src/geometry/dimensions.js` – single source of truth for room measurements (cm → scene units).
+- `src/pages/FirefliesPage.jsx` – the only real page; `/3d` and `/proposals` redirect here.
+- `src/hooks/` – context providers and hooks (proposal, timeline).
+- `src/variants/` – named option sets the variant picker selects between (`proposals.js`, `fireflies.js`, `config.js`).
+- `src/geometry/` – single sources of truth for placement: `dimensions.js` for all room measurements, plus per-variant placement modules (`grovePlacement.js`, `lanternPlacement.js`, `flockPlacement.js`, `nestingPlacement.js`, `wallDotPlacement.js`, `ceilingForms.js`, `forestExclusion.js`).
+- `src/postfx/` – post-processing effects.
+- `src/utils/` – small shared helpers (`parkMillerRng.js`).
 - `src/styles/index.css` – design tokens (CSS variables) + base styles.
 - `api/` – Vercel functions (`notes.js`, `upload.js`) backing the QA panel via `@vercel/blob`.
-- `scripts/capture-phase.mjs` – puppeteer screenshot tool for proposal phase exports.
-- `docs/` – internal docs; start with `room-glossary.md` when reading QA notes.
-- `public/` – static assets shipped to the live site. Keep this lean (currently just favicon and icons).
+- `scripts/` – four reusable tools: `capture-phase.mjs` (proposal phase screenshots), `phase-e-led-totals.mjs` (LED total invariant check), `screenshot-all-presets.mjs` (per-preset capture), `diagnostic-floor.mjs` (floor diagnostic).
+- `docs/canonical/` – numbered canonical references (rooms, ceiling, loofah wall, proposals, experience directions, open items, discovery prompt, additional firefly variants). Start here for design context.
+- `docs/` – other internal docs; `room-glossary.md` translates informal QA language to canonical names.
+- `public/` – static assets shipped to the live site. Keep this lean.
 - `reference/` – local-only project material: research-trip photos, exhibition references, PBR texture libraries, ideas/notes. Never deployed. If you want to wire a texture or photo into the running app, copy it into `public/` first.
 - `showcase/` – auto-generated portfolio docs (regenerated by `/handoff`; do not hand-edit).
 
