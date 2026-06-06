@@ -1,8 +1,8 @@
-# Ceiling — canonical reference
+# Ceiling – canonical reference
 
 ## Status
 
-Canonical. Replaces the flat-panel direction (archived). The sculptural direction set in the 21 May 2026 meeting between Riaan and Corbett is the new locked direction. Sub-values are TBD pending the carpenter visit and the paper mache prototyping weekend — flagged explicitly below.
+Canonical. Replaces the flat-panel direction (archived). The sculptural direction set in the 21 May 2026 meeting between Riaan and Corbett is the new locked direction. Sub-values are TBD pending the carpenter visit and the paper mache prototyping weekend – flagged explicitly below.
 
 ## Visual reference
 
@@ -35,7 +35,7 @@ Fireflies = floating. The ceiling MUST feel suspended, scattered, weightless, al
 - Non-square flat forms preferred over square forms.
 - Blob-like, bowl-like, or otherwise organic suspended forms in scope.
 
-### Material options (under consideration — NOT locked)
+### Material options (under consideration – NOT locked)
 
 | Option | Notes |
 |---|---|
@@ -53,14 +53,14 @@ The paper mache prototyping weekend (scheduled) produces material samples. Final
 | Working ceiling line | 3.52 |
 | Real ceiling | 4.2 |
 | Plenum gap | 0.68 |
-| Suspended element heights | VARIED, TBD — NOT a single plane |
+| Suspended element heights | VARIED, TBD – NOT a single plane |
 | Minimum clearance over walkable forest area | TBD. Working assumption: Y ≥ 2.0. Verify install-day |
 
 ## Suspension and support
 
 - Cable- or grid-supported hanging system above the working ceiling line.
 - Specific support method (rail, grid, individual cable points): TBD with carpenter.
-- Carpenter has KTV experience with integrated lighting — leverage for hidden wiring inside ceiling structure.
+- Carpenter has KTV experience with integrated lighting – leverage for hidden wiring inside ceiling structure.
 - Wire management critical. Room MUST look intentional with lights on, NOT only in the dark.
 
 ## Firefly hardware (concrete, Corbett-sourced)
@@ -109,10 +109,10 @@ Distribution MUST be uneven. Real fireflies cluster unevenly and leave dark gaps
 
 - Matte near-black surfaces for all ceiling elements.
 - Low albedo.
-- Geometry felt, NOT seen — in the dark phase, ONLY the green LEDs should read.
+- Geometry felt, NOT seen – in the dark phase, ONLY the green LEDs should read.
 - Self-emissive base material REQUIRED. Tone mapping crushes non-emissive at full darkness.
 
-## Build sequence (likely order — NOT locked)
+## Build sequence (likely order – NOT locked)
 
 1. Finalise room shape and partition/cabinet system.
 2. Determine support method (grid or cables).
@@ -133,7 +133,7 @@ Build happens in phases. NOT solved entirely in advance.
 - Self-emissive material in simulation.
 - Visual reference image: `meeting-refrence-3.webp` at codebase root.
 
-## Stop-and-flag — do NOT infer defaults
+## Stop-and-flag – do NOT infer defaults
 
 The following are unresolved. Do NOT pick "reasonable defaults" in any build prompt. Stop and flag if a build prompt requires one of these:
 

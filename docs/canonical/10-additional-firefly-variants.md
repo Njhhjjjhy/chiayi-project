@@ -1,4 +1,4 @@
-# Additional firefly variants — canonical reference
+# Additional firefly variants – canonical reference
 
 ## Status
 
@@ -125,7 +125,7 @@ When any firefly behaviour is active (Awakening, Flashlight, Drifting swarm, Pul
 - The lantern envelope went through three passes (translucent 0.7, translucent 0.85, opaque cream) before settling on opaque cream plus LED-cluster-above-cap (option C).
 - Wall dots previously only ran a uniform breathe when a firefly variant was on. They now respond to the active behaviour.
 
-## Stop-and-flag — do not infer defaults
+## Stop-and-flag – do not infer defaults
 
 1. Final variant selection between the six is a designer call still pending.
 2. LED placement constants (counts, spacings, intensities) reflect the locked state at time of writing. Verify against `src/geometry/dimensions.js` before quoting.

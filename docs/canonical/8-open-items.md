@@ -1,10 +1,10 @@
-# Open items — canonical reference
+# Open items – canonical reference
 
 ## Status
 
 All unresolved items in the project, in priority order. Each item lists what it blocks, what it is waiting on, and whether it can move now.
 
-## Tier 1 — blocking, must resolve before further build commitment
+## Tier 1 – blocking, must resolve before further build commitment
 
 ### `IR-sensor-prototype`
 
@@ -23,7 +23,7 @@ All unresolved items in the project, in priority order. Each item lists what it 
 |---|---|
 | Blocks | Partition spec, ceiling support method, structural load confirmation, branch rigging (within-reach) |
 | Scheduled | Week of 25 May 2026 |
-| Move now? | No — waiting on scheduled visit |
+| Move now? | No – waiting on scheduled visit |
 
 ### `paper-mache-prototyping-weekend`
 
@@ -34,7 +34,7 @@ All unresolved items in the project, in priority order. Each item lists what it 
 | Waiting on | Weekend to be scheduled and run |
 | Move now? | Schedule it |
 
-## Tier 2 — waits on Tier 1
+## Tier 2 – waits on Tier 1
 
 ### `ceiling-form-specifics`
 
@@ -75,7 +75,7 @@ All unresolved items in the project, in priority order. Each item lists what it 
 | Options | Anchor points OR rail system |
 | Waiting on | Carpenter visit (ceiling support method first) |
 
-## Tier 3 — operational, can run in parallel
+## Tier 3 – operational, can run in parallel
 
 ### `power-distribution`
 
@@ -240,7 +240,7 @@ All unresolved items in the project, in priority order. Each item lists what it 
 
 Items that can move NOW with no external blocker:
 
-1. `IR-sensor-prototype` (highest priority — blocks the largest unknown).
+1. `IR-sensor-prototype` (highest priority – blocks the largest unknown).
 2. `direction-commit` (A/B/C).
 3. `branch-led-power-method` (wired/battery).
 4. `folded-sky-rename`.

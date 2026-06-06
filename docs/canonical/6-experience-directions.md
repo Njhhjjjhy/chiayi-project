@@ -1,4 +1,4 @@
-# Experience directions — canonical reference
+# Experience directions – canonical reference
 
 ## Status
 
@@ -15,7 +15,7 @@ All three directions assume:
 - Loofah wall per doc 3.
 - Shoes on, foam mat floor, cabinet partitions.
 
-## Direction A — `the-room-remembers`
+## Direction A – `the-room-remembers`
 
 ### Tag
 
@@ -26,7 +26,7 @@ A living archive. Every visitor leaves traces. Every visitor finds the traces of
 | Element | Behaviour |
 |---|---|
 | Flashlight | Charges surfaces it points at |
-| Charged surfaces | Glow (handprints, sweeps, outlines) for an extended period — at least one visitor session |
+| Charged surfaces | Glow (handprints, sweeps, outlines) for an extended period – at least one visitor session |
 | Firefly + charged surface | Fireflies passing near charged surfaces leave brighter, longer-lasting traces |
 | Visitor + firefly | Visitor flashlight pointed at a passing firefly amplifies the trace it leaves |
 
@@ -48,7 +48,7 @@ Visitor walks out knowing they have changed the room for the next group.
 - Surface-tracking system (which surfaces are charged, decay rate).
 - Decay timing balanced against session frequency.
 
-## Direction B — `i-called-one`
+## Direction B – `i-called-one`
 
 ### Tag
 
@@ -82,7 +82,7 @@ Visitor walks out knowing they prepared the place and the fireflies came because
 - Target-specific response patterns (floor summons low, ceiling summons overhead).
 - Sitting detection (overhead pattern shift).
 
-## Direction C — `forest-doesnt-need-you`
+## Direction C – `forest-doesnt-need-you`
 
 ### Tag
 
@@ -113,7 +113,7 @@ Visitor walks out knowing the forest continues without them. They were a witness
 
 - Scatter-on-flashlight behaviour for fireflies.
 - Hidden marks on loofah surface (NO UV. Hidden by ambient changes only).
-- Silhouette on `front-wall` — emerges at low ambient threshold.
+- Silhouette on `front-wall` – emerges at low ambient threshold.
 - Scheduled (not triggered) synchrony event per session.
 - Wall breath rhythm (slow brighten/dim cycle).
 
@@ -123,7 +123,7 @@ Visitor walks out knowing the forest continues without them. They were a witness
 - Each direction's core mechanic and narrative beat.
 - All three share the same physical room.
 
-## Stop-and-flag — do NOT infer defaults
+## Stop-and-flag – do NOT infer defaults
 
 1. Which direction is committed for build (Riaan + Corbett decision).
 2. Specific timing values (charge decay, summon threshold, scatter radius).

@@ -1,4 +1,4 @@
-# Folded-sky proposal — canonical reference
+# Folded-sky proposal – canonical reference
 
 ## Status
 
@@ -6,7 +6,7 @@ Active. One of two design options for the firefly room. The other is `within-rea
 
 ## Name flag
 
-The name `folded-sky` no longer matches the design — there is no fold geometry. Rename pending. Proposal content is current.
+The name `folded-sky` no longer matches the design – there is no fold geometry. Rename pending. Proposal content is current.
 
 ## Room composition (this proposal)
 
@@ -35,14 +35,14 @@ Per room spec doc 1 visitor route. One-way, no doubling back.
 - Phones allowed in `pathway` ONLY. NOT in `forest`.
 - Final panel before forest entry: soft hint about settling the beam.
 
-## Forest experience — three stages
+## Forest experience – three stages
 
 ### Stage 1: flicker
 
 - Duration: 1–3 minutes.
 - Room already alive on group entry.
 - Fireflies wake and fade across ceiling forms on their own.
-- Distribution uneven — some forms dense with activity, some quiet.
+- Distribution uneven – some forms dense with activity, some quiet.
 - No visitor input. Group watches.
 
 ### Stage 2: interactive
@@ -62,7 +62,7 @@ Per room spec doc 1 visitor route. One-way, no doubling back.
 - Duration: 2–3 minutes.
 - Trigger: approximately 70% of flashlights pointed down or held still.
 - All ceiling forms pulse in unison over 2–3 minute build.
-- Cross-ceiling programmed patterns possible — flows, zone transitions.
+- Cross-ceiling programmed patterns possible – flows, zone transitions.
 - Peak synchrony: ~30 seconds. The most coherent moment, NOT necessarily the brightest.
 - Decoherence: ~1 minute.
 - Distant thunder audio cue.
@@ -101,10 +101,10 @@ Per room spec doc 1.
 - Phones in pathway only.
 - Thunder cue at decoherence.
 
-## Stop-and-flag — do NOT infer defaults
+## Stop-and-flag – do NOT infer defaults
 
 1. Exact LED distribution algorithm across sculptural ceiling forms.
-2. IR sensor architecture (mapping beam position to ceiling elements at varied heights and forms). BLOCKING — see open items doc 8.
+2. IR sensor architecture (mapping beam position to ceiling elements at varied heights and forms). BLOCKING – see open items doc 8.
 3. Precise stage timing within the ranges.
 4. Specific synchrony pattern (single peak, oscillation, build-and-release).
 5. Specific audio bed content (drone, pad, forest-night, other).

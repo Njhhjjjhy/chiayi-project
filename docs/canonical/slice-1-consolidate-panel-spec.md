@@ -1,4 +1,4 @@
-# Slice 1 — Consolidate panel/LED spec into single source of truth
+# Slice 1 – Consolidate panel/LED spec into single source of truth
 
 ## How to use this file
 
@@ -22,14 +22,14 @@ You are about to make changes to the codebase. Follow this prompt exactly. Do no
 
 Before any research, discovery, or edits, read these files. They are the canonical reference and override any other source:
 
-- `1-room-spec.md` — room geometry, walls, partitions, floor, hard simulation rules.
-- `2-ceiling.md` — ceiling direction, 1,760-LED hardware spec, visual reference image path, research instruction.
-- `3-loofah-wall.md` — front-wall loofah feature.
-- `4-folded-sky-proposal.md` — `fireflies-suspended-sky` proposal, `sundown` wall lighting.
-- `5-within-reach-proposal.md` — `fireflies-within-reach` proposal, `horizon-line` wall lighting.
-- `6-experience-directions.md` — three narrative directions (A, B, C).
-- `7-what-changed.md` — 21 May 2026 meeting diff.
-- `8-open-items.md` — unresolved items.
+- `1-room-spec.md` – room geometry, walls, partitions, floor, hard simulation rules.
+- `2-ceiling.md` – ceiling direction, 1,760-LED hardware spec, visual reference image path, research instruction.
+- `3-loofah-wall.md` – front-wall loofah feature.
+- `4-folded-sky-proposal.md` – `fireflies-suspended-sky` proposal, `sundown` wall lighting.
+- `5-within-reach-proposal.md` – `fireflies-within-reach` proposal, `horizon-line` wall lighting.
+- `6-experience-directions.md` – three narrative directions (A, B, C).
+- `7-what-changed.md` – 21 May 2026 meeting diff.
+- `8-open-items.md` – unresolved items.
 
 If those files are not present in the project (look in the project root, in `docs/`, and in `docs/canonical/`), STOP and ask the user where they are. Do NOT proceed without them.
 
@@ -106,11 +106,11 @@ Do NOT proceed past Step 0 until the user has reviewed the discovery report and 
 1. **Module location.** Confirm the file path for the new single-source module. Default: `src/geometry/panelSpec.js`.
 
 2. **Module exports.** Confirm the exact named exports. Default:
-   - `PANEL_SPEC` — the spec array (panel size classes, counts, LED grid dimensions per class).
-   - `PANEL_RNG_SEED` — the seed integer (currently 42).
-   - `createPanelRng()` — factory returning a Park–Miller PRNG seeded with `PANEL_RNG_SEED`.
-   - `generatePanelLayout()` — pure function returning the deterministic list of panels (positions, sizes, tilts) given the spec and seed.
-   - `generatePanelLEDs(panelLayout)` — pure function returning the LED positions in world space for a given panel layout.
+   - `PANEL_SPEC` – the spec array (panel size classes, counts, LED grid dimensions per class).
+   - `PANEL_RNG_SEED` – the seed integer (currently 42).
+   - `createPanelRng()` – factory returning a Park–Miller PRNG seeded with `PANEL_RNG_SEED`.
+   - `generatePanelLayout()` – pure function returning the deterministic list of panels (positions, sizes, tilts) given the spec and seed.
+   - `generatePanelLEDs(panelLayout)` – pure function returning the LED positions in world space for a given panel layout.
 
 3. **Behaviour preservation.** Confirm the goal is byte-identical rendered output before and after this slice. If yes, slice ends with side-by-side screenshot comparison. If no, the user must specify acceptable deltas.
 
@@ -133,7 +133,7 @@ Implement per the answers from Step 1:
 7. DELETE the duplicate code from both files.
 8. Verify the import chain has no circular dependencies.
 
-Run `pnpm build`. Report any errors. Do NOT silently fix unrelated issues — if anything outside this slice's scope shows up as an error, stop and flag.
+Run `pnpm build`. Report any errors. Do NOT silently fix unrelated issues – if anything outside this slice's scope shows up as an error, stop and flag.
 
 ## Step 3: verification
 
@@ -179,4 +179,4 @@ If anything in this list appears offset, recoloured, or rerendered after this bu
 
 Any value not in this prompt and any decision not explicitly delegated to procedural code is a stop-and-flag. Do NOT infer. Do NOT pick a "reasonable default". Ask the user. The cost of asking is small.
 
-If the screenshot comparison shows any visual difference between before and after, STOP and flag — do NOT attempt to chase the difference by changing seeds or RNG implementations.
+If the screenshot comparison shows any visual difference between before and after, STOP and flag – do NOT attempt to chase the difference by changing seeds or RNG implementations.

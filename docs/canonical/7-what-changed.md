@@ -1,4 +1,4 @@
-# What changed — meeting and decision log
+# What changed – meeting and decision log
 
 ## Status
 
@@ -12,7 +12,7 @@ Authoritative record of changes from the pre-meeting canonical state to the curr
 | 2 | LED count | 882 (14×14 grid derived) | 1,760 (110 modules × 16 LEDs) | LOCKED count. Distribution TBD. |
 | 3 | `front-wall` | Sundown wall lighting concept (yellow → purple) OR breath-paced warm pulse | Loofah wall, bamboo armature, hidden warm light | LOCKED. Dimensions TBD. |
 | 4 | Partitions | Thin plywood movable walls, ~18mm | Cabinet structures, 0.5m thickness, internal storage | LOCKED. `CABINET_T` = 0.5 in `dimensions.js`. |
-| 5 | Floor | Unspecified / shoes off / foam mat / fake grass | Polished grey marble (existing), shoes ON throughout | SUPERSEDED — see entry 14 below. |
+| 5 | Floor | Unspecified / shoes off / foam mat / fake grass | Polished grey marble (existing), shoes ON throughout | SUPERSEDED – see entry 14 below. |
 | 6 | Capacity | Unspecified | Max 30, min 5, cozy 20 | LOCKED. |
 | 7 | Curtain | Theatrical blackout curtain | Same + MUST be fire-resistant or fire-resistant treated | LOCKED. |
 | 8 | Spray bottles | Open item for multiple sessions | DROPPED from scope | LOCKED. |
@@ -47,7 +47,7 @@ DROPPED. Replaced by loofah wall warm element + pathway floor edge strips coveri
 
 ## Folded-sky name
 
-NAME REQUIRES REPLACEMENT. The original name referenced fold geometry that no longer exists in the design. Rename pending — Riaan decision.
+NAME REQUIRES REPLACEMENT. The original name referenced fold geometry that no longer exists in the design. Rename pending – Riaan decision.
 
 ## Items waiting on others
 

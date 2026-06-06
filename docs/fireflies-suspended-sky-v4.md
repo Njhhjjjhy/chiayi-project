@@ -1,4 +1,4 @@
-# Fireflies-suspended-sky — v4
+# Fireflies-suspended-sky – v4
 
 ## What the room is
 
@@ -28,22 +28,22 @@
 ## Lighting option A: sundown
 
 - Hidden LED strips behind baffles along all four walls; source never visible.
-- Entry: warm amber — room feels like last light before dark.
+- Entry: warm amber – room feels like last light before dark.
 - Slow continuous fade through orange-red to deep blue-black across the session.
-- Wall colour is the room's clock — visitors feel time passing without being told.
+- Wall colour is the room's clock – visitors feel time passing without being told.
 - Green firefly LEDs read warm and soft against amber at entry; cold and precise against blue-black by stage 3.
 - Panels catch amber at entry; by deep night invisible except for the green points.
-- By stage 3 wall LEDs are at deep blue-black or off — room at its darkest as synchrony peaks.
+- By stage 3 wall LEDs are at deep blue-black or off – room at its darkest as synchrony peaks.
 
 ## Lighting option B: breath-paced wall light
 
 - Hidden LED strips behind baffles along all four walls; source never visible.
-- Colour: very dim warm amber — constant throughout, no colour transition ever.
+- Colour: very dim warm amber – constant throughout, no colour transition ever.
 - Pulses at lung rate: ~4 seconds brightening, ~6 seconds dimming.
 - Slow enough that visitors may not immediately notice it is moving.
-- Completely independent of the firefly system — the two rhythms never sync.
+- Completely independent of the firefly system – the two rhythms never sync.
 - The tension between wall breath and firefly flicker is the atmospheric quality of this variant.
-- Green firefly LEDs sit inside the warm pulse — cool and precise against soft and warm.
+- Green firefly LEDs sit inside the warm pulse – cool and precise against soft and warm.
 
 ---
 
@@ -80,5 +80,5 @@
 
 ## Open items
 
-- Spray bottles: undefined — decide or cut before build.
+- Spray bottles: undefined – decide or cut before build.
 - Audio: estimated 4 speakers, amplifier, looped ambience, thunder cue.

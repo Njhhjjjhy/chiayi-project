@@ -6,7 +6,7 @@
 
 ## How to talk to the user (read this first)
 
-**The user is a designer, not a developer.** Never use code jargon, file names, function names, or technical shorthand in conversation. Describe everything in plain or design terms — what the user would *see, feel, or do*, not how the code does it.
+**The user is a designer, not a developer.** Never use code jargon, file names, function names, or technical shorthand in conversation. Describe everything in plain or design terms – what the user would *see, feel, or do*, not how the code does it.
 
 Examples of what NOT to say:
 - "MeasureTool.jsx hardcodes [10, 3.52] planes"
@@ -15,9 +15,9 @@ Examples of what NOT to say:
 - "rename PARTITION_HEIGHT to PATHWAY_HEIGHT"
 
 Translated to plain language:
-- "the click-to-measure tool was still set up for the old, bigger room — fixed it to follow the current room size"
-- "the room dropdown buttons in the QA panel were named with the old labels — updated"
-- "the partition's height value had the old name — renamed to match the new naming"
+- "the click-to-measure tool was still set up for the old, bigger room – fixed it to follow the current room size"
+- "the room dropdown buttons in the QA panel were named with the old labels – updated"
+- "the partition's height value had the old name – renamed to match the new naming"
 
 If a code change has no visible effect, just *do it silently* and don't mention it. If it does have a visible effect, describe the effect, not the change.
 
@@ -26,23 +26,23 @@ When the user asks "what is X?", explain X in terms a non-developer can picture.
 ## Design Context
 
 ### Users
-Primarily non-artsy visitors: families, tourists already visiting Alishan, casual travelers. They arrive without art-world knowledge and should leave with a shifted perspective on nature. The storyline must be self-evident. Bilingual audience (Chinese/English) — both languages deserve equal design consideration.
+Primarily non-artsy visitors: families, tourists already visiting Alishan, casual travelers. They arrive without art-world knowledge and should leave with a shifted perspective on nature. The storyline must be self-evident. Bilingual audience (Chinese/English) – both languages deserve equal design consideration.
 
 ### Brand Personality
-**Poetic, scientific, alive.** Art + science + tech. The exhibition draws on large-scale immersive environmental art and on atmospheric installation work that treats real-world phenomena — light, weather, perception — as the medium itself. It must feel like a proper art exhibition — never a theme park, never a tech demo, never a DIY project.
+**Poetic, scientific, alive.** Art + science + tech. The exhibition draws on large-scale immersive environmental art and on atmospheric installation work that treats real-world phenomena – light, weather, perception – as the medium itself. It must feel like a proper art exhibition – never a theme park, never a tech demo, never a DIY project.
 
 ### Two Stories
 There are two narrative layers, and they must not be confused:
-- **Outer story (promotional):** Tells the story *of* the project — what it is, why it exists, why you should visit. This is the website, marketing, social media. It sells the exhibition.
-- **Inner story (the experience):** What happens *inside* the room. This is the immersive journey itself — an environmental piece that visitors walk through and inhabit. No text panels, no explanation needed. The room tells the story through light, darkness, and rhythm.
+- **Outer story (promotional):** Tells the story *of* the project – what it is, why it exists, why you should visit. This is the website, marketing, social media. It sells the exhibition.
+- **Inner story (the experience):** What happens *inside* the room. This is the immersive journey itself – an environmental piece that visitors walk through and inhabit. No text panels, no explanation needed. The room tells the story through light, darkness, and rhythm.
 
 Both need a clear storyline because the audience is primarily non-artsy. The inner story must land without art-world knowledge.
 
 ### Emotional Arc
-Wonder → connection → care. Visitors experience awe through bioluminescence and atmosphere, then arrive at a quiet realization: the fireflies are not separate from you. They are a reflection of you. The goal is positive reinforcement — visitors leave seeing nature differently, wanting to protect it because it is part of them. Not guilt, not doom.
+Wonder → connection → care. Visitors experience awe through bioluminescence and atmosphere, then arrive at a quiet realization: the fireflies are not separate from you. They are a reflection of you. The goal is positive reinforcement – visitors leave seeing nature differently, wanting to protect it because it is part of them. Not guilt, not doom.
 
 ### Core Theme
-Fireflies represent the delicate balance between humans and nature. Their bioluminescence works through the same fundamental mechanism as electrical signals in human brain synapses — both are living systems communicating through light and chemistry. This scientific parallel connects to a Buddhist philosophical idea: everything you see is an extension of yourself, and you are part of everything.
+Fireflies represent the delicate balance between humans and nature. Their bioluminescence works through the same fundamental mechanism as electrical signals in human brain synapses – both are living systems communicating through light and chemistry. This scientific parallel connects to a Buddhist philosophical idea: everything you see is an extension of yourself, and you are part of everything.
 
 ### Aesthetic Direction
 - **Dark, immersive, gallery-like.** Background #0a0a0a. UI recedes; content breathes.
@@ -55,11 +55,11 @@ Fireflies represent the delicate balance between humans and nature. Their biolum
 
 ### Design Principles
 
-1. **The room is the interface.** Design for a physical space first. The digital tools (3D preview, website) serve the real installation — they are not the product.
+1. **The room is the interface.** Design for a physical space first. The digital tools (3D preview, website) serve the real installation – they are not the product.
 2. **Darkness is a material.** The absence of light is as designed as its presence. Respect the dark. Don't over-illuminate UI or environment.
 3. **Quiet confidence over spectacle.** Every element should feel considered, not showy. If it draws attention to the technology, it's wrong. If it draws attention to the fireflies, it's right.
 4. **Accessible wonder.** No art-world gatekeeping. Families and casual visitors should feel the experience without explanation. Support web accessibility (WCAG AA), motion sensitivity (reduced motion options), and bilingual Chinese/English parity.
-5. **Nature sets the palette.** Colors, timing, and rhythm come from the real Alishan sunset cycle and firefly behavior — golden hour → twilight → blue hour → darkness. The 4-phase lighting transition is the backbone of the experience.
+5. **Nature sets the palette.** Colors, timing, and rhythm come from the real Alishan sunset cycle and firefly behavior – golden hour → twilight → blue hour → darkness. The 4-phase lighting transition is the backbone of the experience.
 
 ### Attribution policy
 No designer, artist, studio, or specific-artwork names appear anywhere in this codebase: not in comments, not in UI, not in plan documents, not in commit messages, not in asset filenames. The form carries the reference.
@@ -74,12 +74,12 @@ No designer, artist, studio, or specific-artwork names appear anywhere in this c
 When interpreting QA notes from Corbett (or any informal language about room elements), read `docs/room-glossary.md` first. It maps every wall / fixture / fabric / firefly group to its canonical name and code reference, plus a translation cheatsheet for common informal phrases.
 
 ### Naming rule (locked)
-Every room element has one canonical name with a hyphen: front-wall, back-wall, window-wall, entrance-wall, pathway, pathway-partition, entrance-wall-partition, column, forest, exhibition-area, hvac-plenum, silver-service-door, etc. Use these everywhere — comments, doc text, dropdown labels, file names. Old names like "corridor", "Segment 1/2/3", "EntryPathway" are forbidden — see `docs/room-glossary.md` for the translation table when reading old QA notes.
+Every room element has one canonical name with a hyphen: front-wall, back-wall, window-wall, entrance-wall, pathway, pathway-partition, entrance-wall-partition, column, forest, exhibition-area, hvac-plenum, silver-service-door, etc. Use these everywhere – comments, doc text, dropdown labels, file names. Old names like "corridor", "Segment 1/2/3", "EntryPathway" are forbidden – see `docs/room-glossary.md` for the translation table when reading old QA notes.
 
-**There are two partitions** — pathway-partition and entrance-wall-partition. Never say just "partition" alone — always qualify which one. The walking strip is always called "pathway", never "walking strip" or "corridor".
+**There are two partitions** – pathway-partition and entrance-wall-partition. Never say just "partition" alone – always qualify which one. The walking strip is always called "pathway", never "walking strip" or "corridor".
 
 ### Real-world room sizes (locked)
-The room is rectangular: 8.83 m (front-wall and back-wall) × 8.78 m (entrance-wall and window-wall) × 3.52 m tall (working ceiling, after beams). Total height to the original structural ceiling is 4.2 m, but only 3.52 m is modelled. Visitor entrance is 2.4 m wide × full-height. Source of truth lives in `src/geometry/dimensions.js` — every other position derives from it. Don't hardcode numbers.
+The room is rectangular: 8.83 m (front-wall and back-wall) × 8.78 m (entrance-wall and window-wall) × 3.52 m tall (working ceiling, after beams). Total height to the original structural ceiling is 4.2 m, but only 3.52 m is modelled. Visitor entrance is 2.4 m wide × full-height. Source of truth lives in `src/geometry/dimensions.js` – every other position derives from it. Don't hardcode numbers.
 
 ### Window-wall layout (locked)
 Walking along the window-wall from the front-wall corner toward the back-wall corner: 119 cm plain wall (with the small 59 × 178 cm window cut in flush-left), then 99 cm silver service door, then 90 cm plain wall, then 570 cm main glass partition that ends flush with the back-wall corner. Total 878 cm.
@@ -88,7 +88,7 @@ Walking along the window-wall from the front-wall corner toward the back-wall co
 The folder `baselines/` (top-level, gitignored) holds PNG screenshots from `scripts/screenshot-all-presets.mjs` and ad-hoc puppeteer captures. One PNG per significant change, filename `<YYYY-MM-DD-HHMMSS>-<label>.png`. Used to visually verify geometry changes side-by-side with prior states. Do not commit these.
 
 ### Honesty about sources
-Never claim to have read documentation or URLs that weren't actually retrieved. WebFetch fails silently on JavaScript-rendered sites (e.g. developer.apple.com) — when that happens, say so explicitly and propose an alternative (puppeteer, user paste, PDF). Distinguish clearly between (a) content actually retrieved from a URL/file and (b) reference info from a Claude skill or training data. Do not substitute one for the other.
+Never claim to have read documentation or URLs that weren't actually retrieved. WebFetch fails silently on JavaScript-rendered sites (e.g. developer.apple.com) – when that happens, say so explicitly and propose an alternative (puppeteer, user paste, PDF). Distinguish clearly between (a) content actually retrieved from a URL/file and (b) reference info from a Claude skill or training data. Do not substitute one for the other.
 
 
 ## Folder map

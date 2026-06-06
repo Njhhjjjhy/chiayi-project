@@ -1,4 +1,4 @@
-# Discovery prompt — paste this into Claude Code
+# Discovery prompt – paste this into Claude Code
 
 Copy everything below the line into Claude Code. It tells Claude Code to look at the current state of the sim and report back. It will not change anything.
 
@@ -70,7 +70,7 @@ Report on the following. Give one section per item, with file paths quoted, and 
 
 ## 9. Firefly behaviour
 
-- Which files implement the firefly behaviours (`Blinking.jsx`, `Motion.jsx`, `Interaction.jsx`, `TheWave.jsx`, `FireflyParticles.jsx` were named in the project history — confirm which exist).
+- Which files implement the firefly behaviours (`Blinking.jsx`, `Motion.jsx`, `Interaction.jsx`, `TheWave.jsx`, `FireflyParticles.jsx` were named in the project history – confirm which exist).
 - Which variants are wired up to the proposals viewer.
 
 ## 10. Proposals viewer

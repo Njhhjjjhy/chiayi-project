@@ -1,4 +1,4 @@
-# Room spec — canonical reference
+# Room spec – canonical reference
 
 ## Status
 
@@ -10,7 +10,7 @@ Nanghia, Laiji Village, Alishan Township, Chiayi, Taiwan.
 
 ## Coordinate system (simulation)
 
-- Origin (0, 0, 0): bottom-left corner of the exhibition area floor — corner where `back-wall` meets the `entrance-wall` line.
+- Origin (0, 0, 0): bottom-left corner of the exhibition area floor – corner where `back-wall` meets the `entrance-wall` line.
 - X axis: along the `entrance-wall` line, from `back-wall` toward `front-wall`. Positive X → `front-wall`.
 - Y axis: vertical. Positive Y → up.
 - Z axis: from `entrance-wall` toward `window-wall`. Positive Z → `window-wall`.
@@ -26,10 +26,10 @@ Nanghia, Laiji Village, Alishan Township, Chiayi, Taiwan.
 
 ## Wall identifiers (kebab-case, in backticks in code)
 
-- `back-wall` — X=0, full depth (Z=0 to Z=8.78). Real wall. Contains `D1` and `D2`. No windows.
-- `front-wall` — X=8.83, full depth (Z=0 to Z=8.78). Real wall. No doors, no windows. Carries the loofah wall element.
-- `entrance-wall` — Z=0, full width (X=0 to X=8.83). NOT a real wall. Open side of building. Model only as the three cabinet partition elements defined below.
-- `window-wall` — Z=8.78, full width (X=0 to X=8.83). Real wall. Contains windows and two doors leading outside. Covered by blackout curtain during operation.
+- `back-wall` – X=0, full depth (Z=0 to Z=8.78). Real wall. Contains `D1` and `D2`. No windows.
+- `front-wall` – X=8.83, full depth (Z=0 to Z=8.78). Real wall. No doors, no windows. Carries the loofah wall element.
+- `entrance-wall` – Z=0, full width (X=0 to X=8.83). NOT a real wall. Open side of building. Model only as the three cabinet partition elements defined below.
+- `window-wall` – Z=8.78, full width (X=0 to X=8.83). Real wall. Contains windows and two doors leading outside. Covered by blackout curtain during operation.
 
 No compass directions. No alternative names. No abbreviations.
 

@@ -12,7 +12,7 @@ That's it. Both steps happen entirely inside your existing Vercel dashboard.
 
 ---
 
-## Step 1 — Enable Vercel Blob
+## Step 1 – Enable Vercel Blob
 
 Vercel Blob is where the notes and any attached screenshots will live.
 
@@ -20,11 +20,11 @@ Vercel Blob is where the notes and any attached screenshots will live.
 2. Click the **Storage** tab in the top nav
 3. Click **Create** → choose **Blob**
 4. Pick a name (e.g. `fireflies-qa`) and click **Create**
-5. Vercel will offer to **Connect to project** — accept
+5. Vercel will offer to **Connect to project** – accept
 
 Vercel automatically injects the credential (`BLOB_READ_WRITE_TOKEN`) as an environment variable. You don't need to copy or paste anything.
 
-## Step 2 — Set the passphrase
+## Step 2 – Set the passphrase
 
 This is the password Corbett (and you) enter once to unlock the QA panel.
 
@@ -35,9 +35,9 @@ This is the password Corbett (and you) enter once to unlock the QA panel.
    - Environments: tick **Production**, **Preview**, and **Development**
 3. Save
 
-> The passphrase is stored only as an env var on Vercel — never in the codebase.
+> The passphrase is stored only as an env var on Vercel – never in the codebase.
 
-## Step 3 — Redeploy
+## Step 3 – Redeploy
 
 Push any commit, or in Vercel click **Deployments** → the latest deployment → **Redeploy**. Once it's live, the **Notes** button will appear in the bottom-right corner of every page.
 
@@ -47,7 +47,7 @@ Push any commit, or in Vercel click **Deployments** → the latest deployment �
 
 1. He opens the live URL on his phone or laptop
 2. Clicks the **Notes** button bottom-right
-3. Enters the passphrase (`fireflies`) — saved in his browser, only once
+3. Enters the passphrase (`fireflies`) – saved in his browser, only once
 4. Picks a category (Bug / Design / Idea / Install), optionally tags a room location, types the note, optionally pastes or uploads a screenshot
 5. Clicks **Add note**
 
@@ -62,7 +62,7 @@ pnpm dlx vercel link    # one-time, links this folder to your Vercel project
 pnpm dlx vercel dev     # starts dev server with /api routes wired up
 ```
 
-`pnpm dev` (Vite alone) won't run the `/api/*` routes — you need `vercel dev` for that.
+`pnpm dev` (Vite alone) won't run the `/api/*` routes – you need `vercel dev` for that.
 
 ## Troubleshooting
 

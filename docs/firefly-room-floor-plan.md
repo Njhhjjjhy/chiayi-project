@@ -1,14 +1,14 @@
-# Firefly room floor plan — spatial reference
+# Firefly room floor plan – spatial reference
 
 ## How to use this document
 
-This is the canonical spatial reference for the firefly immersive experience at Nanghia, Laiji Village, Alishan Township. Every build prompt, 3D simulation, and proposal must use the dimensions, naming, and coordinate system defined here. Do not infer, guess, or substitute values not listed here — flag and wait.
+This is the canonical spatial reference for the firefly immersive experience at Nanghia, Laiji Village, Alishan Township. Every build prompt, 3D simulation, and proposal must use the dimensions, naming, and coordinate system defined here. Do not infer, guess, or substitute values not listed here – flag and wait.
 
 ---
 
 ## Coordinate system (for 3D simulation)
 
-- Origin (0, 0, 0): bottom-left corner of the exhibition area floor — the corner where the `back-wall` meets the `entrance-wall` line.
+- Origin (0, 0, 0): bottom-left corner of the exhibition area floor – the corner where the `back-wall` meets the `entrance-wall` line.
 - X axis: runs along the `entrance-wall` line, from `back-wall` toward `front-wall`. Positive X points toward `front-wall`.
 - Y axis: vertical. Positive Y points up.
 - Z axis: runs from `entrance-wall` toward `window-wall`. Positive Z points toward `window-wall`.
@@ -18,8 +18,8 @@ This is the canonical spatial reference for the firefly immersive experience at 
 
 ## Room dimensions
 
-- Exhibition area width (X): 8.83m — from `back-wall` to `front-wall`.
-- Exhibition area depth (Z): 8.78m — from `entrance-wall` line to `window-wall`.
+- Exhibition area width (X): 8.83m – from `back-wall` to `front-wall`.
+- Exhibition area depth (Z): 8.78m – from `entrance-wall` line to `window-wall`.
 - Total ceiling height (Y): 4.2m.
 - Working ceiling height after beams (Y): 3.52m.
 - Floor: flat, at Y=0.
@@ -31,7 +31,7 @@ This is the canonical spatial reference for the firefly immersive experience at 
 ### `back-wall`
 
 - Position: X=0, runs the full depth of the room (Z=0 to Z=8.78m).
-- Real wall — structural, existing, cannot be modified.
+- Real wall – structural, existing, cannot be modified.
 - Contains two doors: D1 and D2 (see doors section).
 - No windows.
 - Matte dark finish assumed for simulation.
@@ -39,7 +39,7 @@ This is the canonical spatial reference for the firefly immersive experience at 
 ### `front-wall`
 
 - Position: X=8.83m, runs the full depth of the room (Z=0 to Z=8.78m).
-- Real wall — structural, existing, cannot be modified.
+- Real wall – structural, existing, cannot be modified.
 - No doors, no windows.
 - Luffa wall mounted here inside the forest zone (see luffa wall section).
 - Matte dark finish assumed for simulation.
@@ -53,7 +53,7 @@ This is the canonical spatial reference for the firefly immersive experience at 
 ### `window-wall`
 
 - Position: Z=8.78m, runs the full width of the room (X=0 to X=8.83m).
-- Real wall — structural, existing, cannot be modified.
+- Real wall – structural, existing, cannot be modified.
 - Contains windows and two doors (see doors and windows section).
 - Faces outside. Covered by theatrical blackout curtain during operation.
 
@@ -63,33 +63,33 @@ This is the canonical spatial reference for the firefly immersive experience at 
 
 - Structural, existing, cannot be moved.
 - Position on `entrance-wall` line: X=6.43m from `back-wall` (= 8.83m minus 2.4m from `front-wall`), Z=0.
-- Physical footprint: estimated 0.3m × 0.3m square. Flag if exact size matters — not confirmed from drawings.
+- Physical footprint: estimated 0.3m × 0.3m square. Flag if exact size matters – not confirmed from drawings.
 - Height: full structural height, Y=0 to Y=4.2m.
 - In simulation: render as a solid rectangular column, matte dark finish.
 - Creates two openings along the `entrance-wall` line:
-  1. Between `back-wall` (X=0) and column left face (X=6.43m) — closed by entrance-wall partition except for the 1.5m entry gap at the `back-wall` end.
-  2. Between column right face (X=6.73m) and `front-wall` (X=8.83m) — 2.4m wide, fully open. This is the exit/gift area.
+  1. Between `back-wall` (X=0) and column left face (X=6.43m) – closed by entrance-wall partition except for the 1.5m entry gap at the `back-wall` end.
+  2. Between column right face (X=6.73m) and `front-wall` (X=8.83m) – 2.4m wide, fully open. This is the exit/gift area.
 
 ---
 
 ## Partitions
 
-All three partitions are the same material: plywood, matte near-black finish. Estimated thickness: 0.018m (18mm standard plywood). All are built on site for this installation — not existing structure. All run floor to working ceiling: Y=0 to Y=3.52m.
+All three partitions are the same material: plywood, matte near-black finish. Estimated thickness: 0.018m (18mm standard plywood). All are built on site for this installation – not existing structure. All run floor to working ceiling: Y=0 to Y=3.52m.
 
 ### 1. Entrance-wall partition
 
 - Runs along Z=0 (the `entrance-wall` line).
 - From X=1.5m to X=6.43m (column left face).
-- Entry gap: X=0 to X=1.5m — open, no partition. Visitor entry point into the pathway.
-- Exit/gift gap: X=6.73m to X=8.83m — open, no partition. Exit into gift area.
+- Entry gap: X=0 to X=1.5m – open, no partition. Visitor entry point into the pathway.
+- Exit/gift gap: X=6.73m to X=8.83m – open, no partition. Exit into gift area.
 
-### 2. Pathway partition — vertical
+### 2. Pathway partition – vertical
 
 - Runs parallel to the `back-wall`, inside the room.
 - Position: X=1.5m, from Z=0 to Z=7.28m.
 - Separates the vertical leg of the `pathway` from the `forest`.
 
-### 3. Pathway partition — horizontal
+### 3. Pathway partition – horizontal
 
 - Runs parallel to the `window-wall`, inside the room.
 - Position: Z=7.28m (1.5m from `window-wall`), from X=1.5m to X=6.43m.
@@ -125,7 +125,7 @@ All three partitions are the same material: plywood, matte near-black finish. Es
 
 - Position: X=6.43m to X=8.83m at Z=0, opening into the space beyond.
 - Width: 2.4m (between column right face and `front-wall`).
-- No partition — fully open.
+- No partition – fully open.
 - Used for gift sales and post-experience interaction after visitors exit the forest.
 
 ---
@@ -137,13 +137,13 @@ All three partitions are the same material: plywood, matte near-black finish. Es
 - D1: estimated Z=2.5m, width ~0.9m. Existing, not modified.
 - D2: estimated Z=5.0m, width ~0.9m. Existing, not modified.
 - Used for staff access and emergency egress during operation. Not part of visitor route.
-- Flag: exact positions and widths not confirmed — estimates only.
+- Flag: exact positions and widths not confirmed – estimates only.
 
 ### `window-wall` doors (Z=8.78m face)
 
 - Door 1: near `back-wall` corner, estimated X=0.5m to X=1.4m (inside pathway zone). Width ~0.9m.
 - Door 2: approximately mid-wall, estimated X=3.5m to X=4.4m. Width ~0.9m.
-- Flag: exact positions and widths not confirmed — estimates only.
+- Flag: exact positions and widths not confirmed – estimates only.
 
 ---
 
@@ -154,7 +154,7 @@ All three partitions are the same material: plywood, matte near-black finish. Es
 - Window 1: estimated X=1.8m to X=2.8m (inside pathway zone). Width ~1.0m.
 - Window 2: estimated X=4.8m to X=5.8m (inside forest zone). Width ~1.0m.
 - All covered by dark blue theatrical blackout curtain during operation.
-- Flag: exact positions and sizes not confirmed — estimates only.
+- Flag: exact positions and sizes not confirmed – estimates only.
 
 ---
 
@@ -162,7 +162,7 @@ All three partitions are the same material: plywood, matte near-black finish. Es
 
 - Dark blue theatrical fabric, floor to ceiling.
 - Covers all windows on the `window-wall` (Z=8.78m face) during operation.
-- Mounted as a hanging curtain on a track — not a fixed partition.
+- Mounted as a hanging curtain on a track – not a fixed partition.
 - In simulation: render as a dark blue fabric plane at Z=8.78m covering the window openings.
 
 ---
@@ -171,7 +171,7 @@ All three partitions are the same material: plywood, matte near-black finish. Es
 
 - Flat plywood panels suspended across the `forest` zone only.
 - Panel count: estimated 20–30 panels.
-- Three size classes: 40×40cm, 65×65cm, 90×90cm. Mixed organically — not a grid.
+- Three size classes: 40×40cm, 65×65cm, 90×90cm. Mixed organically – not a grid.
 - Height range: Y=2.2m to Y=3.2m from floor.
 - Tilt: 0–15 degrees off horizontal, varied per panel.
 - Suspension: two steel cables per panel from structural ceiling anchors at Y=3.52m.
@@ -187,7 +187,7 @@ All three partitions are the same material: plywood, matte near-black finish. Es
 - Vertical position (Z): TBD on install day.
 - Height and width: TBD.
 - Construction: timber frame, luffa panels, warm LED strip behind diffuser as backlight.
-- Touch and sight element — not a photo zone.
+- Touch and sight element – not a photo zone.
 - In simulation: render as a warm-lit rectangular panel flush against the `front-wall`.
 
 ---
@@ -218,25 +218,25 @@ One-way. No doubling back.
 
 ## Lighting options (summary)
 
-All light sources hidden behind baffles or base rails — source never visible to visitor.
+All light sources hidden behind baffles or base rails – source never visible to visitor.
 
-**Folded-sky A — sundown:** LED strips along all four forest walls. Entry warm amber, slow fade to deep blue-black across session.
+**Folded-sky A – sundown:** LED strips along all four forest walls. Entry warm amber, slow fade to deep blue-black across session.
 
-**Folded-sky B — breath-paced:** LED strips along all four forest walls. Very dim warm amber, pulsing at ~4s in / ~6s out. Independent of firefly system.
+**Folded-sky B – breath-paced:** LED strips along all four forest walls. Very dim warm amber, pulsing at ~4s in / ~6s out. Independent of firefly system.
 
-**Within-reach A — horizon line:** Single LED strip along base of all four forest walls at Y=0.3–0.4m. Static warm white.
+**Within-reach A – horizon line:** Single LED strip along base of all four forest walls at Y=0.3–0.4m. Static warm white.
 
-**Within-reach B — mountain ridge silhouette:** LED strips backlight cut MDF panels (matte black, Y=0 to Y=0.8m) on `back-wall` and `window-wall` faces inside forest only. Cool blue-grey, static.
+**Within-reach B – mountain ridge silhouette:** LED strips backlight cut MDF panels (matte black, Y=0 to Y=0.8m) on `back-wall` and `window-wall` faces inside forest only. Cool blue-grey, static.
 
 ---
 
 ## Simulation rules (hard)
 
-- Canonical wall names only — no compass directions in code, comments, filenames, or commits.
-- "Pathway" always — never "corridor."
-- `entrance-wall` is not a solid wall — model only the three partition elements.
+- Canonical wall names only – no compass directions in code, comments, filenames, or commits.
+- "Pathway" always – never "corridor."
+- `entrance-wall` is not a solid wall – model only the three partition elements.
 - Any geometry visible at full darkness (ambient 0.01) must use self-emissive materials. Non-emissive geometry is crushed black by ACES tone mapping.
 - Firefly LED sphere radius: 0.025 for visual legibility (physically accurate 0.0015 is sub-pixel).
 - All measurements in metres. Y=0 is floor level.
 - No artist, designer, studio, or artwork names anywhere in code, comments, plans, filenames, or commits.
-- Emergency egress: open item — do not model emergency signage.
+- Emergency egress: open item – do not model emergency signage.

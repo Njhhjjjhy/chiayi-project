@@ -1,13 +1,13 @@
 # Build prompt: real-world room updates
 
-## Read this first — sole source of truth
+## Read this first – sole source of truth
 
 This prompt supersedes every previous instruction, scratch file, comment, branch, commit message, or conversation about the curtain, the pathway, the firefly LED size, the proposals page, or anything related to those four. Treat this prompt as ground truth.
 
 If during discovery you find:
 
-- code, comments, or constants from prior attempts (e.g. `showCurtain`, `showPathway`, `showPathwayLeft`, `mirror`, `side` prop on `Partition`, `0.0015` sphere radius, partition material `#1a1a1a` without emissive, `DEFAULT_SHOW_PATHWAY = true`, etc.) — those are remnants of broken work. They are cleanup targets, not specifications.
-- prior prompts, README files, handoff documents, or AI-authored notes — do not extend or reconcile with them. Follow only this prompt.
+- code, comments, or constants from prior attempts (e.g. `showCurtain`, `showPathway`, `showPathwayLeft`, `mirror`, `side` prop on `Partition`, `0.0015` sphere radius, partition material `#1a1a1a` without emissive, `DEFAULT_SHOW_PATHWAY = true`, etc.) – those are remnants of broken work. They are cleanup targets, not specifications.
+- prior prompts, README files, handoff documents, or AI-authored notes – do not extend or reconcile with them. Follow only this prompt.
 
 Do not infer requirements from existing code. Do not preserve prior design decisions for backward compatibility. Prior work is being replaced, not extended.
 
@@ -15,16 +15,16 @@ Do not infer requirements from existing code. Do not preserve prior design decis
 
 ## Context
 
-These are not proposals. These are updates to the canonical 3D room to reflect the actual real-world design at Nanghia. The curtain, the pathway, and the corrected firefly size are permanent parts of the room — no toggles, no proposal flags, no experience modes.
+These are not proposals. These are updates to the canonical 3D room to reflect the actual real-world design at Nanghia. The curtain, the pathway, and the corrected firefly size are permanent parts of the room – no toggles, no proposal flags, no experience modes.
 
 ---
 
-## Wall terminology (locked — use these exact names everywhere; never compass directions)
+## Wall terminology (locked – use these exact names everywhere; never compass directions)
 
-- **Front-wall** — the feature wall, where the main visual focuses.
-- **Back-wall** — the "piano wall". Holds doors D1 and D2.
-- **Entrance-wall** — holds the visitor entrance curtain.
-- **Window-wall** — has the windows. HVAC plenum sits in one corner of this wall.
+- **Front-wall** – the feature wall, where the main visual focuses.
+- **Back-wall** – the "piano wall". Holds doors D1 and D2.
+- **Entrance-wall** – holds the visitor entrance curtain.
+- **Window-wall** – has the windows. HVAC plenum sits in one corner of this wall.
 
 Adjacency: the entrance-wall is opposite the window-wall. The front-wall is opposite the back-wall. The four walls form the canonical room rectangle.
 
@@ -36,18 +36,18 @@ The **forest** is the dark inner space, bounded by the pathway's inner partition
 
 Starting from the visitor entrance on the entrance-wall:
 
-1. **Front-wall side of partition** — runs along the inside of the **front-wall**, from the front-wall / entrance-wall corner to the front-wall / window-wall corner.
+1. **Front-wall side of partition** – runs along the inside of the **front-wall**, from the front-wall / entrance-wall corner to the front-wall / window-wall corner.
 2. Right turn at the front-wall / window-wall corner.
-3. **Window-wall side of partition** — runs along the inside of the **window-wall**, from the front-wall / window-wall corner to the back-wall / window-wall corner.
+3. **Window-wall side of partition** – runs along the inside of the **window-wall**, from the front-wall / window-wall corner to the back-wall / window-wall corner.
 4. Right turn at the back-wall / window-wall corner.
-5. **Back-wall side of partition** — runs along the inside of the **back-wall**, from the back-wall / window-wall corner up to the position of the **first door** (whichever of D1 or D2 Riaan confirms is closer to the window-wall corner).
-6. Right turn at the first door — visitor exits the pathway through a partition opening at that door's x-position and enters the forest.
+5. **Back-wall side of partition** – runs along the inside of the **back-wall**, from the back-wall / window-wall corner up to the position of the **first door** (whichever of D1 or D2 Riaan confirms is closer to the window-wall corner).
+6. Right turn at the first door – visitor exits the pathway through a partition opening at that door's x-position and enters the forest.
 
 D1 and D2 are the two doors on the back-wall. Which one is closer to the window-wall corner (and therefore the "first door" encountered along the path) is **not yet confirmed by Riaan**. **Stop and flag** during discovery to confirm with Riaan which of D1 or D2 is the first door before building any geometry that depends on this. Do not assume.
 
 D1 and D2 are existing building doors.
 
-**Important:** the "first door" is used as a *positional reference* for the partition opening. The pathway partition has an opening aligned with the first door's x-position. Visitors walk through this partition opening to enter the forest. They do not walk through the physical building door as part of the pathway route — the building door's operational status (open, closed, sealed) is outside the scope of this work.
+**Important:** the "first door" is used as a *positional reference* for the partition opening. The pathway partition has an opening aligned with the first door's x-position. Visitors walk through this partition opening to enter the forest. They do not walk through the physical building door as part of the pathway route – the building door's operational status (open, closed, sealed) is outside the scope of this work.
 
 The partition opening width must equal the pathway width (so visitors can walk through it).
 
@@ -55,24 +55,24 @@ The other door (whichever of D1 or D2 is *not* the first door) is outside the pa
 
 ---
 
-## Step 0 — discovery (read only, hard stop after report)
+## Step 0 – discovery (read only, hard stop after report)
 
 **Goal:** confirm the current state of the codebase before any edits.
 
 **Tools allowed in this step:** Read, Glob, Grep.
 **Tools forbidden in this step:** Edit, Write, MultiEdit, NotebookEdit, any Bash command that modifies the filesystem or git state.
 
-Read each of the following files completely. Quote relevant lines in your report. If a file does not exist, state that — do not infer its contents.
+Read each of the following files completely. Quote relevant lines in your report. If a file does not exist, state that – do not infer its contents.
 
-1. `src/geometry/dimensions.js` — list every export. Include `ROOM.W`, `ROOM.H`, `ROOM.D`, `HW`, `HD`, and any door, window, or wall constants. State which axis (x, y, z) corresponds to each of the four walls.
-2. `src/components/Scene.jsx` — full JSX tree of the canonical room. List every wall, door, partition, and architectural element with its position, rotation, and material specs (colour, emissive colour, emissive intensity if any). Map each wall in the JSX to its name (front-wall, back-wall, entrance-wall, window-wall). Identify which door is D1 and which is D2 on the back-wall, and report which one is closer to the window-wall corner. Identify the HVAC plenum corner on the window-wall. Report which folder existing canonical room components live in (this is where moved files will go).
-3. `src/pages/ProposalsPage.jsx` — how `Partition` and `TheatricalCurtain` are currently mounted, the conditionals wrapping them, the state hooks driving them.
-4. `src/hooks/ProposalsProvider.jsx` — full state shape. Identify which keys relate to pathway and curtain.
-5. `src/proposals/defaults.js` — every default related to pathway, curtain, and timeline.
-6. `src/components/proposals/Partition.jsx` — full geometry: partition positions, card positions, lights, side/mirror logic, exit gap math, and material specs (colour, emissive colour, emissive intensity) for partitions, cards, and any other surfaces.
-7. `src/components/proposals/TheatricalCurtain.jsx` — position, dimensions, material colour, rotation.
+1. `src/geometry/dimensions.js` – list every export. Include `ROOM.W`, `ROOM.H`, `ROOM.D`, `HW`, `HD`, and any door, window, or wall constants. State which axis (x, y, z) corresponds to each of the four walls.
+2. `src/components/Scene.jsx` – full JSX tree of the canonical room. List every wall, door, partition, and architectural element with its position, rotation, and material specs (colour, emissive colour, emissive intensity if any). Map each wall in the JSX to its name (front-wall, back-wall, entrance-wall, window-wall). Identify which door is D1 and which is D2 on the back-wall, and report which one is closer to the window-wall corner. Identify the HVAC plenum corner on the window-wall. Report which folder existing canonical room components live in (this is where moved files will go).
+3. `src/pages/ProposalsPage.jsx` – how `Partition` and `TheatricalCurtain` are currently mounted, the conditionals wrapping them, the state hooks driving them.
+4. `src/hooks/ProposalsProvider.jsx` – full state shape. Identify which keys relate to pathway and curtain.
+5. `src/proposals/defaults.js` – every default related to pathway, curtain, and timeline.
+6. `src/components/proposals/Partition.jsx` – full geometry: partition positions, card positions, lights, side/mirror logic, exit gap math, and material specs (colour, emissive colour, emissive intensity) for partitions, cards, and any other surfaces.
+7. `src/components/proposals/TheatricalCurtain.jsx` – position, dimensions, material colour, rotation.
 8. The five firefly files: `FireflyParticles.jsx`, `Blinking.jsx`, `Interaction.jsx`, `Motion.jsx`, `TheWave.jsx`. Current sphere radius value and line number for each.
-9. `src/components/proposals/ControlPanel.jsx` (or wherever toggles live) — every toggle and slider.
+9. `src/components/proposals/ControlPanel.jsx` (or wherever toggles live) – every toggle and slider.
 
 Then run Grep across `src/` for each of these and report all match locations:
 
@@ -93,7 +93,7 @@ Then run Grep across `src/` for each of these and report all match locations:
 
 ---
 
-## Step 1 — firefly visual size fix
+## Step 1 – firefly visual size fix
 
 **Goal:** revert the broken `0.0015` sphere radius (which is sub-pixel and invisible) to a working visible size across all five firefly files.
 
@@ -122,17 +122,17 @@ Then run Grep across `src/` for each of these and report all match locations:
 
 ---
 
-## Step 2 — curtain becomes part of the canonical room
+## Step 2 – curtain becomes part of the canonical room
 
 **Goal:** move the theatrical curtain from the proposals system into the canonical room. Always rendered, no toggle.
 
 **Files:**
 - Move `src/components/proposals/TheatricalCurtain.jsx` → the canonical room components folder (identified in Step 0 discovery) using `git mv` (preserves history). **Stop and flag** if the discovery report did not clearly identify where canonical room components live.
-- `src/components/Scene.jsx` — mount the curtain.
-- `src/hooks/ProposalsProvider.jsx` — remove `showCurtain` from state shape and any setter.
-- `src/proposals/defaults.js` — remove `DEFAULT_SHOW_CURTAIN`.
-- `src/components/proposals/ControlPanel.jsx` — remove the curtain toggle.
-- `src/pages/ProposalsPage.jsx` — remove the curtain mount.
+- `src/components/Scene.jsx` – mount the curtain.
+- `src/hooks/ProposalsProvider.jsx` – remove `showCurtain` from state shape and any setter.
+- `src/proposals/defaults.js` – remove `DEFAULT_SHOW_CURTAIN`.
+- `src/components/proposals/ControlPanel.jsx` – remove the curtain toggle.
+- `src/pages/ProposalsPage.jsx` – remove the curtain mount.
 
 **Changes:**
 
@@ -143,7 +143,7 @@ Then run Grep across `src/` for each of these and report all match locations:
 
 **Acceptance criteria for Step 2:**
 - `TheatricalCurtain.jsx` exists in the canonical room components folder identified in Step 0. The file at `src/components/proposals/TheatricalCurtain.jsx` no longer exists.
-- The curtain is mounted in `Scene.jsx` unconditionally — no JSX conditional wraps it.
+- The curtain is mounted in `Scene.jsx` unconditionally – no JSX conditional wraps it.
 - `grep -r "showCurtain" src/` returns zero matches.
 - `grep -r "DEFAULT_SHOW_CURTAIN" src/` returns zero matches.
 - The curtain toggle is gone from `ControlPanel.jsx`.
@@ -151,32 +151,32 @@ Then run Grep across `src/` for each of these and report all match locations:
 
 ---
 
-## Step 3 — pathway becomes part of the canonical room
+## Step 3 – pathway becomes part of the canonical room
 
 **Goal:** move the pathway from the proposals system into the canonical room as the three-wall pathway described in the "Pathway route" section above. Always rendered, no toggle, no left/right variants.
 
 **Files:**
-- Move `src/components/proposals/Partition.jsx` → the canonical room components folder (identified in Step 0 discovery) using `git mv`. Keep the filename as `Partition.jsx` — do not rename. **Stop and flag** if the discovery report did not clearly identify where canonical room components live.
-- `src/components/Scene.jsx` — mount the pathway.
-- `src/geometry/dimensions.js` — add door-position constants if not present.
-- `src/hooks/ProposalsProvider.jsx` — remove `showPathway`, `showPathwayLeft`.
-- `src/proposals/defaults.js` — remove pathway defaults.
-- `src/components/proposals/ControlPanel.jsx` — remove pathway toggles.
-- `src/pages/ProposalsPage.jsx` — remove pathway mounts.
+- Move `src/components/proposals/Partition.jsx` → the canonical room components folder (identified in Step 0 discovery) using `git mv`. Keep the filename as `Partition.jsx` – do not rename. **Stop and flag** if the discovery report did not clearly identify where canonical room components live.
+- `src/components/Scene.jsx` – mount the pathway.
+- `src/geometry/dimensions.js` – add door-position constants if not present.
+- `src/hooks/ProposalsProvider.jsx` – remove `showPathway`, `showPathwayLeft`.
+- `src/proposals/defaults.js` – remove pathway defaults.
+- `src/components/proposals/ControlPanel.jsx` – remove pathway toggles.
+- `src/pages/ProposalsPage.jsx` – remove pathway mounts.
 
 **Changes:**
 
 1. Move with `git mv` (no rename). Update import paths everywhere.
 2. In the moved file, refactor the geometry to three inner-partition planes:
-   - **Front-wall pathway partition** — runs parallel to the front-wall, offset toward the room interior by the pathway width. Spans from the entrance-wall side to the window-wall corner.
-   - **Window-wall pathway partition** — runs parallel to the window-wall, offset toward the room interior by the pathway width. Spans from the front-wall corner to the back-wall corner.
-   - **Back-wall pathway partition** — runs parallel to the back-wall, offset toward the room interior by the pathway width. Spans from the window-wall corner up to the first door's x-position (the first door is whichever of D1 or D2 Riaan confirmed in Step 0).
+   - **Front-wall pathway partition** – runs parallel to the front-wall, offset toward the room interior by the pathway width. Spans from the entrance-wall side to the window-wall corner.
+   - **Window-wall pathway partition** – runs parallel to the window-wall, offset toward the room interior by the pathway width. Spans from the front-wall corner to the back-wall corner.
+   - **Back-wall pathway partition** – runs parallel to the back-wall, offset toward the room interior by the pathway width. Spans from the window-wall corner up to the first door's x-position (the first door is whichever of D1 or D2 Riaan confirmed in Step 0).
    - Partitions meet at right angles at the front/window corner and the window/back corner.
    - The back-wall partition has an opening at the first door's x-position. **The opening's width equals the pathway width.** This is the pathway's exit into the forest.
-   - **Entrance-wall side forest partitions** — additional partition planes along the entrance-wall side of the forest. Position so the entrance opens into the start of the front-wall pathway and the rest of the entrance-wall is sealed off from the forest. Visitors must traverse the pathway; they cannot reach the forest directly from the entrance.
+   - **Entrance-wall side forest partitions** – additional partition planes along the entrance-wall side of the forest. Position so the entrance opens into the start of the front-wall pathway and the rest of the entrance-wall is sealed off from the forest. Visitors must traverse the pathway; they cannot reach the forest directly from the entrance.
 3. **Pathway width:** **stop and flag** to ask Riaan for the exact pathway width before building geometry. Do not pick a value. Once Riaan provides the value, use the same value for all three segments. The width is the gap between the wall and the partition. Partitions are zero-thickness planes.
 4. **Door-position constants:**
-   - If `dimensions.js` already has constants for D1 and D2 positions, use them — do not rename.
+   - If `dimensions.js` already has constants for D1 and D2 positions, use them – do not rename.
    - If not, add `DOOR_D1_POSITION` and `DOOR_D2_POSITION` as exports in `dimensions.js`. Derive the values from the door positions shown in `Scene.jsx`.
    - **Stop and flag** if `Scene.jsx` does not show D1 and D2 clearly enough to derive their positions.
 5. Delete every line related to the `side` prop and the `mirror` multiplier. There is one configuration only.
@@ -218,16 +218,16 @@ Constraint: the lighting must not spill across the partitions into the forest. O
 
 ---
 
-## Step 4 — clean up
+## Step 4 – clean up
 
 **Goal:** remove all old toggle infrastructure and dead references.
 
 **Changes:**
 
-1. `ProposalsPage.jsx` — remove the old `Partition` and `TheatricalCurtain` mounts.
-2. `ProposalsProvider.jsx` — remove `showCurtain`, `showPathway`, `showPathwayLeft` from state shape and their setters.
-3. `defaults.js` — remove `DEFAULT_SHOW_CURTAIN`, `DEFAULT_SHOW_PATHWAY`, `DEFAULT_SHOW_PATHWAY_LEFT`.
-4. `ControlPanel.jsx` — remove curtain and pathway toggles.
+1. `ProposalsPage.jsx` – remove the old `Partition` and `TheatricalCurtain` mounts.
+2. `ProposalsProvider.jsx` – remove `showCurtain`, `showPathway`, `showPathwayLeft` from state shape and their setters.
+3. `defaults.js` – remove `DEFAULT_SHOW_CURTAIN`, `DEFAULT_SHOW_PATHWAY`, `DEFAULT_SHOW_PATHWAY_LEFT`.
+4. `ControlPanel.jsx` – remove curtain and pathway toggles.
 5. Run `grep -rE "showCurtain|showPathway|showPathwayLeft|DEFAULT_SHOW_CURTAIN|DEFAULT_SHOW_PATHWAY" src/`. If any matches remain, remove them.
 
 **Acceptance criteria for Step 4:**
@@ -236,7 +236,7 @@ Constraint: the lighting must not spill across the partitions into the forest. O
 
 ---
 
-## Step 5 — verification
+## Step 5 – verification
 
 **Goal:** confirm the final state.
 
@@ -258,7 +258,7 @@ Both must exit 0.
 
 ---
 
-## Stop-and-flag rules (do not silently work around — stop and ask in chat)
+## Stop-and-flag rules (do not silently work around – stop and ask in chat)
 
 - Step 0 reveals that file paths or exports differ from what this prompt assumes.
 - The canonical room composition is not in `Scene.jsx`. Find the actual file, report it, stop.

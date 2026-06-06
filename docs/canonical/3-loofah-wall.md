@@ -1,8 +1,8 @@
-# Loofah wall — canonical reference
+# Loofah wall – canonical reference
 
 ## Status
 
-Canonical. Set in the 21 May 2026 meeting. Replaces the prior sundown / breath-paced front-wall lighting concept as a wall *feature*. The wall *lighting modes* (`sundown`, `horizon-line`) remain in their respective proposals — see docs 4 and 5.
+Canonical. Set in the 21 May 2026 meeting. Replaces the prior sundown / breath-paced front-wall lighting concept as a wall *feature*. The wall *lighting modes* (`sundown`, `horizon-line`) remain in their respective proposals – see docs 4 and 5.
 
 ## Placement
 
@@ -45,7 +45,7 @@ Build prompts for the loofah wall MUST instruct Claude Code to research images o
 
 Do NOT name any specific installations or artists.
 
-The visual reference image at codebase root (`meeting-refrence-3.webp`) does NOT cover loofah specifically — it covers ceiling direction. Loofah needs separate research.
+The visual reference image at codebase root (`meeting-refrence-3.webp`) does NOT cover loofah specifically – it covers ceiling direction. Loofah needs separate research.
 
 ## What is locked
 
@@ -55,7 +55,7 @@ The visual reference image at codebase root (`meeting-refrence-3.webp`) does NOT
 - Touch + sight (NOT a photo zone).
 - Replaces prior sundown wall *feature* concept (the *lighting modes* are separate, see docs 4 and 5).
 
-## Stop-and-flag — do NOT infer defaults
+## Stop-and-flag – do NOT infer defaults
 
 1. Exact height of the loofah wall.
 2. Exact width of the loofah wall.
