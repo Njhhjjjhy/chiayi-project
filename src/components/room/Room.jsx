@@ -19,12 +19,13 @@ import CeilingLEDs from '../fireflies/CeilingLEDs.jsx'
 import Branches from './Branches.jsx'
 import WallLighting from './WallLighting.jsx'
 import LuffaWall from './LuffaWall.jsx'
-import SeatingStools from './SeatingStools.jsx'
+import SeatingCubes from './SeatingCubes.jsx'
 import SeatingBenches from './SeatingBenches.jsx'
-import SeatingPillows from './SeatingPillows.jsx'
+import SeatingFrameStools from './SeatingFrameStools.jsx'
 import PathwayEdgeLights from '../lighting/PathwayEdgeLights.jsx'
 import SeatingSpotlights from '../lighting/SeatingSpotlights.jsx'
 import WallGlowDots from '../lighting/WallGlowDots.jsx'
+import FloorMist from '../lighting/FloorMist.jsx'
 import FireflySystem from '../fireflies/FireflySystem.jsx'
 import { useProposal } from '../../hooks/useProposal.js'
 import FlockHangers from './FlockHangers.jsx'
@@ -56,16 +57,22 @@ import { NESTING_HYBRID_LED_TOTAL_CEILING } from '../../geometry/dimensions.js'
 // wayfinding lighting prototype to render (slice 4). 'off' (default)
 // renders nothing.
 //
-// loofahVariant: 'variant1' | 'variant2' | 'variant3' — the loofah
-// wall prototype (slice 5). loofahCorner is consumed only by variant3.
+// loofahVariant: 'grid' | 'fibrous' | 'clusters' | 'corners' — the
+// loofah wall look (legacy variant1/2/3 ids still accepted).
+// loofahCorner is consumed only by 'corners'.
+//
+// mist: low floor fog (concept image 12); the page turns it on in
+// experience mode only so verification stays clean.
 export default function Room({
   spotlightDim = 1,
   fireflyVariant = 'off',
   wayfindVariant = 'off',
-  loofahVariant = 'variant1',
+  loofahVariant = 'fibrous',
   loofahCorner = 'back-left',
-  ceilingVariant = 'oblong',
-  seatingVariant = 'stools',
+  ceilingVariant = 'discs',
+  seatingVariant = 'cubes',
+  beamMode = 'clusters',
+  mist = false,
 }) {
   const { ledSurface } = useProposal()
   const fireflyActive = fireflyVariant && fireflyVariant !== 'off'
@@ -134,10 +141,11 @@ export default function Room({
       <WallLighting />
       <PathwayEdgeLights variant={wayfindVariant} />
       <LuffaWall variant={loofahVariant} corner={loofahCorner} />
-      {seatingVariant === 'stools' && <SeatingStools />}
+      {seatingVariant === 'cubes' && <SeatingCubes />}
+      {seatingVariant === 'frame-stools' && <SeatingFrameStools />}
       {seatingVariant === 'benches' && <SeatingBenches />}
-      {seatingVariant === 'pillows' && <SeatingPillows />}
-      <SeatingSpotlights dim={spotlightDim} />
+      <SeatingSpotlights dim={spotlightDim} variant={seatingVariant} beamMode={beamMode} />
+      {mist && <FloorMist />}
       <WallGlowDots hideLeds={fireflyActive} />
       <FireflySystem variantId={fireflyVariant} ceilingVariant={ceilingVariant} />
     </group>

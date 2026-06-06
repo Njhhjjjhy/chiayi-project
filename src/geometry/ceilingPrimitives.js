@@ -1,21 +1,21 @@
 import {
   CEILING_FORM_PRIMITIVES, CEILING_FORM_PRIMITIVE_WEIGHTS,
   CEILING_FORM_MIN_SIZE, CEILING_FORM_MAX_SIZE,
-  CEILING_FLAT_PRIMITIVES, CEILING_FLAT_PRIMITIVE_WEIGHTS,
-  CEILING_FLAT_SMALL_MIN, CEILING_FLAT_SMALL_MAX,
-  CEILING_FLAT_MEDIUM_MIN, CEILING_FLAT_MEDIUM_MAX,
-  CEILING_FLAT_LARGE_MIN, CEILING_FLAT_LARGE_MAX,
-  CEILING_FLAT_RECTANGLE_MIN, CEILING_FLAT_RECTANGLE_MAX,
-  CEILING_FLAT_THICKNESS, CEILING_FLAT_THICKNESS_LARGE,
+  CEILING_DISC_PRIMITIVES, CEILING_DISC_PRIMITIVE_WEIGHTS,
+  CEILING_DISC_SMALL_MIN, CEILING_DISC_SMALL_MAX,
+  CEILING_DISC_MEDIUM_MIN, CEILING_DISC_MEDIUM_MAX,
+  CEILING_DISC_LARGE_MIN, CEILING_DISC_LARGE_MAX,
+  CEILING_DISC_THICKNESS, CEILING_DISC_THICKNESS_LARGE,
   CEILING_MODULE_RADIUS, CEILING_LED_MIN_GAP,
 } from './dimensions.js'
 
-// Ceiling form vocabularies — slice 9.
+// Ceiling form vocabularies.
 //
 // Two kinds of primitive share one form-object shape:
 //   ellipsoid   ovoid, blade, lens, pod, patch     (slice 7 vocab)
-//   box         small/medium/large-square,         (slice 9 flat vocab)
-//               wide-rectangle, tall-rectangle
+//   disc        small/medium/large-disc            (concept images
+//               07 / 09 / 10 / 13 — flat rounded plates; canonical
+//               doc 11. Replaced the earlier flat-square vocab.)
 //
 // Form shape (locked across kinds):
 //   { primitive, kind, size, halfExtents: {x, y, z},
@@ -23,8 +23,8 @@ import {
 //
 // `size` is the longest horizontal edge in metres. `halfExtents` carries
 // the per-primitive geometry so the renderer doesn't need to re-derive
-// it. For ellipsoid forms `size` equals the X full extent; for boxes
-// it's the longest of X / Z (tall-rectangle has X full extent = size/2).
+// it. For ellipsoid forms `size` equals the X full extent; for discs
+// it's the diameter.
 
 const ELLIPSOID_SCALES = {
   ovoid: { y: 0.4,  z: 0.5 },
@@ -34,26 +34,24 @@ const ELLIPSOID_SCALES = {
   patch: { y: 0.15, z: 0.9 },
 }
 
-const BOX_SCALES = {
-  'small-square':   { xRatio: 1,   zRatio: 1,   thickness: CEILING_FLAT_THICKNESS },
-  'medium-square':  { xRatio: 1,   zRatio: 1,   thickness: CEILING_FLAT_THICKNESS },
-  'large-square':   { xRatio: 1,   zRatio: 1,   thickness: CEILING_FLAT_THICKNESS_LARGE },
-  'wide-rectangle': { xRatio: 1,   zRatio: 0.5, thickness: CEILING_FLAT_THICKNESS },
-  'tall-rectangle': { xRatio: 0.5, zRatio: 1,   thickness: CEILING_FLAT_THICKNESS },
+const DISC_SCALES = {
+  'small-disc':  { thickness: CEILING_DISC_THICKNESS },
+  'medium-disc': { thickness: CEILING_DISC_THICKNESS },
+  'large-disc':  { thickness: CEILING_DISC_THICKNESS_LARGE },
 }
 
 const ELLIPSOID_SET = new Set(Object.keys(ELLIPSOID_SCALES))
-const BOX_SET = new Set(Object.keys(BOX_SCALES))
+const DISC_SET = new Set(Object.keys(DISC_SCALES))
 
 export function getPrimitiveKind(primitive) {
   if (ELLIPSOID_SET.has(primitive)) return 'ellipsoid'
-  if (BOX_SET.has(primitive)) return 'box'
+  if (DISC_SET.has(primitive)) return 'disc'
   return 'ellipsoid'
 }
 
 // Returns { x, y, z } half-extents in metres for a form of the given
 // primitive at the given size. Renderer uses this directly as mesh
-// scale on a unit sphere or unit box.
+// scale on a unit sphere or unit cylinder.
 export function getPrimitiveHalfExtents(primitive, size) {
   if (ELLIPSOID_SET.has(primitive)) {
     const s = ELLIPSOID_SCALES[primitive]
@@ -63,28 +61,25 @@ export function getPrimitiveHalfExtents(primitive, size) {
       z: (size * s.z) / 2,
     }
   }
-  const s = BOX_SCALES[primitive] || BOX_SCALES['small-square']
+  const s = DISC_SCALES[primitive] || DISC_SCALES['small-disc']
   return {
-    x: (size * s.xRatio) / 2,
+    x: size / 2,
     y: s.thickness / 2,
-    z: (size * s.zRatio) / 2,
+    z: size / 2,
   }
 }
 
-// Returns the size in metres for the primitive. Flat primitives have
-// per-class size bands (small / medium / large / rectangle). Oblong
-// primitives all share the slice 7 power-curve skew toward smaller.
+// Returns the size in metres for the primitive. Disc primitives have
+// per-class diameter bands (small / medium / large). Oblong primitives
+// all share the slice 7 power-curve skew toward smaller.
 export function sampleSize(rng, primitive) {
   switch (primitive) {
-    case 'small-square':
-      return CEILING_FLAT_SMALL_MIN + rng() * (CEILING_FLAT_SMALL_MAX - CEILING_FLAT_SMALL_MIN)
-    case 'medium-square':
-      return CEILING_FLAT_MEDIUM_MIN + rng() * (CEILING_FLAT_MEDIUM_MAX - CEILING_FLAT_MEDIUM_MIN)
-    case 'large-square':
-      return CEILING_FLAT_LARGE_MIN + rng() * (CEILING_FLAT_LARGE_MAX - CEILING_FLAT_LARGE_MIN)
-    case 'wide-rectangle':
-    case 'tall-rectangle':
-      return CEILING_FLAT_RECTANGLE_MIN + rng() * (CEILING_FLAT_RECTANGLE_MAX - CEILING_FLAT_RECTANGLE_MIN)
+    case 'small-disc':
+      return CEILING_DISC_SMALL_MIN + rng() * (CEILING_DISC_SMALL_MAX - CEILING_DISC_SMALL_MIN)
+    case 'medium-disc':
+      return CEILING_DISC_MEDIUM_MIN + rng() * (CEILING_DISC_MEDIUM_MAX - CEILING_DISC_MEDIUM_MIN)
+    case 'large-disc':
+      return CEILING_DISC_LARGE_MIN + rng() * (CEILING_DISC_LARGE_MAX - CEILING_DISC_LARGE_MIN)
     default: {
       const t = Math.pow(rng(), 2.2)
       return CEILING_FORM_MIN_SIZE + t * (CEILING_FORM_MAX_SIZE - CEILING_FORM_MIN_SIZE)
@@ -92,15 +87,13 @@ export function sampleSize(rng, primitive) {
   }
 }
 
-// Mixed-variant target distribution: 20 flat + 20 oblong. Pre-built so
+// Mixed-variant target distribution: 20 discs + 20 oblong. Pre-built so
 // the picker just shuffles a copy each call. Sub-primitive counts match
-// the dedicated-variant skews scaled to the 20-form half.
+// the dedicated-variant weights scaled to the 20-form half.
 const MIXED_TARGET = [
-  ...Array(12).fill('small-square'),
-  ...Array(4).fill('medium-square'),
-  ...Array(2).fill('large-square'),
-  ...Array(1).fill('wide-rectangle'),
-  ...Array(1).fill('tall-rectangle'),
+  ...Array(6).fill('small-disc'),
+  ...Array(9).fill('medium-disc'),
+  ...Array(5).fill('large-disc'),
   ...Array(12).fill('ovoid'),
   ...Array(4).fill('blade'),
   ...Array(2).fill('lens'),
@@ -114,10 +107,10 @@ const MIXED_TARGET = [
 // uses this). Caller must invoke `commit()` if the candidate passes all
 // rejection checks; if a placement is rejected the caller skips commit
 // and the next call returns the same queue entry. This guarantees the
-// mixed variant lands exactly 20 flat + 20 oblong even when individual
+// mixed variant lands exactly 20 discs + 20 oblong even when individual
 // placements get rejected by Poisson / envelope / exclusion checks.
 //
-// For 'flat' and 'oblong' the picker is a weighted lottery — `commit`
+// For 'discs' and 'oblong' the picker is a weighted lottery — `commit`
 // is a no-op because there is no queue state to advance.
 const NOOP = () => {}
 
@@ -138,8 +131,8 @@ export function makePrimitivePicker(variant, rng) {
       }
     }
   }
-  const primitives = variant === 'flat' ? CEILING_FLAT_PRIMITIVES : CEILING_FORM_PRIMITIVES
-  const weights = variant === 'flat' ? CEILING_FLAT_PRIMITIVE_WEIGHTS : CEILING_FORM_PRIMITIVE_WEIGHTS
+  const primitives = variant === 'discs' ? CEILING_DISC_PRIMITIVES : CEILING_FORM_PRIMITIVES
+  const weights = variant === 'discs' ? CEILING_DISC_PRIMITIVE_WEIGHTS : CEILING_FORM_PRIMITIVE_WEIGHTS
   return () => {
     const r = rng()
     let acc = 0
@@ -160,15 +153,15 @@ export function makePrimitivePicker(variant, rng) {
 //   anchor = null   free sample.
 //   anchor = ref    sample near the previous anchor, with kind-
 //                    appropriate jitter (angular for ellipsoid, metric
-//                    disc for box). `ref` is opaque — pass back the
-//                    `anchor` field from a previous return value.
+//                    disc for disc faces). `ref` is opaque — pass back
+//                    the `anchor` field from a previous return value.
 //
 // For ellipsoid: ref = { theta, phi }. Jitter is
 //   angularSpread = min(0.9, CEILING_MODULE_RADIUS / max(0.2, size/2)).
 //
-// For box: ref = { lx, lz }. Jitter is a uniform disc of radius
-//   CEILING_MODULE_RADIUS in form-local XZ, clamped to the bottom face
-//   rectangle.
+// For disc: ref = { lx, lz }. Jitter is a uniform disc of radius
+//   CEILING_MODULE_RADIUS in form-local XZ, clamped to the bottom
+//   circular face.
 export function sampleLowerSurfacePoint(rng, primitive, size, anchor = null) {
   const half = getPrimitiveHalfExtents(primitive, size)
   if (ELLIPSOID_SET.has(primitive)) {
@@ -188,20 +181,24 @@ export function sampleLowerSurfacePoint(rng, primitive, size, anchor = null) {
     const lz = half.z * Math.sin(theta) * Math.sin(phi)
     return { local: [lx, ly, lz], anchor: { theta, phi } }
   }
-  // box
+  // disc — bottom circular face of radius half.x
   let lx, lz
   if (anchor) {
     const r = Math.sqrt(rng()) * CEILING_MODULE_RADIUS
     const a = rng() * Math.PI * 2
     lx = anchor.lx + Math.cos(a) * r
     lz = anchor.lz + Math.sin(a) * r
-    if (lx < -half.x) lx = -half.x
-    if (lx > half.x) lx = half.x
-    if (lz < -half.z) lz = -half.z
-    if (lz > half.z) lz = half.z
+    // Clamp back inside the circle, preserving direction from centre.
+    const d = Math.sqrt(lx * lx + lz * lz)
+    if (d > half.x) {
+      lx = (lx / d) * half.x
+      lz = (lz / d) * half.x
+    }
   } else {
-    lx = (rng() - 0.5) * 2 * half.x
-    lz = (rng() - 0.5) * 2 * half.z
+    const r = Math.sqrt(rng()) * half.x
+    const a = rng() * Math.PI * 2
+    lx = Math.cos(a) * r
+    lz = Math.sin(a) * r
   }
   const ly = -half.y
   return { local: [lx, ly, lz], anchor: { lx, lz } }
@@ -209,7 +206,7 @@ export function sampleLowerSurfacePoint(rng, primitive, size, anchor = null) {
 
 // Returns true if two anchors on the same form are within the LED
 // minimum-gap distance. Threshold is shared (CEILING_LED_MIN_GAP) but
-// the metric differs by kind: radians on ellipsoid, metres on box.
+// the metric differs by kind: radians on ellipsoid, metres on disc.
 export function anchorsTooClose(primitive, a, b) {
   if (ELLIPSOID_SET.has(primitive)) {
     const dt = a.theta - b.theta

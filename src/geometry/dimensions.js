@@ -95,12 +95,20 @@ export const PATHWAY_POOL_HEIGHT = 3.4           // overhead fixture Y (just bel
 export const FIREFLY_COLOR = '#00FF00'
 
 // --- Loofah wall ---
-// Three visual prototypes behind `?loofah=`. All three mount flush
-// against `front-wall` inside the `forest` zone with an 8 mm surface-
-// flush nudge. Loofah pieces are non-emissive — canonical doc 3 says
-// "Light source MUST NEVER be visible to visitor"; the hidden warm
-// backlight plane (or internal cylinder for the corner column) does
-// all the visible work.
+// Four visual prototypes behind `?loofah=`: two wall looks per concept
+// images 06 / 07 / 08 (canonical doc 11) plus the earlier freestanding
+// explorations.
+//   'grid'      ordered grid of warm glowing cells in a slim dark
+//               frame (image 06; close-up fibre read per image 08)
+//   'fibrous'   wild loofah piece field with criss-crossed dark
+//               sticks (image 07)
+//   'clusters'  freestanding glowing sculptures in the forest
+//   'corners'   sculptural corner columns
+// Wall looks mount flush against `front-wall` inside the `forest` zone
+// with an 8 mm surface-flush nudge. Loofah pieces are non-emissive —
+// canonical doc 3 says "Light source MUST NEVER be visible to
+// visitor"; the hidden warm backlight plane (or internal cylinder for
+// the corner column) does all the visible work.
 export const LOOFAH_WALL_HEIGHT = 2.4
 export const LOOFAH_WALL_WIDTH = 4.5
 export const LOOFAH_WALL_Y_BASE = 0              // wall grounds to floor
@@ -115,9 +123,43 @@ export const LOOFAH_BACKLIGHT_INTENSITY = 1.0    // dominant warm element vs coo
 // be visible to visitor. Do not raise without designer approval.
 export const LOOFAH_FIBRE_EMISSIVE_INTENSITY = 0
 
-export const LOOFAH_BAMBOO_GRID_SPACING = 0.4    // stick spacing in variants 1 and 3
+export const LOOFAH_BAMBOO_GRID_SPACING = 0.4    // stick spacing in the corner cages
 export const LOOFAH_BAMBOO_RADIUS = 0.008        // 16 mm diameter stick
 export const LOOFAH_BAMBOO_COLOR = '#3a2a18'     // dark warm brown
+
+// Grid look (concept image 06) — cell counts over the 4.5 × 2.4 m wall
+// give roughly 0.56 × 0.6 m cells, matching the image's proportions.
+// Per-cell brightness varies inside the min/max band so the grid reads
+// hand-lit rather than uniform.
+export const LOOFAH_GRID_COLS = 8
+export const LOOFAH_GRID_ROWS = 4
+export const LOOFAH_GRID_FRAME_T = 0.035         // frame bar cross-section
+export const LOOFAH_GRID_FRAME_COLOR = '#241a10' // near-black warm wood
+export const LOOFAH_GRID_CELL_BRIGHT_MIN = 0.75
+export const LOOFAH_GRID_CELL_BRIGHT_MAX = 1.15
+
+// Fibrous look (concept image 07) — criss-crossed dark sticks laid
+// over the loofah piece field at random angles.
+export const LOOFAH_STICK_COUNT = 26
+export const LOOFAH_STICK_LENGTH_MIN = 1.0
+export const LOOFAH_STICK_LENGTH_MAX = 2.6
+
+// Base strip (concept image 12) — bright warm strip along the floor at
+// the foot of the wall, on both wall looks.
+export const LOOFAH_BASE_STRIP_HEIGHT = 0.04
+export const LOOFAH_BASE_STRIP_DEPTH = 0.03
+export const LOOFAH_BASE_STRIP_COLOR = '#fff0d8'
+export const LOOFAH_BASE_STRIP_INTENSITY = 2.2
+
+// --- Floor mist (concept image 12) ---
+// Low fog layer drifting at floor level, experience mode only. Two
+// stacked noise-driven sheets; opacity stays subtle so the mist reads
+// as atmosphere, not smoke.
+export const MIST_LAYER_HEIGHTS = [0.08, 0.2]    // sheet heights above floor
+export const MIST_COLOR = '#cfc8ba'              // warm grey
+export const MIST_OPACITY = 0.07                 // per sheet, before noise modulation
+export const MIST_DRIFT_SPEED = 0.012            // noise scroll speed (slow drift)
+export const MIST_NOISE_SCALE = 0.55             // patch size of the noise billows
 
 export const LOOFAH_CLUSTER_SEED = 137           // distinct from panel seed 42 and branch seed 99
 export const LOOFAH_CLUSTER_COUNT_WALL = 16      // (legacy, unused)
@@ -177,50 +219,50 @@ export const CABINET_BODY_COLOR = '#1f1d1c'  // dark stained wood, matches seati
 
 // --- Seating zones ---
 //
-// PLACEHOLDER — final count, dimensions, and bench-vs-stool mix are
-// install-day decisions with the carpenter. All 30 visitors must be
-// seated (per the locked 5–30 capacity spec). The 6 boxes in 3 zones
-// below establish scale, spacing, and spotlight pool behaviour for
-// designer + carpenter reference. They are NOT a capacity commitment.
-//
-// Plywood storage box stools with cushioned tops, arranged in `forest`
-// and marked by overhead spotlights. Count, placement, exact
-// dimensions, and the stool/bench mix are simulation defaults — to be
-// confirmed with carpenter on install day.
+// PLACEHOLDER — final count, dimensions, and seat mix are install-day
+// decisions with the carpenter. All 30 visitors must be seated (per
+// the locked 5–30 capacity spec). The zone anchors below are kept for
+// the placement exclusion logic (ceiling forms, lanterns, grove, and
+// the loofah wall all avoid them). Seat geometry itself lives in the
+// three seating variants (concept images 03 / 12 / 15) further down.
 
-// Box geometry
-export const SEATING_BOX_W = 0.55          // X width, within locked 50–60 cm range
-export const SEATING_BOX_D = 0.55          // Z depth, square footprint
-export const SEATING_BOX_H = 0.42          // Y height to top of plywood (before cushion)
-export const SEATING_BOX_GAP = 0.2         // gap between adjacent box edges within a zone
-export const SEATING_BOX_COLOR = '#1f1d1c'
-export const SEATING_BOX_ROUGHNESS = 0.85
+// Cube stools (concept image 03) — solid timber blocks, no cushion.
+// Dark per the dark-room target frames (images 04 / 09 / 15); see
+// canonical doc 11 stop-and-flag before changing the colour.
+export const SEATING_CUBE_SIZE = 0.45      // X/Z footprint, square
+export const SEATING_CUBE_H = 0.42         // seat height
+export const SEATING_CUBE_COLOR = '#241f1a'
+export const SEATING_CUBE_ROUGHNESS = 0.85
 
-// Cushion
-export const SEATING_CUSHION_T = 0.03      // Y thickness above box top
+// Bench top slab (shared by the bench variant)
+export const SEATING_CUSHION_T = 0.03      // Y thickness above bench body
 export const SEATING_CUSHION_COLOR = '#3a2e24'
 export const SEATING_CUSHION_ROUGHNESS = 0.95
 
 // Zone placements (centre X, centre Z in world coordinates).
-// Used by SeatingSpotlights as overhead task-light targets — these
-// remain fixed regardless of which seating variant is active.
+// Exclusion anchors only — ceiling forms, lanterns, grove stems, and
+// loofah sculptures keep clear of these regardless of which seating
+// variant is active. Seat lighting follows the actual seats, not these.
 export const SEATING_ZONES = [
   { x: 4.2, z: 1.4 },   // zone 1, forest-entry side
   { x: 5.5, z: 4.0 },   // zone 2, central
   { x: 7.0, z: 5.6 },   // zone 3, loofah-wall side
 ]
 
-// --- Seating variants (slice 18) ---
+// --- Seating variants (concept images 03 / 12 / 15) ---
 //
-// Three seating variants behind `?seating=`. Each must accommodate the
-// full 30-visitor capacity. Arrangement language is "campfire" —
-// scattered clusters, low to the floor, informal pockets rather than
-// theatre rows. All variants share the existing forest exclusion zones
+// Three seating variants behind `?seating=`: 'cubes' (solid timber
+// blocks, image 03), 'frame-stools' (open timber frames, image 12),
+// 'benches' (low boxes, image 15). Each must accommodate the full
+// 30-visitor capacity. Arrangement language is "campfire" — scattered
+// clusters, low to the floor, informal pockets rather than theatre
+// rows. All variants share the existing forest exclusion zones
 // (entrance-wall-partition, pathway-partition-vertical, column,
 // pathway, loofah corner columns).
 
-// Variant 'stools' — 5 campfire clusters of 6 plywood box-stools each.
-// Stools form a loose ring around each cluster centre. 30 stools total.
+// Cluster placement shared by 'cubes' and 'frame-stools' — 5 campfire
+// clusters of 6 seats each, in a loose ring around each cluster centre.
+// 30 seats total.
 export const SEATING_STOOL_CLUSTERS = [
   { x: 3.2, z: 1.8 },
   { x: 5.6, z: 1.6 },
@@ -251,22 +293,18 @@ export const SEATING_BENCH_POCKETS = [
 export const SEATING_BENCH_PAIR_GAP = 1.6
 export const SEATING_BENCH_FACE_TILT = 0.35
 
-// Variant 'pillows' — large soft floor bolsters per design-reference-14.
-// 4 clusters of 4 parallel bolsters; visitors lie between adjacent
-// bolsters (3 channels per cluster × 4 = 12 lying), with the remaining
-// 18 visitors sitting on bolster tops or in cluster gaps. 30 capacity.
-export const SEATING_PILLOW_DIAMETER = 0.45
-export const SEATING_PILLOW_LENGTH = 2.0
-export const SEATING_PILLOW_GAP = 0.65
-export const SEATING_PILLOWS_PER_CLUSTER = 4
-export const SEATING_PILLOW_COLOR = '#3a2e24'
-export const SEATING_PILLOW_ROUGHNESS = 0.95
-export const SEATING_PILLOW_CLUSTERS = [
-  { x: 3.6, z: 2.0, rotY:  0.2 },
-  { x: 5.2, z: 4.4, rotY:  0.9 },
-  { x: 7.0, z: 2.4, rotY: -0.5 },
-  { x: 6.4, z: 5.8, rotY:  1.3 },
-]
+// Variant 'frame-stools' — open-frame timber stools (concept image 12).
+// Same cluster placement as 'cubes'. Light wood: four corner legs, low
+// side rails, and a slatted top. Open sides read lighter than the
+// solid cubes.
+export const SEATING_FRAME_SIZE = 0.42         // X/Z footprint, square
+export const SEATING_FRAME_H = 0.45            // seat height
+export const SEATING_FRAME_LEG_T = 0.045       // leg cross-section
+export const SEATING_FRAME_SLAT_COUNT = 3      // top slats
+export const SEATING_FRAME_SLAT_T = 0.03       // slat thickness (Y)
+export const SEATING_FRAME_RAIL_Y = 0.12       // side-rail height above floor
+export const SEATING_FRAME_COLOR = '#9a7d57'   // light timber
+export const SEATING_FRAME_ROUGHNESS = 0.8
 
 // Spotlight geometry
 export const SEATING_SPOT_Y = 3.4          // mounting Y. TBD when slice 7 ceiling lands; matches PATHWAY_POOL_HEIGHT for visual consistency.
@@ -275,9 +313,21 @@ export const SEATING_SPOT_PENUMBRA = 0.4
 export const SEATING_SPOT_DECAY = 1
 export const SEATING_SPOT_DISTANCE = 6
 
-// Spotlight light
+// Spotlight light. Soft neutral white per concept image 15 (was warm
+// amber before the per-seat downbeam redesign).
 export const SEATING_SPOT_INTENSITY = 60
-export const SEATING_SPOT_COLOR = '#ffd8a0'
+export const SEATING_SPOT_COLOR = '#e8e6df'
+
+// Per-seat downbeams (concept image 15). Every seat sits under its own
+// narrow visible beam — a thin additive cone from the ceiling plus a
+// floor pool. Actual light contribution still comes from one wider
+// spotLight per cluster/pocket so the live light count stays low.
+export const SEAT_BEAM_TOP_RADIUS = 0.05               // fixture-end cone radius
+export const SEAT_BEAM_POOL_RADIUS_STOOL = 0.42        // floor pool, cubes + frame stools
+export const SEAT_BEAM_POOL_RADIUS_BENCH = 0.95        // floor pool, one beam per bench
+// 'Clusters' beam mode: one wider beam per cluster/pocket instead of
+// one per seat. Pool covers the whole campfire circle.
+export const SEAT_BEAM_POOL_RADIUS_CLUSTER = 1.15
 
 // Spotlight timeline behaviour.
 // At full intensity from t = 0 through t = SEATING_SPOT_RAMP_START.
@@ -293,7 +343,11 @@ export const SEATING_SPOT_RAMP_END = 0.75
 // thin additive cone mesh + a floor pool disc that scale their opacity
 // with the spot's current intensity ratio so the visible read tracks
 // the lighting ramp.
-export const SPOTLIGHT_CONE_OPACITY = 0.18
+// Cone opacity tuned for the per-seat downbeam redesign (30 beams):
+// any camera angle looks through several cones, so each must stay
+// faint or the additive stack whites out the frame. Was 0.18 when only
+// 3 zone spots carried cones.
+export const SPOTLIGHT_CONE_OPACITY = 0.08
 export const SPOTLIGHT_POOL_OPACITY = 0.40
 export const SPOTLIGHT_CONE_SEGMENTS = 32
 export const SPOTLIGHT_POOL_Y_OFFSET = 0.005
@@ -389,42 +443,44 @@ export const CEILING_LEDS_TOTAL = CEILING_MODULES_TOTAL * CEILING_LEDS_PER_MODUL
 export const CEILING_MODULE_RADIUS = 0.25   // 16 LEDs cluster within this radius of module anchor
 export const CEILING_LED_MIN_GAP = 0.04     // min LED-to-LED angular gap on form surface
 
-// --- Ceiling form vocabularies (slice 9) ---
+// --- Ceiling form vocabularies ---
 //
-// Three-variant comparison ('flat' | 'oblong' | 'mixed') for the
+// Three-variant comparison ('discs' | 'oblong' | 'mixed') for the
 // sculptural ceiling. Only the form vocabulary changes between variants
 // — placement, module distribution, LED count, material, and cluster
 // algorithm are shared. See ceilingPrimitives.js for the per-primitive
 // scale and sampling logic.
+//
+// 'discs' is the locked direction per concept images 07 / 09 / 10 / 13
+// (canonical doc 11): flat rounded plates of varied diameters. It
+// replaced the earlier flat-square vocabulary. 'oblong' and 'mixed'
+// stay for comparison.
 
-// Flat-square sub-primitive size ranges (longest horizontal edge, m)
-export const CEILING_FLAT_SMALL_MIN = 0.4
-export const CEILING_FLAT_SMALL_MAX = 0.7
-export const CEILING_FLAT_MEDIUM_MIN = 0.7
-export const CEILING_FLAT_MEDIUM_MAX = 1.1
-export const CEILING_FLAT_LARGE_MIN = 1.1
-export const CEILING_FLAT_LARGE_MAX = 1.6
-export const CEILING_FLAT_RECTANGLE_MIN = 1.2
-export const CEILING_FLAT_RECTANGLE_MAX = 1.8
+// Disc sub-primitive diameter ranges (m)
+export const CEILING_DISC_SMALL_MIN = 0.4
+export const CEILING_DISC_SMALL_MAX = 0.7
+export const CEILING_DISC_MEDIUM_MIN = 0.7
+export const CEILING_DISC_MEDIUM_MAX = 1.1
+export const CEILING_DISC_LARGE_MIN = 1.1
+export const CEILING_DISC_LARGE_MAX = 1.6
 
-// Slab thickness (Y dimension) — fixed per size class.
-export const CEILING_FLAT_THICKNESS = 0.04
-export const CEILING_FLAT_THICKNESS_LARGE = 0.05
+// Disc thickness (Y dimension) — fixed per size class.
+export const CEILING_DISC_THICKNESS = 0.04
+export const CEILING_DISC_THICKNESS_LARGE = 0.05
 
-// Flat primitive list + weighted-lottery weights (parallel arrays,
-// matches the existing oblong pattern).
-export const CEILING_FLAT_PRIMITIVES = [
-  'small-square',
-  'medium-square',
-  'large-square',
-  'wide-rectangle',
-  'tall-rectangle',
+// Disc primitive list + weighted-lottery weights (parallel arrays,
+// matches the existing oblong pattern). The concept images show mostly
+// medium and large plates, so the lottery leans that way.
+export const CEILING_DISC_PRIMITIVES = [
+  'small-disc',
+  'medium-disc',
+  'large-disc',
 ]
-export const CEILING_FLAT_PRIMITIVE_WEIGHTS = [0.6, 0.2, 0.1, 0.05, 0.05]
+export const CEILING_DISC_PRIMITIVE_WEIGHTS = [0.3, 0.45, 0.25]
 
 // Variant identifiers used by URL param `?ceiling=`.
-export const CEILING_VARIANTS = ['flat', 'oblong', 'mixed']
-export const CEILING_VARIANT_DEFAULT = 'oblong'
+export const CEILING_VARIANTS = ['discs', 'oblong', 'mixed']
+export const CEILING_VARIANT_DEFAULT = 'discs'
 
 // Front-wall clearance for ceiling forms (slice 9 tune). Form edges
 // must not pass this X plane — keeps the front-wall / loofah-wall area

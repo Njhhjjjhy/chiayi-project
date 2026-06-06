@@ -6,12 +6,13 @@ import {
 } from '../../geometry/dimensions.js'
 import { buildCeiling } from '../../geometry/ceilingForms.js'
 
-// Sculptural ceiling — variant-aware (slice 9). Three vocabularies
-// share one renderer:
+// Sculptural ceiling — variant-aware. The vocabularies share one
+// renderer:
 //   ellipsoid forms  rendered via shared unit-sphere geometry, scaled
 //                    per-form to the form's halfExtents.
-//   box forms        rendered via shared unit-box geometry, scaled
-//                    per-form to the form's halfExtents (thin Y slab).
+//   disc forms       rendered via shared unit-cylinder geometry, scaled
+//                    per-form to the form's halfExtents (thin round
+//                    plate — concept images 07 / 09 / 10 / 13).
 //
 // Cable anchors derive from form.halfExtents.y (top of form) and
 // form.halfExtents.x (horizontal offset) so both kinds get correctly-
@@ -36,17 +37,18 @@ const CABLE_RADIUS = 0.003
 
 // Module-scoped shared geometries — one allocation, scaled per-form.
 const SHARED_SPHERE_GEO = new THREE.SphereGeometry(1, 16, 12)
-const SHARED_BOX_GEO = new THREE.BoxGeometry(1, 1, 1)
+const SHARED_DISC_GEO = new THREE.CylinderGeometry(1, 1, 1, 32)
 
 function Form({ form }) {
-  const geo = form.kind === 'box' ? SHARED_BOX_GEO : SHARED_SPHERE_GEO
+  const geo = form.kind === 'disc' ? SHARED_DISC_GEO : SHARED_SPHERE_GEO
   const { x: hx, y: hy, z: hz } = form.halfExtents
-  // Sphere geometry has radius 1 (full extent 2), box has full extent 1.
-  // Scale half-extents accordingly so both kinds end up at the correct
+  // Sphere geometry has radius 1 (full extent 2); the unit cylinder has
+  // radius 1 (full extent 2) but height 1 (full extent 1). Scale
+  // half-extents accordingly so both kinds end up at the correct
   // world size.
-  const sx = form.kind === 'box' ? hx * 2 : hx
-  const sy = form.kind === 'box' ? hy * 2 : hy
-  const sz = form.kind === 'box' ? hz * 2 : hz
+  const sx = hx
+  const sy = form.kind === 'disc' ? hy * 2 : hy
+  const sz = hz
 
   return (
     <group position={[form.x, form.y, form.z]}>

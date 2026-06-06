@@ -27,9 +27,10 @@ import { inForestExclusion } from './forestExclusion.js'
 
 // Sculptural ceiling — procedural pipeline.
 //
-// Variants (slice 9):
+// Variants:
+//   'discs'   3 disc primitives (flat round plates — the locked
+//             direction per concept images 07 / 09 / 10 / 13).
 //   'oblong'  5 ellipsoid primitives (slice 7 spec).
-//   'flat'    5 box primitives (squares + rectangles).
 //   'mixed'   50/50 split via shuffled exact-count queue.
 //
 // Pipeline stages (variant-independent):

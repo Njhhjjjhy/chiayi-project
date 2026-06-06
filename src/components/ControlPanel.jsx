@@ -25,21 +25,28 @@ const WAYFIND_OPTIONS = [
 ]
 
 const CEILING_OPTIONS = [
-  { id: 'flat', label: 'Flat' },
+  { id: 'discs', label: 'Discs' },
   { id: 'oblong', label: 'Oblong' },
   { id: 'mixed', label: 'Mixed' },
 ]
 
 const LOOFAH_OPTIONS = [
-  { id: 'variant1', label: 'Flat panel' },
-  { id: 'variant2', label: 'Clusters' },
-  { id: 'variant3', label: 'Corners' },
+  { id: 'grid', label: 'Grid' },
+  { id: 'fibrous', label: 'Fibrous' },
+  { id: 'clusters', label: 'Clusters' },
+  { id: 'corners', label: 'Corners' },
 ]
 
 const SEATING_OPTIONS = [
-  { id: 'stools', label: 'Stools' },
+  { id: 'cubes', label: 'Cubes' },
+  { id: 'frame-stools', label: 'Frame stools' },
   { id: 'benches', label: 'Benches' },
-  { id: 'pillows', label: 'Pillows' },
+]
+
+const BEAM_OPTIONS = [
+  { id: 'all', label: 'All seats' },
+  { id: 'clusters', label: 'Clusters' },
+  { id: 'off', label: 'Off' },
 ]
 
 
@@ -159,9 +166,25 @@ export default function ControlPanel({ brightness, onBrightnessChange, spotlight
   const currentFirefly = urlFirefly !== null ? urlFirefly : (defaultFirefly ?? 'off')
   const currentView = searchParams.get('view') ?? DEFAULT_VIEW
   const currentWayfind = searchParams.get('wayfind') ?? 'strip'
-  const currentCeiling = searchParams.get('ceiling') ?? 'oblong'
-  const currentLoofah = searchParams.get('loofah') ?? 'variant1'
-  const currentSeating = searchParams.get('seating') ?? 'stools'
+  // Retired 'flat' (and any unknown value) highlights Discs, matching
+  // what the room actually renders.
+  const rawCeiling = searchParams.get('ceiling')
+  const currentCeiling = ['discs', 'oblong', 'mixed'].includes(rawCeiling)
+    ? rawCeiling
+    : 'discs'
+  // Legacy variant1/2/3 ids highlight the look they map onto.
+  const rawLoofah = searchParams.get('loofah')
+  const legacyLoofah = { variant1: 'fibrous', variant2: 'clusters', variant3: 'corners' }[rawLoofah]
+  const currentLoofah = legacyLoofah
+    ?? (['grid', 'fibrous', 'clusters', 'corners'].includes(rawLoofah) ? rawLoofah : 'fibrous')
+  // Mirror the page fallback: retired values ('stools', 'pillows')
+  // highlight Cubes since that is what the room actually renders.
+  const rawSeating = searchParams.get('seating')
+  const currentSeating = ['cubes', 'frame-stools', 'benches'].includes(rawSeating)
+    ? rawSeating
+    : 'cubes'
+  const rawBeams = searchParams.get('beams')
+  const currentBeams = ['all', 'clusters', 'off'].includes(rawBeams) ? rawBeams : 'clusters'
 
   const urlForSet = (key, value) => {
     const params = new URLSearchParams(searchParams)
@@ -261,7 +284,7 @@ export default function ControlPanel({ brightness, onBrightnessChange, spotlight
               <Pills
                 options={CEILING_OPTIONS}
                 current={currentCeiling}
-                urlFor={(id) => urlForDefault('ceiling', id, 'oblong')}
+                urlFor={(id) => urlForDefault('ceiling', id, 'discs')}
               />
             </div>
 
@@ -270,7 +293,7 @@ export default function ControlPanel({ brightness, onBrightnessChange, spotlight
               <Pills
                 options={LOOFAH_OPTIONS}
                 current={currentLoofah}
-                urlFor={(id) => urlForDefault('loofah', id, 'variant1')}
+                urlFor={(id) => urlForDefault('loofah', id, 'fibrous')}
               />
             </div>
 
@@ -279,7 +302,16 @@ export default function ControlPanel({ brightness, onBrightnessChange, spotlight
               <Pills
                 options={SEATING_OPTIONS}
                 current={currentSeating}
-                urlFor={(id) => urlForDefault('seating', id, 'stools')}
+                urlFor={(id) => urlForDefault('seating', id, 'cubes')}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label>Seat beams</Label>
+              <Pills
+                options={BEAM_OPTIONS}
+                current={currentBeams}
+                urlFor={(id) => urlForDefault('beams', id, 'clusters')}
               />
             </div>
           </div>

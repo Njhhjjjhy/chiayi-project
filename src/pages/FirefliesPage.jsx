@@ -15,6 +15,8 @@ import { getLoofahCornerCenter } from '../geometry/loofahCorners.js'
 import ControlPanel from '../components/ControlPanel.jsx'
 import TimelineController from '../components/TimelineController'
 import ExperienceLighting from '../components/lighting/ExperienceLighting.jsx'
+import { sampleSunset, SUNSET_BASE_INTENSITY } from '../components/lighting/sunsetArc.js'
+import { useTimeline } from '../hooks/useTimeline.js'
 
 // Layout: left panel (ControlPanel) with all settings, bottom timeline.
 // Glass aesthetic throughout.
@@ -59,6 +61,25 @@ function ActiveProposalSync() {
   return null
 }
 
+// Verification-mode lighting that follows the timeline player's sunset
+// arc — the same colour keyframes as experience mode, scaled to the
+// brighter inspection levels. Scrubbing the player changes the room in
+// BOTH modes; that arc is the player's whole purpose. Subscribes to
+// the timeline inside its own component so playback re-renders only
+// these lights, not the entire room tree.
+function VerificationLighting({ brightness }) {
+  const { time } = useTimeline()
+  const { hex, intensity } = sampleSunset(time)
+  const ratio = intensity / SUNSET_BASE_INTENSITY   // 1 at golden hour → ~0.03 in darkness
+  return (
+    <>
+      <ambientLight intensity={2.4 * brightness * ratio} color={hex} />
+      <directionalLight position={[6, 14, 6]} intensity={1.2 * ratio} color={hex} />
+      <directionalLight position={[-4, 10, -4]} intensity={0.6 * ratio} color={hex} />
+    </>
+  )
+}
+
 function DevExpose() {
   const { scene } = useThree()
   useEffect(() => {
@@ -88,10 +109,28 @@ function FirefliesInner() {
   const urlFirefly = searchParams.get('firefly')
   const fireflyVariant = urlFirefly !== null ? urlFirefly : (defaultFirefly ?? 'off')
   const wayfindVariant = searchParams.get('wayfind') ?? 'strip'
-  const loofahVariant = searchParams.get('loofah') ?? 'variant1'
+  // Old QA-note links may carry variant1/2/3 — map them onto the new
+  // look ids; anything unknown falls back to 'fibrous'.
+  const rawLoofah = searchParams.get('loofah')
+  const legacyLoofah = { variant1: 'fibrous', variant2: 'clusters', variant3: 'corners' }[rawLoofah]
+  const loofahVariant = legacyLoofah
+    ?? (['grid', 'fibrous', 'clusters', 'corners'].includes(rawLoofah) ? rawLoofah : 'fibrous')
   const loofahCorner = searchParams.get('corner') ?? 'back-left'
-  const ceilingVariant = searchParams.get('ceiling') ?? 'oblong'
-  const seatingVariant = searchParams.get('seating') ?? 'stools'
+  // Old links may carry the retired 'flat' ceiling — fall back to
+  // 'discs' (the locked direction) for anything unknown.
+  const rawCeiling = searchParams.get('ceiling')
+  const ceilingVariant = ['discs', 'oblong', 'mixed'].includes(rawCeiling)
+    ? rawCeiling
+    : 'discs'
+  // Old QA-note links may still carry the retired 'stools'/'pillows'
+  // values — fall back to 'cubes' for anything unknown so the room
+  // never renders seat beams over an empty floor.
+  const rawSeating = searchParams.get('seating')
+  const seatingVariant = ['cubes', 'frame-stools', 'benches'].includes(rawSeating)
+    ? rawSeating
+    : 'cubes'
+  const rawBeams = searchParams.get('beams')
+  const beamMode = ['all', 'clusters', 'off'].includes(rawBeams) ? rawBeams : 'clusters'
   const gridOn = searchParams.get('grid') === 'on'
 
   // `corner-compare` keeps a dynamic target so the camera tracks the
@@ -114,8 +153,6 @@ function FirefliesInner() {
 
   const [brightness, setBrightness] = useState(1.0)
   const [spotlights, setSpotlights] = useState(1.0)
-
-  const ambientIntensity = 2.4 * brightness
 
   // Outside-the-room background: white during verification (lets the room
   // outline read against a clean ground), near-black in experience mode.
@@ -145,19 +182,13 @@ function FirefliesInner() {
           {isExperience ? (
             <ExperienceLighting brightness={brightness} />
           ) : (
-            <ambientLight intensity={ambientIntensity} color="#ffffff" />
+            <VerificationLighting brightness={brightness} />
           )}
-          {!isExperience && (
-            <>
-              <directionalLight position={[6, 14, 6]} intensity={1.2} />
-              <directionalLight position={[-4, 10, -4]} intensity={0.6} />
-              {gridOn && (
-                <gridHelper
-                  args={[20, 40, '#cccccc', '#eeeeee']}
-                  position={[ROOM.W / 2, 0.001, ROOM.D / 2]}
-                />
-              )}
-            </>
+          {!isExperience && gridOn && (
+            <gridHelper
+              args={[20, 40, '#cccccc', '#eeeeee']}
+              position={[ROOM.W / 2, 0.001, ROOM.D / 2]}
+            />
           )}
 
           <OrbitControls
@@ -175,7 +206,9 @@ function FirefliesInner() {
             loofahCorner={loofahCorner}
             ceilingVariant={ceilingVariant}
             seatingVariant={seatingVariant}
-            spotlightDim={isExperience ? 0 : spotlights}
+            beamMode={beamMode}
+            spotlightDim={spotlights}
+            mist={isExperience}
           />
 
           <DevExpose />
