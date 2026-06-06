@@ -1,18 +1,18 @@
 import * as THREE from 'three'
 import { buildNesting } from '../../geometry/nestingPlacement.js'
 import {
-  NESTING_HYBRID_LED_COLOR,
-  NESTING_HYBRID_LED_EMISSIVE_INTENSITY,
+  NESTING_LED_COLOR,
+  NESTING_LED_EMISSIVE_INTENSITY,
 } from '../../geometry/dimensions.js'
 
-// Static-only LEDs on bolster upper surfaces. Always-on green,
-// independent of the firefly behaviour system (per designer lock).
+// Static green LEDs set into the pebble undersides (concept image 09).
+// The full 1,760-LED population for the nesting proposal lives here.
 const LED_RADIUS = 0.025
 const LED_GEO = new THREE.SphereGeometry(LED_RADIUS, 8, 8)
 const LED_MAT = new THREE.MeshStandardMaterial({
-  color: NESTING_HYBRID_LED_COLOR,
-  emissive: NESTING_HYBRID_LED_COLOR,
-  emissiveIntensity: NESTING_HYBRID_LED_EMISSIVE_INTENSITY,
+  color: NESTING_LED_COLOR,
+  emissive: NESTING_LED_COLOR,
+  emissiveIntensity: NESTING_LED_EMISSIVE_INTENSITY,
   toneMapped: false,
   roughness: 0.5,
   metalness: 0,

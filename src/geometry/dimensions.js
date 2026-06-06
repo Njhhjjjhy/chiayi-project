@@ -58,38 +58,68 @@ export const FLOOR_EMISSIVE_INTENSITY = 0.05    // self-emissive lift for visibi
 export const FLOOR_SEAM_DARKEN = 0.3             // seam colour = FLOOR_COLOR × this factor
 
 // --- Pathway lighting ---
-// Wayfinding lights along the L-shaped `pathway` floor edges. Three
-// visual prototypes (strip, rope, pools) share the colour and the
-// height-above-floor; per-prototype thickness and intensity sit beside
-// them. All three are driven by the `?wayfind=` URL param. Default off.
-export const PATHWAY_LED_HEIGHT = 0.02           // centre Y above floor for strip and rope
+// Always-on, no switcher (designer decision 6 June 2026): the warm
+// strips along the L-shaped pathway's floor edges are part of the
+// pathway in both concept images, and the wayfinding signal is three
+// painted arrows at the route's decision points. The arrows are PAINT,
+// not fixtures — no extra lights get installed for them; they read by
+// the pathway's existing light (strips, downlights or lamps).
+export const PATHWAY_LED_HEIGHT = 0.02           // centre Y above floor for the edge strips
 export const PATHWAY_LED_COLOR = '#fff4e0'       // warm white
-export const PATHWAY_LED_INTENSITY = 0.7         // baseline emissive intensity (strip)
+export const PATHWAY_LED_INTENSITY = 0.7         // strip emissive intensity
 
 export const PATHWAY_STRIP_THICKNESS = 0.015     // strip cross-section (square)
 
-// Variant B: painted floor arrows lit by overhead spots. Three arrows
-// mark the three decision points along the L-shaped pathway.
-// Arrows are matte paint (NOT emissive) so they only read when a spot
-// reaches them — that is the wayfinding signal.
+// Painted floor arrows — matte white paint on the floor mats.
 export const PATHWAY_ARROW_LENGTH = 0.6          // tip-to-tail length
 export const PATHWAY_ARROW_WIDTH = 0.3           // across-the-arrow span
-export const PATHWAY_ARROW_COLOR = '#e8e0d0'     // matte off-white paint
-export const PATHWAY_ARROW_SPOT_HEIGHT = 3.4     // overhead fixture Y (just below working ceiling)
-// Proposed starting values — both flagged for the tuning pass after
-// designer review of the recapture.
-//   intensity 10 with decay 1 and distance 5 reaches the floor at a
-//     quiet illuminance — visible but not theatrical.
-//   angle 0.15 rad (~8.6° half-angle) gives a cone radius at floor
-//     of ~3.4 × tan(0.15) ≈ 0.51 m, only slightly wider than the
-//     arrow's 0.3 m half-length.
-export const PATHWAY_ARROW_SPOT_INTENSITY = 10
-export const PATHWAY_ARROW_SPOT_ANGLE = 0.15
+export const PATHWAY_ARROW_COLOR = '#ffffff'     // matte white paint
 
-export const PATHWAY_POOL_COUNT = 6              // total pools along the L (3 per leg)
-export const PATHWAY_POOL_RADIUS = 0.4           // pool disc radius on the floor
-export const PATHWAY_POOL_INTENSITY = 2.0        // brighter than strip/rope so pools read as discrete
-export const PATHWAY_POOL_HEIGHT = 3.4           // overhead fixture Y (just below working ceiling at 3.52)
+// --- Pathway looks (concept images 05 / 14, canonical doc 11) ---
+// Two switchable looks behind `?pathway=`, compared side by side:
+//   'dark'    near-black corridor with small warm ceiling downlights
+//             washing scallops onto the partition wall (image 05)
+//   'timber'  wood-panelled corridor with small glowing wall lamps
+//             down the partition side (image 14)
+// Both looks sit alongside the always-on pathway lighting (edge strips
+// + painted arrows) — the looks never duplicate it. The window-wall
+// side of the horizontal leg keeps its blackout curtain in both looks
+// (the real room has the 570 cm glass partition there), so timber
+// panelling goes on the back-wall and the two partition faces only.
+export const PATHWAY_LOOK_VARIANTS = ['dark', 'timber']
+export const PATHWAY_LOOK_DEFAULT = 'dark'
+
+// Dark look — downlight fixtures (image 05). No real lights: the can,
+// the wall scallop, and the floor pool are all emissive/additive, the
+// same approach as the wayfinding pools (real lights at this count
+// would weigh down the renderer).
+export const PATHWAY_DOWNLIGHT_WALL_OFFSET = 0.35   // fixture distance off the partition face
+export const PATHWAY_DOWNLIGHT_SPACING = 1.2        // along-the-leg spacing
+export const PATHWAY_DOWNLIGHT_CAN_RADIUS = 0.045
+export const PATHWAY_DOWNLIGHT_CAN_HEIGHT = 0.06
+export const PATHWAY_DOWNLIGHT_COLOR = '#ffd9a0'    // warm scallop colour
+// No floor pools — the downlights land their light on the wall only
+// (designer decision 6 June 2026: the floor discs read as odd circles
+// from above).
+export const PATHWAY_SCALLOP_WIDTH = 0.9            // wall scallop plane size
+export const PATHWAY_SCALLOP_HEIGHT = 1.3
+export const PATHWAY_SCALLOP_OPACITY = 0.35
+
+// Timber look — wall boards + lamps (image 14). Boards are full-height
+// vertical planks with per-board colour jitter so the panelling reads
+// hand-built rather than wallpapered.
+export const PATHWAY_TIMBER_SEED = 947              // Park-Miller seed, distinct from existing seeds
+export const PATHWAY_TIMBER_BOARD_WIDTH = 0.6       // target plank width; actual varies per board
+export const PATHWAY_TIMBER_BOARD_T = 0.012         // plank thickness proud of the wall
+export const PATHWAY_TIMBER_GAP = 0.004             // dark seam between planks
+export const PATHWAY_TIMBER_COLOR = '#6b4a2e'       // mid warm brown
+export const PATHWAY_TIMBER_COLOR_JITTER = 0.08     // per-board lightness variation
+export const PATHWAY_LAMP_Y = 2.3                   // lamp mounting height
+export const PATHWAY_LAMP_SPACING = 1.4
+export const PATHWAY_LAMP_RADIUS = 0.07             // dome shade radius
+export const PATHWAY_LAMP_COLOR = '#ffc070'
+export const PATHWAY_LAMP_INTENSITY = 2.2
+export const PATHWAY_LAMP_SCALLOP_HEIGHT = 1.6      // lamp glow washes up and down the boards
 
 // --- Firefly LED colour (canonical lock from docs/canonical/2-ceiling.md) ---
 export const FIREFLY_COLOR = '#00FF00'
@@ -234,10 +264,11 @@ export const SEATING_CUBE_H = 0.42         // seat height
 export const SEATING_CUBE_COLOR = '#241f1a'
 export const SEATING_CUBE_ROUGHNESS = 0.85
 
-// Bench top slab (shared by the bench variant)
-export const SEATING_CUSHION_T = 0.03      // Y thickness above bench body
-export const SEATING_CUSHION_COLOR = '#3a2e24'
-export const SEATING_CUSHION_ROUGHNESS = 0.95
+// Bench pad (shared by both bench designs, concept image 15) — the
+// dark seat pad sitting on top of the frame / box body.
+export const SEATING_BENCH_PAD_T = 0.06
+export const SEATING_BENCH_PAD_COLOR = '#26211c'
+export const SEATING_BENCH_PAD_ROUGHNESS = 0.95
 
 // Zone placements (centre X, centre Z in world coordinates).
 // Exclusion anchors only — ceiling forms, lanterns, grove stems, and
@@ -275,23 +306,46 @@ export const SEATING_STOOL_CLUSTER_RADIUS = 0.85
 export const SEATING_STOOL_JITTER = 0.12
 export const SEATING_STOOLS_RNG_SEED = 631
 
-// Variant 'benches' — 3 cluster pockets of 2 benches each, opened at
-// varied angles. Backless plywood, 5 visitors per bench × 6 benches = 30.
-export const SEATING_BENCH_LENGTH = 1.8
-export const SEATING_BENCH_DEPTH = 0.35
-export const SEATING_BENCH_HEIGHT = 0.42
-export const SEATING_BENCH_COLOR = '#1f1d1c'
-export const SEATING_BENCH_ROUGHNESS = 0.85
-// Each pocket: centre + an open-V angle. The two benches face slightly
-// inward across the pocket; openAngle rotates the whole pocket so the
-// open V points in a different direction in each spot.
-export const SEATING_BENCH_POCKETS = [
-  { x: 3.6, z: 2.2, openAngle:  0.5 },
-  { x: 5.6, z: 4.2, openAngle: -0.8 },
-  { x: 6.6, z: 6.0, openAngle:  1.1 },
+// Variant 'benches' — concept image 15: five benches in a symmetric
+// horseshoe facing the loofah wall (the warm glowing panel is the
+// focal point every seat faces). Two designs from the image:
+//   slim  centre + two flanks — dark pad on a thin top frame carried
+//         by slab legs at each end, open underneath
+//   box   two outer corners — panelled chest on a recessed plinth,
+//         dark pad on top
+// `out` is the distance from the loofah wall surface into the room,
+// `side` the offset along the wall from its centreline. Every bench
+// turns to face the wall's centre (seatingPlacement.js does the math).
+export const SEATING_BENCH_LAYOUT = [
+  { kind: 'slim', out: 2.3, side: 0 },
+  { kind: 'slim', out: 2.7, side: -1.7 },
+  { kind: 'slim', out: 2.7, side: 1.7 },
+  { kind: 'box',  out: 4.3, side: -2.5 },
+  { kind: 'box',  out: 4.3, side: 2.5 },
 ]
-export const SEATING_BENCH_PAIR_GAP = 1.6
-export const SEATING_BENCH_FACE_TILT = 0.35
+
+// Slim bench
+export const SEATING_BENCH_SLIM_LENGTH = 1.6
+export const SEATING_BENCH_SLIM_DEPTH = 0.42
+export const SEATING_BENCH_SLIM_HEIGHT = 0.45      // top of pad above floor
+export const SEATING_BENCH_SLIM_FRAME_T = 0.04     // top frame slab under the pad
+export const SEATING_BENCH_SLIM_LEG_T = 0.05       // slab leg thickness
+export const SEATING_BENCH_SLIM_LEG_INSET = 0.1    // legs in from the bench ends
+
+// Box bench
+export const SEATING_BENCH_BOX_LENGTH = 1.35
+export const SEATING_BENCH_BOX_DEPTH = 0.6
+export const SEATING_BENCH_BOX_HEIGHT = 0.5        // top of pad above floor
+export const SEATING_BENCH_BOX_PLINTH_H = 0.06     // recessed base (shadow gap at the floor)
+export const SEATING_BENCH_BOX_PLINTH_INSET = 0.05
+export const SEATING_BENCH_BOX_PANEL_MARGIN = 0.07 // frame border around each face panel
+
+// Bench materials — warm grey body per the image; the brightness in
+// the frame comes from the downbeams, not the material.
+export const SEATING_BENCH_BODY_COLOR = '#6a6155'
+export const SEATING_BENCH_BODY_ROUGHNESS = 0.7
+export const SEATING_BENCH_PANEL_COLOR = '#5c5448' // inset face panels, box design
+export const SEATING_BENCH_PLINTH_COLOR = '#181512'
 
 // Variant 'frame-stools' — open-frame timber stools (concept image 12).
 // Same cluster placement as 'cubes'. Light wood: four corner legs, low
@@ -517,25 +571,40 @@ export const EXIT_CURTAIN_CENTER_X = 7.78                             // (6.73 +
 export const EXIT_CURTAIN_CENTER_Y = ROOM.H / 2
 export const EXIT_CURTAIN_CENTER_Z = CURTAIN_OFFSET                   // 0.04
 
-// --- Flock hangers (proposal v3: fireflies-flock) ---
+// --- Flock (proposal v3: fireflies-flock — rebuilt to concept image 13) ---
 //
-// 110 modules individually suspended on fine threads from the working
-// ceiling, forming an emergent flock shape in the middle volume.
+// Image 13 vocabulary: dense vertical strings of green points draping
+// the forest's boundary walls like rain, plus a glowing field of green
+// points just under the working ceiling with large dark disc
+// silhouettes floating in front of it. The 110-module / 1,760-LED
+// invariant is split between the two surfaces: one module per wall
+// string (16 LEDs down the string) and the remainder scattered as the
+// ceiling field.
 export const FLOCK_RNG_SEED = 419
-export const FLOCK_MODULE_COUNT = 110
-export const FLOCK_Y_MIN = 1.5
-export const FLOCK_Y_MAX = 3.4
-export const FLOCK_Y_BIAS_CENTER = 2.6
-export const FLOCK_Y_SIGMA = 0.4
+export const FLOCK_STRING_MODULES = 60                                // wall strings, 16 LEDs each
+export const FLOCK_FIELD_MODULES = 50                                 // ceiling-field clusters, 16 LEDs each
+export const FLOCK_STRING_LENGTH_MIN = 1.6                            // metres of drop from the ceiling
+export const FLOCK_STRING_LENGTH_MAX = 3.2
+export const FLOCK_STRING_WALL_OFFSET = 0.04                          // string distance off the wall face
+export const FLOCK_STRING_LED_JITTER = 0.03                           // per-LED scatter along/off the string
+export const FLOCK_FIELD_Y_MIN = 3.36                                 // ceiling-field band
+export const FLOCK_FIELD_Y_MAX = 3.5
+export const FLOCK_FIELD_SPREAD = 0.45                                // cluster radius of one field module
 export const FLOCK_THREAD_RADIUS = 0.001                              // 2 mm fine thread
 export const FLOCK_THREAD_COLOR = '#222222'
 export const FLOCK_THREAD_EMISSIVE_INTENSITY = 0.05
-export const FLOCK_GRID_SPACING = 0.5
-export const FLOCK_GRID_JITTER = 0.2
 // Flock LED emissive intensity, decoupled from the ceiling LED value
 // so the close-up flock-looking-up view does not bloom into fat halos
 // while the flock-side distant view keeps its luminous band reading.
 export const FLOCK_LED_EMISSIVE_INTENSITY = 3
+// Large dark disc silhouettes floating against the glowing field.
+export const FLOCK_SILHOUETTE_COUNT = 6
+export const FLOCK_SILHOUETTE_DIAMETER_MIN = 1.4
+export const FLOCK_SILHOUETTE_DIAMETER_MAX = 2.6
+export const FLOCK_SILHOUETTE_THICKNESS = 0.05
+export const FLOCK_SILHOUETTE_Y = 3.26                                // just below the field band
+export const FLOCK_SILHOUETTE_MIN_GAP = 0.5                           // edge-to-edge between discs
+export const FLOCK_SILHOUETTE_COLOR = '#101010'
 
 // --- Grove (proposal v5: fireflies-grove) ---
 //
@@ -586,35 +655,24 @@ export const LANTERN_LED_REMAINDER_PER_PILLAR = 118                   // 5 pilla
 export const LANTERN_LED_CLUSTER_RADIUS = 0.12                        // metres
 export const LANTERN_LED_CLUSTER_HEIGHT = 0.2                         // metres
 
-// --- Nesting hybrid LED placement (proposal v4: fireflies-nesting, hybrid mode) ---
+// --- Nesting pebble ceiling (proposal v4: fireflies-nesting — rebuilt to concept image 09) ---
 //
-// 15% of total LEDs (264) on bolster upper surfaces, split deterministically
-// across the runtime-resolved bolster count (6 to 8). Remaining 85%
-// (1,496) stay on the ceiling forms. Ceiling renderer truncates its
-// own cached output at the new count.
-export const NESTING_HYBRID_LED_TOTAL_BOLSTERS = 264
-export const NESTING_HYBRID_LED_TOTAL_CEILING = 1496
-export const NESTING_HYBRID_LED_MIN_SPACING = 0.06
-export const NESTING_HYBRID_LED_COLOR = '#00ff00'
-export const NESTING_HYBRID_LED_EMISSIVE_INTENSITY = 5
-
-// --- Nesting forms (proposal v4: fireflies-nesting) ---
-//
-// Large soft bolster cushions on the floor. Visitors lie between them
-// and gaze straight up at the firefly panels. LEDs stay on the
-// ceiling panels.
+// Image 09 vocabulary: the whole forest ceiling covered in dark
+// rounded pebble-like forms, each studded with green points set into
+// its underside. The pebbles replace the regular sculptural ceiling
+// for this proposal; seating below comes from the seating switcher
+// (dark cubes in the target frame). All 110 modules / 1,760 LEDs live
+// on the pebble undersides.
 export const NESTING_RNG_SEED = 523
-export const NESTING_CLUSTER_CENTERS = [
-  { x: 4.0, z: 2.5 },
-  { x: 6.5, z: 4.5 },
-]
-export const NESTING_PER_CLUSTER_MIN = 3
-export const NESTING_PER_CLUSTER_MAX = 4
-export const NESTING_GAP = 0.6                                        // gap between bolsters for a person
-export const NESTING_LENGTH_MIN = 1.5
-export const NESTING_LENGTH_MAX = 2.5
-export const NESTING_RADIUS_MIN = 0.2
-export const NESTING_RADIUS_MAX = 0.35
-export const NESTING_COLOR = '#3a2e24'
-export const NESTING_EMISSIVE_INTENSITY = 0.12
-export const NESTING_ROUGHNESS = 0.95
+export const NESTING_PEBBLE_COUNT = 22
+export const NESTING_PEBBLE_DIAMETER_MIN = 0.6
+export const NESTING_PEBBLE_DIAMETER_MAX = 1.5
+export const NESTING_PEBBLE_HEIGHT_RATIO_MIN = 0.3                    // pebble height / diameter
+export const NESTING_PEBBLE_HEIGHT_RATIO_MAX = 0.45
+export const NESTING_PEBBLE_SQUASH_MIN = 0.75                         // footprint Z/X ratio (1 = round)
+export const NESTING_PEBBLE_DROP_MAX = 0.35                           // hang depth below the working ceiling
+export const NESTING_PEBBLE_EDGE_GAP = 0.05                           // min edge-to-edge between pebbles
+export const NESTING_PEBBLE_COLOR = '#161616'
+export const NESTING_LED_MIN_SPACING = 0.06
+export const NESTING_LED_COLOR = '#00ff00'
+export const NESTING_LED_EMISSIVE_INTENSITY = 5

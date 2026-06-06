@@ -29,6 +29,19 @@ import {
 } from '../../geometry/dimensions.js'
 import { getLoofahCornerCenter } from '../../geometry/loofahCorners.js'
 import { makeRng } from '../../utils/parkMillerRng.js'
+import { useTimeline } from '../../hooks/useTimeline.js'
+import { sampleHorizon } from '../lighting/sunsetArc.js'
+
+// The loofah glow follows the evening (designer decision 6 June 2026):
+// every warm emitter — backlights, base strip, sculpture and corner
+// internal lights — fades along the sunset's horizon journey, so by
+// the darkness phase only the fireflies remain. Each glowing mesh
+// subscribes to the timeline itself, keeping playback re-renders away
+// from the (large, static) loofah piece field.
+function useEveningFactor() {
+  const { time } = useTimeline()
+  return sampleHorizon(time).factor
+}
 
 // Loofah wall — four visual prototypes. Hidden warm backlight does
 // all the visible work; loofah pieces are non-emissive per canonical
@@ -330,6 +343,7 @@ function sampleColor(rng) {
 
 // --- Backlight plane behind the wall variants ---
 function BacklightPlane() {
+  const evening = useEveningFactor()
   const yCenter = LOOFAH_WALL_Y_BASE + LOOFAH_WALL_HEIGHT / 2
   const zCenter = (LOOFAH_WALL_Z_START + LOOFAH_WALL_Z_END) / 2
   return (
@@ -338,7 +352,10 @@ function BacklightPlane() {
       rotation={[0, -Math.PI / 2, 0]}
     >
       <planeGeometry args={[LOOFAH_WALL_WIDTH, LOOFAH_WALL_HEIGHT]} />
-      <meshStandardMaterial {...BACKLIGHT_MATERIAL} />
+      <meshStandardMaterial
+        {...BACKLIGHT_MATERIAL}
+        emissiveIntensity={LOOFAH_BACKLIGHT_INTENSITY * evening}
+      />
     </mesh>
   )
 }
@@ -500,20 +517,29 @@ function SculptureCage({ height, baseSize }) {
   )
 }
 
+// Sculpture's internal glow in its own component so the per-frame
+// timeline subscription re-renders one mesh, not the piece cluster.
+function SculptureGlow({ height }) {
+  const evening = useEveningFactor()
+  return (
+    <mesh position={[0, height / 2, 0]}>
+      <cylinderGeometry args={[LOOFAH_SCULPTURE_GLOW_RADIUS, LOOFAH_SCULPTURE_GLOW_RADIUS, height, 8]} />
+      <meshStandardMaterial
+        color={LOOFAH_BACKLIGHT_COLOR}
+        emissive={LOOFAH_BACKLIGHT_COLOR}
+        emissiveIntensity={LOOFAH_SCULPTURE_GLOW_INTENSITY * evening}
+        roughness={1}
+        metalness={0}
+      />
+    </mesh>
+  )
+}
+
 function Sculpture({ sculpture, boxGeo, normalMap, normalScale }) {
   const pieces = useMemo(() => generateSculpturePieces(sculpture), [sculpture])
   return (
     <group position={[sculpture.x, 0, sculpture.z]} rotation={[0, sculpture.rotY, 0]}>
-      <mesh position={[0, sculpture.height / 2, 0]}>
-        <cylinderGeometry args={[LOOFAH_SCULPTURE_GLOW_RADIUS, LOOFAH_SCULPTURE_GLOW_RADIUS, sculpture.height, 8]} />
-        <meshStandardMaterial
-          color={LOOFAH_BACKLIGHT_COLOR}
-          emissive={LOOFAH_BACKLIGHT_COLOR}
-          emissiveIntensity={LOOFAH_SCULPTURE_GLOW_INTENSITY}
-          roughness={1}
-          metalness={0}
-        />
-      </mesh>
+      <SculptureGlow height={sculpture.height} />
       <SculptureCage height={sculpture.height} baseSize={sculpture.baseSize} />
       {pieces.map((piece, i) => (
         <LoofahPiece
@@ -566,6 +592,7 @@ function LoofahPiece({ piece, geometry, normalMap, normalScale }) {
 
 // --- Base strip (image 12) — bright warm line along the wall's foot ---
 function BaseStrip() {
+  const evening = useEveningFactor()
   const zCenter = (LOOFAH_WALL_Z_START + LOOFAH_WALL_Z_END) / 2
   // Sits on the floor just in front of the deepest loofah pieces.
   const x = WALL_BAMBOO_X - LOOFAH_SIZE_X_RANGE[1] - LOOFAH_BASE_STRIP_DEPTH
@@ -575,7 +602,7 @@ function BaseStrip() {
       <meshStandardMaterial
         color={LOOFAH_BASE_STRIP_COLOR}
         emissive={LOOFAH_BASE_STRIP_COLOR}
-        emissiveIntensity={LOOFAH_BASE_STRIP_INTENSITY}
+        emissiveIntensity={LOOFAH_BASE_STRIP_INTENSITY * evening}
         roughness={1}
         metalness={0}
       />
@@ -643,6 +670,25 @@ function FibrousWall({ boxGeo, normalMap, normalScale }) {
 // Ordered grid of glowing cells: warm backlight (one flat brightness
 // per cell) seen through a fibre cutout sheet, framed by slim dark
 // bars. The fibre sheet uses alphaTest so strands cut out crisply.
+// Grid backlight in its own component so the per-frame timeline
+// subscription re-renders one mesh, not the whole frame grid.
+function GridBacklight({ cellMap, yCenter, zCenter }) {
+  const evening = useEveningFactor()
+  return (
+    <mesh position={[WALL_BACKLIGHT_X, yCenter, zCenter]} rotation={[0, -Math.PI / 2, 0]}>
+      <planeGeometry args={[LOOFAH_WALL_WIDTH, LOOFAH_WALL_HEIGHT]} />
+      <meshStandardMaterial
+        color={LOOFAH_BACKLIGHT_COLOR}
+        emissive={LOOFAH_BACKLIGHT_COLOR}
+        emissiveMap={cellMap}
+        emissiveIntensity={LOOFAH_BACKLIGHT_INTENSITY * LOOFAH_GRID_CELL_BRIGHT_MAX * evening}
+        roughness={1}
+        metalness={0}
+      />
+    </mesh>
+  )
+}
+
 function GridWall({ fibreMap }) {
   const cellMap = useMemo(() => makeCellBrightnessMap(), [])
   useEffect(() => () => cellMap.dispose(), [cellMap])
@@ -671,17 +717,7 @@ function GridWall({ fibreMap }) {
   return (
     <group>
       {/* backlight with one flat brightness per cell */}
-      <mesh position={[WALL_BACKLIGHT_X, yCenter, zCenter]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[LOOFAH_WALL_WIDTH, LOOFAH_WALL_HEIGHT]} />
-        <meshStandardMaterial
-          color={LOOFAH_BACKLIGHT_COLOR}
-          emissive={LOOFAH_BACKLIGHT_COLOR}
-          emissiveMap={cellMap}
-          emissiveIntensity={LOOFAH_BACKLIGHT_INTENSITY * LOOFAH_GRID_CELL_BRIGHT_MAX}
-          roughness={1}
-          metalness={0}
-        />
-      </mesh>
+      <GridBacklight cellMap={cellMap} yCenter={yCenter} zCenter={zCenter} />
       {/* fibre cutout sheet the glow shines through */}
       <mesh position={[WALL_BAMBOO_X, yCenter, zCenter]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[LOOFAH_WALL_WIDTH, LOOFAH_WALL_HEIGHT]} />
@@ -720,6 +756,7 @@ function GridWall({ fibreMap }) {
 // not "placed").
 
 function CornerInternalLight() {
+  const evening = useEveningFactor()
   return (
     <mesh position={[0, LOOFAH_CORNER_HEIGHT / 2, 0]}>
       <cylinderGeometry
@@ -730,7 +767,10 @@ function CornerInternalLight() {
           12,
         ]}
       />
-      <meshStandardMaterial {...CORNER_BACKLIGHT_MATERIAL} />
+      <meshStandardMaterial
+        {...CORNER_BACKLIGHT_MATERIAL}
+        emissiveIntensity={LOOFAH_CORNER_BACKLIGHT_INTENSITY * evening}
+      />
     </mesh>
   )
 }

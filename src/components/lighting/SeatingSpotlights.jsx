@@ -12,6 +12,7 @@ import {
 } from '../../geometry/dimensions.js'
 import { buildSeating } from '../../geometry/seatingPlacement.js'
 import { useTimeline } from '../../hooks/useTimeline.js'
+import { sampleSky } from './sunsetArc.js'
 
 // SeatingSpotlights — per-seat downbeams (concept image 15).
 //
@@ -136,7 +137,7 @@ function fillTranslations(mesh, seats, y) {
   mesh.frustumCulled = false
 }
 
-function ClusterLight({ x, z, intensity }) {
+function ClusterLight({ x, z, intensity, color }) {
   const target = useMemo(() => {
     const obj = new THREE.Object3D()
     obj.position.set(x, 0, z)
@@ -149,7 +150,7 @@ function ClusterLight({ x, z, intensity }) {
       <spotLight
         position={[x, SEATING_SPOT_Y, z]}
         target={target}
-        color={SEATING_SPOT_COLOR}
+        color={color}
         intensity={intensity}
         angle={SEATING_SPOT_CONE_ANGLE}
         penumbra={SEATING_SPOT_PENUMBRA}
@@ -168,7 +169,12 @@ function ClusterLight({ x, z, intensity }) {
 //   'off'       no visible beams; the real cluster lights still run
 export default function SeatingSpotlights({ dim = 1, variant = 'cubes', beamMode = 'clusters' }) {
   const { time } = useTimeline()
-  const intensity = rampIntensity(time) * dim
+  // The spotlights are the sunset's SKY fixture: colour and level follow
+  // the upper-sky journey (warm white-gold → violet → deep navy → out),
+  // on top of the existing end-of-arc ramp so they are fully gone before
+  // the fireflies own the darkness phase.
+  const { hex: skyHex, factor: skyFactor } = sampleSky(time)
+  const intensity = rampIntensity(time) * dim * skyFactor
   const ratio = Math.min(1, intensity / SEATING_SPOT_INTENSITY)
 
   const { lightAnchors, cones, pools, cans, coneMat, poolMat } = useMemo(() => {
@@ -217,6 +223,8 @@ export default function SeatingSpotlights({ dim = 1, variant = 'cubes', beamMode
     if (!coneMat) return
     coneMat.uniforms.uOpacity.value = SPOTLIGHT_CONE_OPACITY * ratio
     poolMat.uniforms.uOpacity.value = SPOTLIGHT_POOL_OPACITY * ratio
+    coneMat.uniforms.uColor.value.set(skyHex)
+    poolMat.uniforms.uColor.value.set(skyHex)
   })
   /* eslint-enable react-hooks/immutability */
 
@@ -227,7 +235,7 @@ export default function SeatingSpotlights({ dim = 1, variant = 'cubes', beamMode
       {pools && <primitive object={pools} />}
       {cans && <primitive object={cans} />}
       {lightAnchors.map((a, i) => (
-        <ClusterLight key={`light-${i}`} x={a.x} z={a.z} intensity={intensity} />
+        <ClusterLight key={`light-${i}`} x={a.x} z={a.z} intensity={intensity} color={skyHex} />
       ))}
     </group>
   )

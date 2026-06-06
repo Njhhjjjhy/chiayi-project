@@ -5,6 +5,9 @@ const FONT_STACK =
 
 export const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
+// The glass material itself lives in src/styles/index.css
+// (.glass-surface) so the OS-level reduced-transparency / increased-
+// contrast fallbacks can apply — inline styles can't respond to those.
 const Glass = forwardRef(function Glass(
   { as = 'div', className = '', style, children, ...rest },
   ref,
@@ -15,12 +18,10 @@ const Glass = forwardRef(function Glass(
       ref,
       style: {
         fontFamily: FONT_STACK,
-        backdropFilter: 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         letterSpacing: '-0.01em',
         ...style,
       },
-      className: `bg-black/80 border border-white/[0.18] text-[#f5f5f7] ${className}`,
+      className: `glass-surface text-[#f5f5f7] ${className}`,
       ...rest,
     },
     children,

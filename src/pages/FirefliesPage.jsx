@@ -15,7 +15,7 @@ import { getLoofahCornerCenter } from '../geometry/loofahCorners.js'
 import ControlPanel from '../components/ControlPanel.jsx'
 import TimelineController from '../components/TimelineController'
 import ExperienceLighting from '../components/lighting/ExperienceLighting.jsx'
-import { sampleSunset, SUNSET_BASE_INTENSITY } from '../components/lighting/sunsetArc.js'
+import { sunsetLevel } from '../components/lighting/sunsetArc.js'
 import { useTimeline } from '../hooks/useTimeline.js'
 
 // Layout: left panel (ControlPanel) with all settings, bottom timeline.
@@ -61,23 +61,46 @@ function ActiveProposalSync() {
   return null
 }
 
-// Verification-mode lighting that follows the timeline player's sunset
-// arc — the same colour keyframes as experience mode, scaled to the
-// brighter inspection levels. Scrubbing the player changes the room in
-// BOTH modes; that arc is the player's whole purpose. Subscribes to
-// the timeline inside its own component so playback re-renders only
-// these lights, not the entire room tree.
+// Verification-mode lighting. Neutral white inspection lights — the
+// sunset COLOURS live on the room's fixtures (horizon strips, sky
+// spotlights), never on a scene tint. These lights only dim along the
+// sunset's level as the player runs, so the fixtures' colour story
+// stays readable against a darkening room. A small floor keeps
+// geometry inspectable even in the darkness phase. Subscribes to the
+// timeline inside its own component so playback re-renders only these
+// lights, not the entire room tree.
 function VerificationLighting({ brightness }) {
   const { time } = useTimeline()
-  const { hex, intensity } = sampleSunset(time)
-  const ratio = intensity / SUNSET_BASE_INTENSITY   // 1 at golden hour → ~0.03 in darkness
+  const level = Math.max(sunsetLevel(time), 0.06)
   return (
     <>
-      <ambientLight intensity={2.4 * brightness * ratio} color={hex} />
-      <directionalLight position={[6, 14, 6]} intensity={1.2 * ratio} color={hex} />
-      <directionalLight position={[-4, 10, -4]} intensity={0.6 * ratio} color={hex} />
+      <ambientLight intensity={2.4 * brightness * level} color="#ffffff" />
+      <directionalLight position={[6, 14, 6]} intensity={1.2 * level} color="#ffffff" />
+      <directionalLight position={[-4, 10, -4]} intensity={0.6 * level} color="#ffffff" />
     </>
   )
+}
+
+// Entering experience mode starts the sunset from golden hour and
+// plays it — the visitor arrives at the start of the story, never into
+// a black room. Leaving experience mode pauses wherever the arc is so
+// the designer can inspect that exact moment. An explicit ?timeline=
+// in the URL (capture scripts, shared links) suppresses the auto-play
+// so stills stay still. Lives in its own null component so the
+// timeline subscription never re-renders the page tree.
+function ExperienceAutoPlay({ active, suppress }) {
+  const { setTime, play, pause } = useTimeline()
+  useEffect(() => {
+    if (active) {
+      if (!suppress) {
+        setTime(0)
+        play()
+      }
+    } else {
+      pause()
+    }
+  }, [active, suppress, setTime, play, pause])
+  return null
 }
 
 function DevExpose() {
@@ -96,9 +119,12 @@ function DevExpose() {
 
 function FirefliesInner() {
   const [searchParams] = useSearchParams()
-  const viewKey = searchParams.get('view') ?? DEFAULT_VIEW
-  const preset = cameraPresets[viewKey] ?? cameraPresets[DEFAULT_VIEW]
   const isExperience = searchParams.get('mode') === 'experience'
+  // Experience mode opens at the visitor viewpoint inside the forest —
+  // never at an inspection view staring into an unlit corridor. An
+  // explicit ?view= still wins in both modes.
+  const viewKey = searchParams.get('view') ?? (isExperience ? 'experience' : DEFAULT_VIEW)
+  const preset = cameraPresets[viewKey] ?? cameraPresets[DEFAULT_VIEW]
 
   useEffect(() => {
     if (!cameraPresets[viewKey]) {
@@ -108,7 +134,6 @@ function FirefliesInner() {
   const { proposalId, defaultFirefly } = useProposal()
   const urlFirefly = searchParams.get('firefly')
   const fireflyVariant = urlFirefly !== null ? urlFirefly : (defaultFirefly ?? 'off')
-  const wayfindVariant = searchParams.get('wayfind') ?? 'strip'
   // Old QA-note links may carry variant1/2/3 — map them onto the new
   // look ids; anything unknown falls back to 'fibrous'.
   const rawLoofah = searchParams.get('loofah')
@@ -131,6 +156,10 @@ function FirefliesInner() {
     : 'cubes'
   const rawBeams = searchParams.get('beams')
   const beamMode = ['all', 'clusters', 'off'].includes(rawBeams) ? rawBeams : 'clusters'
+  // Pathway looks (concept images 05 / 14) — 'dark' is the working
+  // default; anything unknown falls back to it.
+  const rawPathway = searchParams.get('pathway')
+  const pathwayVariant = ['dark', 'timber'].includes(rawPathway) ? rawPathway : 'dark'
   const gridOn = searchParams.get('grid') === 'on'
 
   // `corner-compare` keeps a dynamic target so the camera tracks the
@@ -158,9 +187,15 @@ function FirefliesInner() {
   // outline read against a clean ground), near-black in experience mode.
   const outsideColor = isExperience ? '#0a0a0a' : '#ffffff'
 
+  // visionOS-style layout: the room fills the whole window (the glass
+  // panes derive their look from blurring it), and the UI floats over
+  // it as glass — the inspector pane owns the right-hand strip, the
+  // player bar spans the rest of the bottom edge. The two strips never
+  // overlap; in experience mode the inspector is gone and the player
+  // takes the full width.
   return (
     <div
-      className="relative h-screen w-screen"
+      className="relative h-dvh w-screen"
       style={{ backgroundColor: outsideColor }}
     >
       <Suspense fallback={<Loader />}>
@@ -201,12 +236,12 @@ function FirefliesInner() {
 
           <Room
             fireflyVariant={fireflyVariant}
-            wayfindVariant={wayfindVariant}
             loofahVariant={loofahVariant}
             loofahCorner={loofahCorner}
             ceilingVariant={ceilingVariant}
             seatingVariant={seatingVariant}
             beamMode={beamMode}
+            pathwayVariant={pathwayVariant}
             spotlightDim={spotlights}
             mist={isExperience}
           />
@@ -217,14 +252,19 @@ function FirefliesInner() {
         </Canvas>
       </Suspense>
 
+      <ExperienceAutoPlay
+        active={isExperience}
+        suppress={searchParams.has('timeline')}
+      />
+
+      {/* Floating glass panes: inspector (exit pill in experience mode)
+          and the player bar */}
       <ControlPanel
         brightness={brightness}
         onBrightnessChange={setBrightness}
         spotlights={spotlights}
         onSpotlightsChange={setSpotlights}
       />
-
-      {/* Bottom: timeline */}
       <TimelineController />
     </div>
   )

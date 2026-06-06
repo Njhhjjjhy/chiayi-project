@@ -7,7 +7,6 @@ import { buildFlock } from '../src/geometry/flockPlacement.js'
 import { buildGrove } from '../src/geometry/grovePlacement.js'
 import { buildLanterns } from '../src/geometry/lanternPlacement.js'
 import { buildNesting } from '../src/geometry/nestingPlacement.js'
-import { NESTING_HYBRID_LED_TOTAL_CEILING } from '../src/geometry/dimensions.js'
 
 const ceiling = buildCeiling()
 const flock = buildFlock()
@@ -18,10 +17,10 @@ const nesting = buildNesting()
 const totals = [
   { variant: 'fireflies-suspended-sky', surface: 'ceiling', count: ceiling.leds.count },
   { variant: 'fireflies-within-reach',  surface: 'ceiling', count: ceiling.leds.count },
-  { variant: 'fireflies-flock',         surface: 'flock threads', count: flock.leds.count },
+  { variant: 'fireflies-flock',         surface: 'wall strings + ceiling field', count: flock.leds.count },
   { variant: 'fireflies-grove',         surface: 'grove stems', count: grove.leds.count },
   { variant: 'fireflies-lanterns',      surface: 'lantern pillars', count: lanterns.leds.count },
-  { variant: 'fireflies-nesting',       surface: 'nesting-hybrid (ceiling + bolsters)', count: NESTING_HYBRID_LED_TOTAL_CEILING + nesting.leds.count },
+  { variant: 'fireflies-nesting',       surface: 'pebble undersides', count: nesting.leds.count },
 ]
 
 console.log('Per-variant LED totals (expected 1760 for each):')

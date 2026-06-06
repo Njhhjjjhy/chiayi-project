@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTimeline, PHASES, SPEEDS } from '../hooks/useTimeline.js'
 import Glass, { EASE_OUT, PlayGlyph, PauseGlyph } from './Glass'
 
@@ -27,6 +28,7 @@ const TRANSITION = {
 
 export default function TimelineController() {
   const { time, setTime, playing, toggle, speed, setSpeed, jumpToPhase } = useTimeline()
+  const [searchParams] = useSearchParams()
   const [collapsed, setCollapsed] = useState(() => readCollapsed())
 
   const currentPhase = time < 0.25 ? 0 : time < 0.5 ? 1 : time < 0.75 ? 2 : 3
@@ -36,10 +38,18 @@ export default function TimelineController() {
     writeCollapsed(value)
   }
 
+  // A glass pane floating over the room (visionOS material — glass is
+  // defined by what's behind it, so the room must be behind it). On
+  // desktop it ends before the pinned inspector's strip so the two
+  // never overlap; below desktop width (and in experience mode) the
+  // inspector isn't pinned, so the player gets the full width.
+  const isExperience = searchParams.get('mode') === 'experience'
+  const rightEdge = isExperience ? 'right-3' : 'right-3 xl:right-[444px]'
+
   if (collapsed) {
     return (
       <div
-        className="fixed bottom-0 left-0 right-0 z-10 flex justify-center pointer-events-none"
+        className={`fixed bottom-0 left-3 ${rightEdge} z-10 flex justify-center pointer-events-none`}
         role="region"
         aria-label="Timeline (collapsed)"
       >
@@ -62,15 +72,15 @@ export default function TimelineController() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-10 select-none p-3"
+      className={`fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 ${rightEdge} z-10 select-none`}
       role="region"
       aria-label="Timeline controls"
       onPointerDown={(e) => e.stopPropagation()}
       onPointerMove={(e) => e.stopPropagation()}
     >
       <Glass className="rounded-2xl px-4 py-4">
-        {/* Phase labels */}
-        <div className="flex items-center gap-1.5 mb-3">
+        {/* Phase labels — wrap on narrow phones rather than crush */}
+        <div className="flex flex-wrap items-center gap-1.5 mb-3">
           {PHASES.map((phase, i) => {
             const active = currentPhase === i
             return (

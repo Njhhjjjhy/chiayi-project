@@ -37,6 +37,127 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ─── Glass material (visionOS-standard) ───
+   Verified recipe (6 June 2026 research): translucent dark tint +
+   backdrop blur/brightness/saturation stack, 1px specular rim, top-edge
+   highlight gradient, soft depth shadow. The material is defined by
+   what's BEHIND it — glass panes must float over live content, never
+   over a reserved empty strip. Tint opacity is chosen so primary text
+   (white/90) keeps WCAG contrast against the brightest possible
+   backdrop (the white outside in verification view). */
+:root {
+  --glass-blur: 16px;
+  --glass-tint: rgba(12, 12, 14, 0.6);
+  --glass-stroke: rgba(255, 255, 255, 0.16);
+  --glass-rim: rgba(255, 255, 255, 0.22);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.glass-surface {
+  background-color: var(--glass-tint);
+  background-image: linear-gradient(
+    to bottom,
+    var(--glass-highlight),
+    rgba(255, 255, 255, 0.02) 40%,
+    transparent 70%
+  );
+  backdrop-filter: blur(var(--glass-blur)) brightness(80%) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) brightness(80%) saturate(140%);
+  border: 1px solid var(--glass-stroke);
+  box-shadow:
+    inset 0 1px 0 var(--glass-rim),
+    var(--glass-shadow);
+}
+
+/* Mandated fallback: users who reduce transparency or raise contrast
+   at the OS level get a solid surface — glass is an enhancement. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass-surface {
+    background-color: rgba(8, 8, 10, 0.97);
+    background-image: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ─── Touch density (docs/base: hig + ios + ipados) ───
+   Density swap: touch devices get the 44px minimum hit target on every
+   interactive element; hover-capable fine-pointer devices keep the
+   compact desktop sizing. touch-action: manipulation removes the
+   300ms double-tap-zoom delay on controls without blocking pinch zoom
+   elsewhere. The 3D canvas owns all its gestures. */
+button,
+[role="button"],
+a,
+input,
+select {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none), (pointer: coarse) {
+  button,
+  [role="button"],
+  a,
+  input[type="range"],
+  select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Dense pill groups (docs/base: 28px floor permitted in genuinely
+     constrained spaces, with hit-region expansion via ::before that
+     doesn't change visible size — effective target stays ~44px). */
+  .pill-dense {
+    min-height: 36px;
+    min-width: 36px;
+    position: relative;
+  }
+  .pill-dense::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+  }
+}
+
+canvas {
+  touch-action: none; /* one finger orbits, two fingers zoom — never the page */
+}
+
+/* ─── Settings dialog (below desktop width) ───
+   Phone (< 768px): bottom sheet — rounded top, grabber, safe-area
+   padding. Tablet (768–1279px): trailing slide-over pane. Desktop
+   (1280px+) uses the always-pinned inspector pane instead; the dialog
+   is never opened there. Native <dialog> provides focus trapping,
+   Esc-to-close, and the inert background. */
+dialog.settings-dialog {
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 92dvh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+}
+
+dialog.settings-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 768px) {
+  dialog.settings-dialog {
+    inset: 12px 12px 12px auto;
+    width: 420px;
+    max-width: 92vw;
+    height: auto;
+    max-height: none;
+  }
+}
+
 /* ─── Focus ─── */
 *:focus-visible {
   outline: 1px solid var(--color-muted);

@@ -36,7 +36,6 @@ import LanternPillars from './LanternPillars.jsx'
 import LanternLEDs from '../fireflies/LanternLEDs.jsx'
 import NestingForms from './NestingForms.jsx'
 import NestingLEDs from '../fireflies/NestingLEDs.jsx'
-import { NESTING_HYBRID_LED_TOTAL_CEILING } from '../../geometry/dimensions.js'
 
 // v2 room wrapper. Mounts every piece of the canonical room geometry
 // in one group so consumers only need to render <Room /> and don't
@@ -53,28 +52,27 @@ import { NESTING_HYBRID_LED_TOTAL_CEILING } from '../../geometry/dimensions.js'
 // positions and the static LED dots in Ceiling are hidden so they
 // don't double up. 'off' (default) leaves the static LEDs visible.
 //
-// wayfindVariant: 'off' | 'strip' | 'arrows' | 'pools' — the pathway
-// wayfinding lighting prototype to render (slice 4). 'off' (default)
-// renders nothing.
-//
 // loofahVariant: 'grid' | 'fibrous' | 'clusters' | 'corners' — the
 // loofah wall look (legacy variant1/2/3 ids still accepted).
 // loofahCorner is consumed only by 'corners'.
+//
+// pathwayVariant: 'dark' | 'timber' — the pathway look (concept
+// images 05 / 14).
 //
 // mist: low floor fog (concept image 12); the page turns it on in
 // experience mode only so verification stays clean.
 export default function Room({
   spotlightDim = 1,
   fireflyVariant = 'off',
-  wayfindVariant = 'off',
   loofahVariant = 'fibrous',
   loofahCorner = 'back-left',
   ceilingVariant = 'discs',
   seatingVariant = 'cubes',
   beamMode = 'clusters',
+  pathwayVariant = 'dark',
   mist = false,
 }) {
-  const { ledSurface } = useProposal()
+  const { ledSurface, replacesCeiling } = useProposal()
   const fireflyActive = fireflyVariant && fireflyVariant !== 'off'
   return (
     <group>
@@ -82,7 +80,7 @@ export default function Room({
       <Walls />
       <Column />
       <EntranceWallPartition />
-      <Pathway />
+      <Pathway variant={pathwayVariant} />
       <>
           <TheatricalCurtain
             width={WINDOW_CURTAIN_WIDTH}
@@ -111,11 +109,13 @@ export default function Room({
       </>
       <Doors />
       <Windows />
-      <SculpturalCeiling variant={ceilingVariant} />
+      {/* Proposals that bring their own ceiling vocabulary (nesting
+          pebbles, flock field + silhouettes) replace the regular
+          sculptural ceiling rather than stack on top of it. */}
+      {!replacesCeiling && <SculpturalCeiling variant={ceilingVariant} />}
       <CeilingLEDs
-        hideLeds={fireflyActive || (ledSurface !== 'ceiling' && ledSurface !== 'nesting-hybrid')}
+        hideLeds={fireflyActive || ledSurface !== 'ceiling'}
         variant={ceilingVariant}
-        ledCount={ledSurface === 'nesting-hybrid' ? NESTING_HYBRID_LED_TOTAL_CEILING : null}
       />
       {ledSurface === 'flock' && (
         <>
@@ -135,11 +135,11 @@ export default function Room({
           <LanternLEDs />
         </>
       )}
-      {ledSurface === 'nesting-hybrid' && <NestingLEDs />}
+      {ledSurface === 'nesting' && <NestingLEDs />}
       <NestingForms />
-      <Branches />
+      <Branches ceilingVariant={ceilingVariant} />
       <WallLighting />
-      <PathwayEdgeLights variant={wayfindVariant} />
+      <PathwayEdgeLights />
       <LuffaWall variant={loofahVariant} corner={loofahCorner} />
       {seatingVariant === 'cubes' && <SeatingCubes />}
       {seatingVariant === 'frame-stools' && <SeatingFrameStools />}

@@ -58,6 +58,15 @@ export const cameraPresets = {
     position: [0.75, 1.6, 0.4],
     target:   [0.75, 1.6, PATHWAY_PARTITION_Z],
   },
+  experience: {
+    // Default view when experience mode is entered: a visitor standing
+    // inside the forest at eye level, facing the sun side (front-wall /
+    // loofah wall) with the seating and ceiling discs in frame. The
+    // sunset plays out in front of them.
+    label: 'Experience view',
+    position: [3.0, 1.5, 5.6],
+    target:   [8.7, 1.15, 3.6],
+  },
 
   'flock-looking-up': {
     label: 'Flock looking up',

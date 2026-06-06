@@ -20,6 +20,7 @@ export function ProposalProvider({ children }) {
         setProposalId,
         hasBranches: active.hasBranches,
         hasNesting: active.hasNesting ?? false,
+        replacesCeiling: active.replacesCeiling ?? false,
         ledSurface: active.ledSurface,
         wallLight: active.wallLight,
         defaultFirefly: active.defaultFirefly,

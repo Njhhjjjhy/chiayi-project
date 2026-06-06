@@ -7,44 +7,31 @@ import {
   PATHWAY_LED_HEIGHT, PATHWAY_LED_COLOR, PATHWAY_LED_INTENSITY,
   PATHWAY_STRIP_THICKNESS,
   PATHWAY_ARROW_LENGTH, PATHWAY_ARROW_WIDTH, PATHWAY_ARROW_COLOR,
-  PATHWAY_ARROW_SPOT_HEIGHT,
-  PATHWAY_ARROW_SPOT_INTENSITY, PATHWAY_ARROW_SPOT_ANGLE,
-  PATHWAY_POOL_COUNT, PATHWAY_POOL_RADIUS,
-  PATHWAY_POOL_INTENSITY, PATHWAY_POOL_HEIGHT,
 } from '../../geometry/dimensions.js'
 
-// Wayfinding lights along the L-shaped `pathway`. Three visual
-// prototypes behind one component, selected by `variant`:
+// Pathway lighting — always on, no switcher (designer decision 6 June
+// 2026):
 //
-//   'off'    renders nothing (default).
-//   'strip'  thin continuous emissive box along each of the four
-//            pathway floor edges.
-//   'arrows' three painted floor arrows at the pathway's decision
-//            points, each lit by a tight overhead spot. Arrows are
-//            matte paint, not emissive — they only read when a spot
-//            reaches them.
-//   'pools'  six discrete overhead downlights, three per pathway leg,
-//            each casting a small emissive disc on the floor.
+//   strips  thin continuous warm strips along the four pathway floor
+//           edges (part of the pathway in both concept images). These
+//           are the LED fixtures.
+//   arrows  three painted arrows on the floor at the route's decision
+//           points. Paint only — no fixtures are installed for them;
+//           they read by the pathway's existing light.
 //
-// The four pathway floor edges (used by the strip variant):
+// The four pathway floor edges (strip runs):
 //   1. along `back-wall`              X = 0,    Z = 0    → Z = ROOM.D
 //   2. along `window-wall`            Z = ROOM.D, X = 0  → X = COLUMN_X
 //   3. pathway-side of `pathway-partition-vertical`   X = ENTRY_GAP_WIDTH, Z = 0 → PATHWAY_PARTITION_Z
 //   4. pathway-side of `pathway-partition-horizontal` Z = PATHWAY_PARTITION_Z, X = ENTRY_GAP_WIDTH → COLUMN_X
 //
 // Surface-flush rule: strip runs are offset SURFACE_NUDGE + half-
-// thickness inward from each surface. Arrow meshes sit ARROW_Y above
-// the floor. Inward direction depends on which side of the surface the
-// pathway sits on.
+// thickness inward from each surface.
 
 const SURFACE_NUDGE = 0.008                      // 8 mm inward
-const ARROW_Y = 0.008                            // 8 mm above floor (paint sits on the foam)
-const ARROW_SPOT_PENUMBRA = 0.3                  // soft cone edge
-const ARROW_SPOT_DECAY = 1                       // gentler than physical 2 so 3.4 m reach reads
-const ARROW_SPOT_DISTANCE = 5                    // cutoff just past floor
 
-// Strip-only — pathway floor-edge runs at the correct inward-nudged
-// position for the given cross-section thickness.
+// Strip runs at the correct inward-nudged position for the cross-
+// section thickness.
 function makeEdgeRuns(thickness) {
   const inward = SURFACE_NUDGE + thickness / 2
   return [
@@ -74,8 +61,12 @@ function StripRun({ run, thickness, material }) {
 
 // Arrow shape — built once and reused for all three arrows. Tip points
 // in shape-local -Y; after the mesh's [-PI/2, 0, 0] rotation the tip
-// lands at world +Z. The outer group's Y-rotation then turns the tip
-// to its final world direction (rotY = 0 → +Z, rotY = -PI/2 → +X, etc.).
+// lands at group-local +Z. The outer group's Y-rotation then turns the
+// tip to its final world direction:
+//   rotY = 0       → tip +Z
+//   rotY = +PI/2   → tip +X
+//   rotY = PI      → tip -Z
+//   rotY = -PI/2   → tip -X
 function buildArrowShape() {
   const halfL = PATHWAY_ARROW_LENGTH / 2          // 0.30
   const halfW = PATHWAY_ARROW_WIDTH / 2           // 0.15
@@ -94,156 +85,71 @@ function buildArrowShape() {
   return s
 }
 
-function FloorArrow({ x, z, rotY, shape }) {
-  // Per-arrow spot target as a tiny Object3D positioned directly below
-  // the fixture. The spot's target prop is wired to this object.
-  const target = useMemo(() => {
-    const obj = new THREE.Object3D()
-    obj.position.set(x, 0, z)
-    return obj
-  }, [x, z])
+// One painted arrow on the floor mats (no emission — paint, not LED).
+const ARROW_Y = 0.008 // 8 mm above floor (paint sits on the foam)
 
+// The bloom pass halos anything rendering above luminance 1.0 — that's
+// how the LEDs glow. The verification lights are overbright (ambient
+// 2.4 + two directionals ≈ 4× irradiance on the floor), so full-albedo
+// white paint crossed the bloom threshold and haloed like an emitter.
+// Scaling the paint's reflectance keeps its rendered luminance just
+// under 1.0 at default brightness: it still reads white (the white
+// outside ground renders at exactly 1.0) but never blooms, and it
+// still dims with the room through the evening like real paint.
+const ARROW_REFLECTANCE = 0.24
+const ARROW_PAINT = new THREE.Color(PATHWAY_ARROW_COLOR).multiplyScalar(ARROW_REFLECTANCE)
+
+function PaintedArrow({ x, z, rotY, shape }) {
   return (
-    <group>
-      {/* Painted arrow on the floor (no emission — paint, not LED) */}
-      <group position={[x, ARROW_Y, z]} rotation={[0, rotY, 0]}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <shapeGeometry args={[shape]} />
-          <meshStandardMaterial
-            color={PATHWAY_ARROW_COLOR}
-            roughness={0.9}
-            metalness={0}
-          />
-        </mesh>
-      </group>
-      {/* Spot target — must live in the scene graph for spotLight.target to work */}
-      <primitive object={target} />
-      {/* Overhead spot — straight down onto the arrow */}
-      <spotLight
-        position={[x, PATHWAY_ARROW_SPOT_HEIGHT, z]}
-        target={target}
-        color={PATHWAY_LED_COLOR}
-        intensity={PATHWAY_ARROW_SPOT_INTENSITY}
-        angle={PATHWAY_ARROW_SPOT_ANGLE}
-        penumbra={ARROW_SPOT_PENUMBRA}
-        decay={ARROW_SPOT_DECAY}
-        distance={ARROW_SPOT_DISTANCE}
-        castShadow={false}
-      />
+    <group position={[x, ARROW_Y, z]} rotation={[0, rotY, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <shapeGeometry args={[shape]} />
+        <meshStandardMaterial
+          color={ARROW_PAINT}
+          roughness={0.9}
+          metalness={0}
+        />
+      </mesh>
     </group>
   )
 }
 
 // Three arrows at the pathway's three decision points. Tip directions
-// follow the one-way visitor route: enter → walk +Z → turn +X at the
-// corner → continue +X through the forest entry.
+// follow the one-way visitor route: enter → walk +Z down the vertical
+// leg → turn +X at the corner onto the horizontal leg → continue +X
+// toward the forest entry.
 const ARROW_PLACEMENTS = [
-  // 1. Entry: just inside the entry gap, pointing into the vertical leg.
-  { x: 0.75, z: 0.6, rotY: 0 },           // tip +Z
+  // 1. Entry: just inside the entry gap, pointing down the vertical leg.
+  { x: 0.75, z: 0.6, rotY: 0 },            // tip +Z
   // 2. Corner: inside the L corner, turning the visitor onto the horizontal leg.
-  { x: 0.75, z: 7.6, rotY: -Math.PI / 2 }, // tip +X
+  { x: 0.75, z: 7.6, rotY: Math.PI / 2 },  // tip +X
   // 3. Forest entry: just before the forest opening at X = 6.43.
-  { x: 5.5,  z: 7.9, rotY: -Math.PI / 2 }, // tip +X
+  { x: 5.5,  z: 7.9, rotY: Math.PI / 2 },  // tip +X
 ]
 
-// Pool variant (unchanged from prior tuning).
-function makePoolPositions() {
-  const perLeg = PATHWAY_POOL_COUNT / 2
-  const positions = []
-  const verticalX = ENTRY_GAP_WIDTH / 2
-  for (let i = 0; i < perLeg; i++) {
-    const t = (i + 0.5) / perLeg
-    positions.push([verticalX, t * ROOM.D])
+export default function PathwayEdgeLights() {
+  const arrowShape = useMemo(() => buildArrowShape(), [])
+  const runs = makeEdgeRuns(PATHWAY_STRIP_THICKNESS)
+  const stripMaterial = {
+    color: PATHWAY_LED_COLOR,
+    emissive: PATHWAY_LED_COLOR,
+    emissiveIntensity: PATHWAY_LED_INTENSITY,
+    roughness: 0.6,
+    metalness: 0,
   }
-  const horizontalZ = (PATHWAY_PARTITION_Z + ROOM.D) / 2
-  for (let i = 0; i < perLeg; i++) {
-    const t = (i + 0.5) / perLeg
-    positions.push([t * COLUMN_X, horizontalZ])
-  }
-  return positions
-}
-
-const POOL_DISC_Y = 0.003
-const POOL_FIXTURE_RADIUS = 0.04
-const POOL_FIXTURE_HEIGHT = 0.06
-
-function PoolSpot({ x, z }) {
   return (
     <group>
-      <mesh position={[x, POOL_DISC_Y, z]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[PATHWAY_POOL_RADIUS, 32]} />
-        <meshStandardMaterial
-          color={PATHWAY_LED_COLOR}
-          emissive={PATHWAY_LED_COLOR}
-          emissiveIntensity={PATHWAY_POOL_INTENSITY}
-          roughness={1.0}
-          metalness={0}
+      {runs.map((run) => (
+        <StripRun
+          key={run.label}
+          run={run}
+          thickness={PATHWAY_STRIP_THICKNESS}
+          material={stripMaterial}
         />
-      </mesh>
-      <mesh position={[x, PATHWAY_POOL_HEIGHT, z]}>
-        <cylinderGeometry
-          args={[POOL_FIXTURE_RADIUS, POOL_FIXTURE_RADIUS, POOL_FIXTURE_HEIGHT, 12]}
-        />
-        <meshStandardMaterial
-          color="#111111"
-          emissive={PATHWAY_LED_COLOR}
-          emissiveIntensity={0.5}
-          roughness={0.7}
-          metalness={0}
-        />
-      </mesh>
+      ))}
+      {ARROW_PLACEMENTS.map((a, i) => (
+        <PaintedArrow key={i} x={a.x} z={a.z} rotY={a.rotY} shape={arrowShape} />
+      ))}
     </group>
   )
-}
-
-export default function PathwayEdgeLights({ variant = 'off' }) {
-  const arrowShape = useMemo(() => buildArrowShape(), [])
-
-  if (variant === 'off') return null
-
-  if (variant === 'strip') {
-    const runs = makeEdgeRuns(PATHWAY_STRIP_THICKNESS)
-    const material = {
-      color: PATHWAY_LED_COLOR,
-      emissive: PATHWAY_LED_COLOR,
-      emissiveIntensity: PATHWAY_LED_INTENSITY,
-      roughness: 0.6,
-      metalness: 0,
-    }
-    return (
-      <group>
-        {runs.map((run) => (
-          <StripRun
-            key={run.label}
-            run={run}
-            thickness={PATHWAY_STRIP_THICKNESS}
-            material={material}
-          />
-        ))}
-      </group>
-    )
-  }
-
-  if (variant === 'arrows') {
-    return (
-      <group>
-        {ARROW_PLACEMENTS.map((a, i) => (
-          <FloorArrow key={i} x={a.x} z={a.z} rotY={a.rotY} shape={arrowShape} />
-        ))}
-      </group>
-    )
-  }
-
-  if (variant === 'pools') {
-    const positions = makePoolPositions()
-    return (
-      <group>
-        {positions.map(([x, z], i) => (
-          <PoolSpot key={i} x={x} z={z} />
-        ))}
-      </group>
-    )
-  }
-
-  return null
 }

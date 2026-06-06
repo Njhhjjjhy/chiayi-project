@@ -1,144 +1,196 @@
 import {
+  ROOM, WALL_T, CABINET_T,
+  ENTRY_GAP_WIDTH, PATHWAY_PARTITION_Z,
+  CEILING_MODULES_TOTAL, CEILING_LEDS_PER_MODULE, CEILING_MODULE_RADIUS,
+  CEILING_FORM_MAX_EDGE_X,
   NESTING_RNG_SEED,
-  NESTING_CLUSTER_CENTERS,
-  NESTING_PER_CLUSTER_MIN, NESTING_PER_CLUSTER_MAX,
-  NESTING_GAP,
-  NESTING_LENGTH_MIN, NESTING_LENGTH_MAX,
-  NESTING_RADIUS_MIN, NESTING_RADIUS_MAX,
-  NESTING_HYBRID_LED_TOTAL_BOLSTERS, NESTING_HYBRID_LED_MIN_SPACING,
+  NESTING_PEBBLE_COUNT,
+  NESTING_PEBBLE_DIAMETER_MIN, NESTING_PEBBLE_DIAMETER_MAX,
+  NESTING_PEBBLE_HEIGHT_RATIO_MIN, NESTING_PEBBLE_HEIGHT_RATIO_MAX,
+  NESTING_PEBBLE_SQUASH_MIN,
+  NESTING_PEBBLE_DROP_MAX, NESTING_PEBBLE_EDGE_GAP,
+  NESTING_LED_MIN_SPACING,
 } from './dimensions.js'
 import { makeRng } from '../utils/parkMillerRng.js'
+import { inForestExclusion } from './forestExclusion.js'
 
-function generateBolsters() {
+// Nesting pebble ceiling (concept image 09). Dark rounded pebble-like
+// forms cover the forest ceiling, each studded with green points set
+// into its underside. All CEILING_MODULES_TOTAL modules (1,760 LEDs)
+// live here — this proposal replaces the regular sculptural ceiling
+// rather than adding to it.
+//
+// Pipeline:
+//   1. Place NESTING_PEBBLE_COUNT pebbles by rejection sampling across
+//      the forest footprint — dense coverage, near-touching, like
+//      river stones seen from below.
+//   2. Distribute the 110 modules across the pebbles proportionally to
+//      footprint area (largest remainder), so big pebbles carry more
+//      points. Total is exactly 110 regardless of how many pebbles the
+//      seed managed to place.
+//   3. Sample each module's 16 LEDs on the pebble's lower surface with
+//      metric min-spacing, clustered within CEILING_MODULE_RADIUS of a
+//      module anchor.
+
+const FOREST_X_MIN = ENTRY_GAP_WIDTH + CABINET_T               // 2.0
+const FOREST_X_MAX = ROOM.W - WALL_T                           // 8.71
+const FOREST_Z_MIN = CABINET_T                                 // 0.5
+const FOREST_Z_MAX = PATHWAY_PARTITION_Z - CABINET_T           // 6.78
+
+function generatePebbles() {
   const rng = makeRng(NESTING_RNG_SEED)
-  const bolsters = []
+  const pebbles = []
+  const maxAttempts = NESTING_PEBBLE_COUNT * 300
 
-  for (const center of NESTING_CLUSTER_CENTERS) {
-    const clusterRotY = rng() * Math.PI
-    const count = NESTING_PER_CLUSTER_MIN +
-      Math.floor(rng() * (NESTING_PER_CLUSTER_MAX - NESTING_PER_CLUSTER_MIN + 1))
+  let attempts = 0
+  while (pebbles.length < NESTING_PEBBLE_COUNT && attempts < maxAttempts) {
+    attempts++
 
-    for (let i = 0; i < count; i++) {
-      const radius = NESTING_RADIUS_MIN + rng() * (NESTING_RADIUS_MAX - NESTING_RADIUS_MIN)
-      const length = NESTING_LENGTH_MIN + rng() * (NESTING_LENGTH_MAX - NESTING_LENGTH_MIN)
+    const diameter = NESTING_PEBBLE_DIAMETER_MIN +
+      rng() * (NESTING_PEBBLE_DIAMETER_MAX - NESTING_PEBBLE_DIAMETER_MIN)
+    const halfX = diameter / 2
+    const squash = NESTING_PEBBLE_SQUASH_MIN + rng() * (1 - NESTING_PEBBLE_SQUASH_MIN)
+    const halfZ = halfX * squash
+    const heightRatio = NESTING_PEBBLE_HEIGHT_RATIO_MIN +
+      rng() * (NESTING_PEBBLE_HEIGHT_RATIO_MAX - NESTING_PEBBLE_HEIGHT_RATIO_MIN)
+    const halfY = (diameter * heightRatio) / 2
+    const rotY = rng() * Math.PI * 2
+    const maxHalf = Math.max(halfX, halfZ)
 
-      const offset = (i - (count - 1) / 2) * (NESTING_GAP + radius * 2)
-      const perpX = Math.cos(clusterRotY + Math.PI / 2) * offset
-      const perpZ = Math.sin(clusterRotY + Math.PI / 2) * offset
+    const x = FOREST_X_MIN + maxHalf + rng() * (CEILING_FORM_MAX_EDGE_X - FOREST_X_MIN - 2 * maxHalf)
+    const z = FOREST_Z_MIN + maxHalf + rng() * (FOREST_Z_MAX - FOREST_Z_MIN - 2 * maxHalf)
 
-      bolsters.push({
-        x: center.x + perpX,
-        z: center.z + perpZ,
-        length,
-        radius,
-        rotY: clusterRotY + (rng() - 0.5) * 0.2,
-      })
+    if (inForestExclusion(x, z)) continue
+
+    let tooClose = false
+    for (const p of pebbles) {
+      const dx = p.x - x
+      const dz = p.z - z
+      const minDist = maxHalf + Math.max(p.halfX, p.halfZ) + NESTING_PEBBLE_EDGE_GAP
+      if (dx * dx + dz * dz < minDist * minDist) { tooClose = true; break }
     }
+    if (tooClose) continue
+
+    const drop = rng() * NESTING_PEBBLE_DROP_MAX
+    const y = ROOM.H - halfY - drop
+
+    pebbles.push({ x, y, z, halfX, halfY, halfZ, rotY })
   }
 
-  return bolsters
+  return pebbles
 }
 
-// Per-bolster LED count distribution. Splits NESTING_HYBRID_LED_TOTAL_BOLSTERS
-// (264) evenly across the runtime bolster count, with the first
-// `remainder` bolsters carrying one extra LED each. Guarantees the sum
-// equals 264 exactly regardless of how many bolsters the seed resolved.
-function distributeLedCounts(bolsterCount) {
-  const base = Math.floor(NESTING_HYBRID_LED_TOTAL_BOLSTERS / bolsterCount)
-  const remainder = NESTING_HYBRID_LED_TOTAL_BOLSTERS - base * bolsterCount
-  const counts = new Array(bolsterCount)
-  for (let i = 0; i < bolsterCount; i++) {
-    counts[i] = base + (i < remainder ? 1 : 0)
+// Module counts per pebble, proportional to footprint area, balanced
+// to exactly CEILING_MODULES_TOTAL by largest remainder.
+function distributeModules(pebbles) {
+  const areas = pebbles.map((p) => p.halfX * p.halfZ)
+  const totalArea = areas.reduce((s, a) => s + a, 0)
+  const raw = areas.map((a) => (a / totalArea) * CEILING_MODULES_TOTAL)
+  const counts = raw.map((r) => Math.floor(r))
+  let assigned = counts.reduce((s, c) => s + c, 0)
+
+  const byRemainder = raw
+    .map((r, i) => ({ i, rem: r - Math.floor(r) }))
+    .sort((a, b) => b.rem - a.rem)
+  let k = 0
+  while (assigned < CEILING_MODULES_TOTAL) {
+    counts[byRemainder[k % byRemainder.length].i]++
+    assigned++
+    k++
   }
   return counts
 }
 
-// Bolster upper-surface LED placement. The bolster mesh in NestingForms
-// uses CapsuleGeometry with rotation order 'ZYX' and rotation
-// (0, rotY, π/2), so the capsule axis (originally local Y) ends up
-// pointing along world (-cos(rotY), 0, sin(rotY)). Local +X becomes
-// world +Y (straight up) and local +Z becomes world (sin(rotY), 0,
-// cos(rotY)). The mapping below places a candidate sample on the upper
-// half of the cylinder body (axial parameter t along the capsule axis,
-// circumferential angle θ in [-π/2, +π/2] so cos(θ) ≥ 0 always points
-// at or above the capsule midline). Seeded rejection sampling enforces
-// the min-spacing.
-function placeLedsOnBolster(bolster, ledCount, rng, minSpacing) {
-  const minSpacingSq = minSpacing * minSpacing
-  const placed = []
-  const maxAttempts = ledCount * 400
+// Sample a point on the pebble's lower surface in world space. The
+// pebble is an ellipsoid with half-extents (halfX, halfY, halfZ),
+// rotated rotY about Y. theta ∈ [π/2, π] keeps the sample on the
+// underside.
+function sampleUnderside(pebble, rng, theta = null, phi = null) {
+  const t = theta ?? (Math.PI / 2) + rng() * (Math.PI / 2)
+  const p = phi ?? rng() * Math.PI * 2
+  const lx = pebble.halfX * Math.sin(t) * Math.cos(p)
+  const ly = pebble.halfY * Math.cos(t)
+  const lz = pebble.halfZ * Math.sin(t) * Math.sin(p)
+  const cY = Math.cos(pebble.rotY), sY = Math.sin(pebble.rotY)
+  return {
+    x: pebble.x + lx * cY + lz * sY,
+    y: pebble.y + ly,
+    z: pebble.z - lx * sY + lz * cY,
+    theta: t,
+    phi: p,
+  }
+}
 
-  const cosRotY = Math.cos(bolster.rotY)
-  const sinRotY = Math.sin(bolster.rotY)
-  const r = bolster.radius
-  const halfLen = bolster.length / 2
+function generateLEDs(pebbles, moduleCounts) {
+  const rng = makeRng(NESTING_RNG_SEED + 1)
+  const positions = []
+  const unitIndices = []
+  const unitCenters = []
+  const minSpacingSq = NESTING_LED_MIN_SPACING * NESTING_LED_MIN_SPACING
+  let moduleIdx = 0
 
-  let attempts = 0
-  while (placed.length < ledCount && attempts < maxAttempts) {
-    attempts++
-    const t = (rng() - 0.5) * bolster.length
-    const theta = (rng() - 0.5) * Math.PI
+  for (let i = 0; i < pebbles.length; i++) {
+    const pebble = pebbles[i]
+    // Angular spread that maps CEILING_MODULE_RADIUS onto this
+    // pebble's surface, so module clusters stay readable on big and
+    // small pebbles alike.
+    const spread = Math.min(0.9, CEILING_MODULE_RADIUS / Math.max(0.2, pebble.halfX))
 
-    const sinT = Math.sin(theta)
-    const cosT = Math.cos(theta)
+    for (let m = 0; m < moduleCounts[i]; m++) {
+      const anchor = sampleUnderside(pebble, rng)
+      unitCenters.push([anchor.x, anchor.y, anchor.z])
 
-    const wx = bolster.x - t * cosRotY + r * sinT * sinRotY
-    const wy = r + r * cosT
-    const wz = bolster.z + t * sinRotY + r * sinT * cosRotY
+      const placed = []
+      let attempts = 0
+      while (placed.length < CEILING_LEDS_PER_MODULE && attempts < CEILING_LEDS_PER_MODULE * 40) {
+        attempts++
+        let theta = anchor.theta + (rng() - 0.5) * 2 * spread
+        const phi = anchor.phi + (rng() - 0.5) * 2 * spread
+        // reflect back into the underside band
+        if (theta < Math.PI / 2) theta = Math.PI / 2 + (Math.PI / 2 - theta)
+        if (theta > Math.PI) theta = Math.PI - (theta - Math.PI)
+        const cand = sampleUnderside(pebble, rng, theta, phi)
 
-    let tooClose = false
-    for (const p of placed) {
-      const dx = wx - p.x
-      const dy = wy - p.y
-      const dz = wz - p.z
-      if (dx * dx + dy * dy + dz * dz < minSpacingSq) { tooClose = true; break }
+        let tooClose = false
+        for (const prev of placed) {
+          const dx = cand.x - prev.x
+          const dy = cand.y - prev.y
+          const dz = cand.z - prev.z
+          if (dx * dx + dy * dy + dz * dz < minSpacingSq) { tooClose = true; break }
+        }
+        if (tooClose) continue
+        placed.push(cand)
+      }
+      // Top up without the spacing constraint if rejection ran dry —
+      // the 1,760 invariant always wins.
+      while (placed.length < CEILING_LEDS_PER_MODULE) {
+        placed.push(sampleUnderside(pebble, rng))
+      }
+
+      for (const led of placed) {
+        positions.push(led.x, led.y, led.z)
+        unitIndices.push(moduleIdx)
+      }
+      moduleIdx++
     }
-    if (tooClose) continue
-
-    placed.push({ x: wx, y: wy, z: wz })
   }
 
-  // Silence unused-var warning for halfLen — kept for clarity in the
-  // axial range derivation above.
-  void halfLen
-
-  return placed
+  return {
+    positions: new Float32Array(positions),
+    unitIndices: new Uint16Array(unitIndices),
+    unitCenters,
+    count: positions.length / 3,
+    unitCount: unitCenters.length,
+  }
 }
 
 let _cache = null
 
 export function buildNesting() {
   if (_cache) return _cache
-  const bolsters = generateBolsters()
-
-  const counts = distributeLedCounts(bolsters.length)
-  const rng = makeRng(NESTING_RNG_SEED + 1)
-  const allPositions = []
-  for (let i = 0; i < bolsters.length; i++) {
-    const placed = placeLedsOnBolster(
-      bolsters[i],
-      counts[i],
-      rng,
-      NESTING_HYBRID_LED_MIN_SPACING,
-    )
-    if (placed.length < counts[i]) {
-      console.warn(
-        `[nesting-hybrid] bolster ${i}: placed only ${placed.length} of ` +
-        `${counts[i]} LEDs at min spacing ${NESTING_HYBRID_LED_MIN_SPACING} m`,
-      )
-    }
-    for (const p of placed) {
-      allPositions.push(p.x, p.y, p.z)
-    }
-  }
-
-  _cache = {
-    bolsters,
-    leds: {
-      positions: new Float32Array(allPositions),
-      count: allPositions.length / 3,
-      perBolsterCounts: counts,
-    },
-  }
+  const pebbles = generatePebbles()
+  const moduleCounts = distributeModules(pebbles)
+  const leds = generateLEDs(pebbles, moduleCounts)
+  _cache = { pebbles, moduleCounts, leds }
   return _cache
 }

@@ -1,8 +1,10 @@
 import {
+  ROOM, WALL_T,
+  LOOFAH_WALL_Z_START, LOOFAH_WALL_Z_END,
   SEATING_STOOL_CLUSTERS, SEATING_STOOLS_PER_CLUSTER,
   SEATING_STOOL_CLUSTER_RADIUS, SEATING_STOOL_JITTER,
   SEATING_STOOLS_RNG_SEED,
-  SEATING_BENCH_POCKETS, SEATING_BENCH_PAIR_GAP, SEATING_BENCH_FACE_TILT,
+  SEATING_BENCH_LAYOUT,
   SEAT_BEAM_POOL_RADIUS_STOOL, SEAT_BEAM_POOL_RADIUS_BENCH,
 } from './dimensions.js'
 import { makeRng } from '../utils/parkMillerRng.js'
@@ -15,9 +17,10 @@ import { makeRng } from '../utils/parkMillerRng.js'
 // Returns { seats, lightAnchors, poolRadius }:
 //   seats:        [{ x, z, rotY }] — one per seat (one per bench for
 //                 the bench variant; each seat gets a visible beam)
-//   lightAnchors: [{ x, z }] — one per cluster/pocket; the real
-//                 spotLights mount here so the live light count stays
-//                 low while every seat still reads as individually lit
+//   lightAnchors: [{ x, z }] — one per cluster (one per bench for the
+//                 bench variant); the real spotLights mount here so
+//                 the live light count stays low while every seat
+//                 still reads as individually lit
 //   poolRadius:   floor pool radius for this variant's beams
 
 // 5 campfire clusters of 6 seats each — shared by 'cubes' and
@@ -42,27 +45,20 @@ function buildClusterSeats() {
   return out
 }
 
-// 3 pockets of 2 benches each. Same pocket math the bench component
-// used, so bench positions are unchanged.
+// Five benches in a symmetric horseshoe facing the loofah wall
+// (concept image 15). Each layout entry gives a distance out from the
+// wall surface and an offset along the wall; the bench then turns so
+// its seat faces the wall's centre. rotY maps the bench's local +Z
+// (its facing normal) onto the direction toward the focus point.
 function buildBenchSeats() {
-  const out = []
-  SEATING_BENCH_POCKETS.forEach((pocket) => {
-    const half = SEATING_BENCH_PAIR_GAP / 2
-    const offsets = [
-      { sign: +1, tilt: -SEATING_BENCH_FACE_TILT },
-      { sign: -1, tilt: +SEATING_BENCH_FACE_TILT },
-    ]
-    offsets.forEach((o) => {
-      const localX = o.sign * half
-      const cosA = Math.cos(pocket.openAngle)
-      const sinA = Math.sin(pocket.openAngle)
-      const x = pocket.x + cosA * localX
-      const z = pocket.z + sinA * localX
-      const rotY = pocket.openAngle + Math.PI / 2 + o.tilt
-      out.push({ x, z, rotY })
-    })
+  const focusX = ROOM.W - WALL_T
+  const focusZ = (LOOFAH_WALL_Z_START + LOOFAH_WALL_Z_END) / 2
+  return SEATING_BENCH_LAYOUT.map((b) => {
+    const x = focusX - b.out
+    const z = focusZ + b.side
+    const rotY = Math.atan2(focusX - x, focusZ - z)
+    return { x, z, rotY, kind: b.kind }
   })
-  return out
 }
 
 const _cache = {}
@@ -71,9 +67,12 @@ export function buildSeating(variant) {
   const key = variant === 'benches' ? 'benches' : 'clusters'
   if (_cache[key]) return _cache[key]
   if (key === 'benches') {
+    // One anchor per bench — every bench sits under its own downbeam
+    // in the image, so the real lights mount over each bench.
+    const seats = buildBenchSeats()
     _cache[key] = {
-      seats: buildBenchSeats(),
-      lightAnchors: SEATING_BENCH_POCKETS.map((p) => ({ x: p.x, z: p.z })),
+      seats,
+      lightAnchors: seats.map((s) => ({ x: s.x, z: s.z })),
       poolRadius: SEAT_BEAM_POOL_RADIUS_BENCH,
     }
   } else {

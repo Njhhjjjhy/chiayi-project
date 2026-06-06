@@ -141,14 +141,15 @@ export default function QAPanel() {
 
   return (
     <>
-      {/* Floating trigger — sits to the left of the settings panel */}
+      {/* Floating trigger — sits left of the pinned settings pane on
+          desktop, left of the Settings toggle below desktop width */}
       <Glass
         as="button"
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open notes"
         style={TRANSITION}
-        className="fixed top-3 right-[448px] z-10 inline-flex min-h-[44px] items-center gap-2.5 rounded-2xl px-5 cursor-pointer hover:bg-black/55 transition-colors"
+        className="fixed top-3 right-[120px] xl:right-[448px] z-10 inline-flex min-h-[44px] items-center gap-2.5 rounded-2xl px-5 cursor-pointer hover:bg-black/55 transition-colors"
       >
         <span className="text-[13px]">Notes</span>
         {openCount > 0 && (

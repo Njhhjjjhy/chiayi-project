@@ -1,32 +1,37 @@
 import * as THREE from 'three'
 import { useProposal } from '../../hooks/useProposal.js'
 import { buildNesting } from '../../geometry/nestingPlacement.js'
-import {
-  NESTING_COLOR, NESTING_EMISSIVE_INTENSITY, NESTING_ROUGHNESS,
-} from '../../geometry/dimensions.js'
+import { NESTING_PEBBLE_COLOR } from '../../geometry/dimensions.js'
 
-const NESTING_MAT = new THREE.MeshStandardMaterial({
-  color: NESTING_COLOR,
-  emissive: NESTING_COLOR,
-  emissiveIntensity: NESTING_EMISSIVE_INTENSITY,
-  roughness: NESTING_ROUGHNESS,
+// Nesting pebble ceiling (concept image 09) — dark rounded pebble-like
+// forms covering the forest ceiling. Rendered instead of the regular
+// sculptural ceiling when the nesting proposal is active (the proposal
+// sets replacesCeiling). The green points on the undersides live in
+// NestingLEDs.jsx.
+
+const PEBBLE_MAT = new THREE.MeshStandardMaterial({
+  color: NESTING_PEBBLE_COLOR,
+  emissive: NESTING_PEBBLE_COLOR,
+  emissiveIntensity: 0.08,
+  roughness: 0.9,
   metalness: 0,
 })
 
-const { bolsters } = buildNesting()
+const SHARED_SPHERE_GEO = new THREE.SphereGeometry(1, 20, 14)
 
-const NESTING_GROUP = new THREE.Group()
-for (const b of bolsters) {
-  const geo = new THREE.CapsuleGeometry(b.radius, b.length, 8, 16)
-  const mesh = new THREE.Mesh(geo, NESTING_MAT)
-  mesh.position.set(b.x, b.radius, b.z)
-  mesh.rotation.order = 'ZYX'
-  mesh.rotation.set(0, b.rotY, Math.PI / 2)
-  NESTING_GROUP.add(mesh)
+const { pebbles } = buildNesting()
+
+const PEBBLE_GROUP = new THREE.Group()
+for (const p of pebbles) {
+  const mesh = new THREE.Mesh(SHARED_SPHERE_GEO, PEBBLE_MAT)
+  mesh.position.set(p.x, p.y, p.z)
+  mesh.rotation.set(0, p.rotY, 0)
+  mesh.scale.set(p.halfX, p.halfY, p.halfZ)
+  PEBBLE_GROUP.add(mesh)
 }
 
 export default function NestingForms() {
   const { hasNesting } = useProposal()
   if (!hasNesting) return null
-  return <primitive object={NESTING_GROUP} />
+  return <primitive object={PEBBLE_GROUP} />
 }
