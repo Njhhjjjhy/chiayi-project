@@ -44,3 +44,9 @@ baselines/
 design-references/
 qa/
 meeting-refrence-*.webp
+
+# Concept image briefs (64MB of PNGs — kept local; docs/canonical/11 maps them)
+concept-images/
+
+# Hand-gesture webcam demo (2.6GB local experiment, has its own HANDOVER.md)
+3d-image/
