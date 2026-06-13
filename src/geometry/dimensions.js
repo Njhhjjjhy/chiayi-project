@@ -38,15 +38,49 @@ export const FOREST_Z_END   = PATHWAY_PARTITION_Z // 7.28
 
 // --- Back-wall doors (X = 0 face) ---
 // D1 and D2 are existing staff doors. Positions ESTIMATE — confirm on visit.
-export const D1_Z = 2.5,  D1_W = 0.9,  D1_H = 2.1   // ESTIMATE
-export const D2_Z = 5.0,  D2_W = 0.9,  D2_H = 2.1   // ESTIMATE
+export const D1_Z = 2.5,  D1_W = 0.96, D1_H = 2.36  // sizes from the dim drawing; Z still estimate
+export const D2_Z = 5.0,  D2_W = 0.90, D2_H = 2.36  // sizes from the dim drawing; Z still estimate
 
-// --- Window-wall doors and windows (Z = ROOM.D face) ---
-// All ESTIMATE — exact positions and sizes confirm on building visit.
-export const WW_DOOR1_X = 0.95, WW_DOOR1_W = 0.9, WW_DOOR1_H = 2.1                   // ESTIMATE
-export const WW_DOOR2_X = 3.95, WW_DOOR2_W = 0.9, WW_DOOR2_H = 2.1                   // ESTIMATE
-export const WW_WIN1_X  = 2.3,  WW_WIN1_W  = 1.0, WW_WIN1_H  = 1.5, WW_WIN1_SILL = 0.9 // ESTIMATE
-export const WW_WIN2_X  = 5.3,  WW_WIN2_W  = 1.0, WW_WIN2_H  = 1.5, WW_WIN2_SILL = 0.9 // ESTIMATE
+// --- Back-wall red sprinkler pipe (existing infrastructure) ---
+// Bright red pipe running horizontally across the back-wall near the top,
+// with a vertical drop near the entrance-wall corner. Sits just off the
+// back-wall face, below the dropped-ceiling line.
+export const SPRINKLER_Y = 3.05            // height of the horizontal run
+export const SPRINKLER_RADIUS = 0.025
+export const SPRINKLER_OFFSET = 0.06       // distance off the back-wall face into the room
+
+// --- Window-wall openings (Z = ROOM.D face) — 1 silver door + 2 windows ---
+// Real building measurements. Reading the wall from the front-wall corner
+// (X = ROOM.W) toward the back-wall corner (X = 0): the silver service door
+// sits under the HVAC near the front-wall end, the small vertical window next
+// to it, then the big wide window runs along to the back-wall corner.
+// Sizes are exact; the X centres are placed from the layout — nudge against
+// the reference photos if needed.
+// Layout from the front-wall corner (X = ROOM.W): 119 cm wall (small window in
+// it) → 99 cm door → 90 cm wall → 570 cm big window → back-wall corner.
+export const WW_DOOR_W = 0.99, WW_DOOR_H = 2.07              // silver service door (under the HVAC)
+export const WW_DOOR_X = 7.145                              // centre: after the 119 cm wall
+export const WW_SMALLWIN_W = 0.59, WW_SMALLWIN_H = 1.78      // small vertical window, in the 119 cm stretch
+export const WW_SMALLWIN_X = 7.95, WW_SMALLWIN_SILL = 0.30
+export const WW_BIGWIN_W = 5.70, WW_BIGWIN_H = 2.01          // large wide window (interior glass)
+export const WW_BIGWIN_X = 2.90, WW_BIGWIN_SILL = 0.32       // centre; runs toward the back-wall corner
+
+// --- Wainscoting (existing dark-wood panelling along the wall bases) ---
+// Present on the back-wall, front-wall, and window-wall; the entrance-wall has
+// none. A band standing slightly proud of each wall's room-facing surface.
+export const WAINSCOT_FRONT_H = 0.75   // front-wall band height (placeholder — confirm exact cm)
+export const WAINSCOT_BACK_H = 0.75    // back-wall band height (placeholder — confirm exact cm)
+export const WAINSCOT_WINDOW_H = 0.30  // window-wall band height (low, under the glass)
+export const WAINSCOT_T = 0.02         // how far it stands proud of the wall face
+export const WAINSCOT_COLOR = '#3d2b1a'
+
+// --- HVAC plenum (existing; window-wall upper corner near the front-wall end,
+// above the silver service door). A main box plus a smaller drop. ---
+export const HVAC_W = 1.8     // along the window-wall (X)
+export const HVAC_D = 1.35    // into the room (Z)
+export const HVAC_H = 0.7     // tall
+export const HVAC_X = 7.3     // centre, above the silver door near the front-wall corner
+export const HVAC_COLOR = '#15161a'  // near-black metal duct
 
 // --- Floor ---
 // Interlocking foam-mat tiles (per canonical doc 1). Matte, dark, no
@@ -139,9 +173,9 @@ export const FIREFLY_COLOR = '#00FF00'
 // canonical doc 3 says "Light source MUST NEVER be visible to
 // visitor"; the hidden warm backlight plane (or internal cylinder for
 // the corner column) does all the visible work.
-export const LOOFAH_WALL_HEIGHT = 2.4
+export const LOOFAH_WALL_Y_BASE = WAINSCOT_FRONT_H        // sits ABOVE the front-wall wainscoting, leaving it exposed
+export const LOOFAH_WALL_HEIGHT = 2.4 - WAINSCOT_FRONT_H  // top stays at 2.4 m
 export const LOOFAH_WALL_WIDTH = 4.5
-export const LOOFAH_WALL_Y_BASE = 0              // wall grounds to floor
 export const LOOFAH_WALL_Z_START = 1.39          // centred along forest Z = 0..7.28
 export const LOOFAH_WALL_Z_END = 5.89
 

@@ -1,9 +1,9 @@
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
-import { ROOM } from '../geometry/dimensions.js'
+import { ROOM, PATHWAY_PARTITION_Z } from '../geometry/dimensions.js'
 import { cameraPresets } from '../variants/config.js'
 import { ProposalProvider } from '../hooks/ProposalProvider.jsx'
 import { TimelineProvider } from '../hooks/TimelineProvider.jsx'
@@ -13,6 +13,7 @@ import Room from '../components/room/Room.jsx'
 import { PostEffects } from '../postfx/PostEffects.jsx'
 import { getLoofahCornerCenter } from '../geometry/loofahCorners.js'
 import ControlPanel from '../components/ControlPanel.jsx'
+import GestureControls from '../components/gesture/GestureControls.jsx'
 import TimelineController from '../components/TimelineController'
 import ExperienceLighting from '../components/lighting/ExperienceLighting.jsx'
 import { sunsetLevel } from '../components/lighting/sunsetArc.js'
@@ -23,6 +24,25 @@ import { useTimeline } from '../hooks/useTimeline.js'
 
 const DEFAULT_VIEW = 'standing'
 const DEFAULT_FOV = 50
+
+// The guided walk through the room. The on-screen scene buttons and the
+// open-hand flick both step through this one list, in narrative order:
+// arrive at the entrance, walk the pathway, the partition corner, into
+// the forest, the seating, then the loofah wall. Entrance and pathway are
+// placed along the real pathway; the rest reuse the room's designed
+// viewpoints so each shot is already framed.
+const fromPreset = (key) => ({
+  position: cameraPresets[key].position,
+  target: cameraPresets[key].target,
+})
+const SCENE_TOUR = [
+  { label: 'Entrance', position: [0.75, 1.6, 0.4], target: [0.75, 1.6, PATHWAY_PARTITION_Z] },
+  { label: 'Pathway', position: [0.75, 1.6, 3.6], target: [0.75, 1.6, 7.0] },
+  { label: 'Corner', ...fromPreset('partition-corner') },
+  { label: 'Forest', ...fromPreset('experience') },
+  { label: 'Chairs', ...fromPreset('close-range-seating') },
+  { label: 'Loofah', ...fromPreset('loofah-overview') },
+]
 
 // Parse a comma-separated triplet "x,y,z" into [x, y, z], or null on
 // any malformed input. Used by the ?campos= and ?camtarget= URL params
@@ -183,6 +203,20 @@ function FirefliesInner() {
   const [brightness, setBrightness] = useState(1.0)
   const [spotlights, setSpotlights] = useState(1.0)
 
+  // Hand-gesture camera control (opt-in, local-only — needs the gesture
+  // helper running). The button toggles it; the reticle tracks the hand.
+  const [gestureOn, setGestureOn] = useState(false)
+  const [gestureStatus, setGestureStatus] = useState('off')
+  const orbitRef = useRef(null)
+  const reticleRef = useRef(null)
+  // Imperative handle the scene buttons (which live outside the canvas)
+  // use to fly the camera — works whether or not the hand control is on.
+  const gestureApiRef = useRef(null)
+
+  // Hand-tracking engine: 'browser' (in-page, no helper, default) or
+  // 'server' (the Python helper, for A/B comparison via ?handengine=server).
+  const handEngine = searchParams.get('handengine') === 'server' ? 'server' : 'browser'
+
   // Outside-the-room background: white during verification (lets the room
   // outline read against a clean ground), near-black in experience mode.
   const outsideColor = isExperience ? '#0a0a0a' : '#ffffff'
@@ -227,11 +261,23 @@ function FirefliesInner() {
           )}
 
           <OrbitControls
+            ref={orbitRef}
             target={orbitTarget}
             enableDamping
             dampingFactor={0.08}
             maxDistance={40}
             minDistance={0.3}
+          />
+
+          <GestureControls
+            enabled={gestureOn}
+            controlsRef={orbitRef}
+            reticleRef={reticleRef}
+            onStatus={setGestureStatus}
+            jumpViews={SCENE_TOUR}
+            jumpStartIndex={0}
+            engine={handEngine}
+            apiRef={gestureApiRef}
           />
 
           <Room
@@ -257,6 +303,19 @@ function FirefliesInner() {
         suppress={searchParams.has('timeline')}
       />
 
+      {/* Hand-gesture camera control: the on-screen reticle that follows
+          the hand (filled when pinching). The on/off toggle lives in the
+          top-left navigation panel (ControlPanel). */}
+      <div
+        ref={reticleRef}
+        style={{
+          position: 'fixed', width: 28, height: 28, marginLeft: -14, marginTop: -14,
+          border: '2px solid #00ff78', borderRadius: '50%', pointerEvents: 'none',
+          zIndex: 30, display: 'none', boxShadow: '0 0 12px rgba(0,0,0,0.5)',
+          transition: 'background 0.08s, transform 0.05s',
+        }}
+      />
+
       {/* Floating glass panes: inspector (exit pill in experience mode)
           and the player bar */}
       <ControlPanel
@@ -264,8 +323,13 @@ function FirefliesInner() {
         onBrightnessChange={setBrightness}
         spotlights={spotlights}
         onSpotlightsChange={setSpotlights}
+        gestureOn={gestureOn}
+        gestureStatus={gestureStatus}
+        onToggleGesture={() => setGestureOn((v) => !v)}
+        scenes={SCENE_TOUR}
+        onJumpScene={(i) => gestureApiRef.current?.jumpTo(i)}
       />
-      <TimelineController />
+      {!gestureOn && <TimelineController />}
     </div>
   )
 }

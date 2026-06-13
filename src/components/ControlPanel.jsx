@@ -5,6 +5,7 @@ import { proposalVariantList } from '../variants/proposals.js'
 import { fireflyVariantList } from '../variants/fireflies.js'
 import { useProposal } from '../hooks/useProposal.js'
 import Glass, { EASE_OUT, ChevronDown, CloseGlyph } from './Glass'
+import GestureButton from './gesture/GestureButton.jsx'
 
 const TRANSITION = {
   transitionDuration: '280ms',
@@ -45,7 +46,6 @@ const BEAM_OPTIONS = [
 
 const PATHWAY_OPTIONS = [
   { id: 'dark', label: 'Dark' },
-  { id: 'timber', label: 'Timber' },
 ]
 
 
@@ -152,7 +152,11 @@ function Dropdown({ options, current, urlFor }) {
   )
 }
 
-export default function ControlPanel({ brightness, onBrightnessChange, spotlights, onSpotlightsChange }) {
+export default function ControlPanel({
+  brightness, onBrightnessChange, spotlights, onSpotlightsChange,
+  gestureOn, gestureStatus, onToggleGesture,
+  scenes = [], onJumpScene,
+}) {
   const [searchParams] = useSearchParams()
   const { proposalId, defaultFirefly } = useProposal()
 
@@ -383,11 +387,38 @@ export default function ControlPanel({ brightness, onBrightnessChange, spotlight
           Notes / Settings pills never crowd them) */}
       <div className="fixed top-3 left-3 z-10 select-none">
         <Glass className="rounded-2xl p-3 md:p-4 space-y-2 w-44 md:w-56">
-          <Dropdown options={proposalOptions} current={proposalId} urlFor={proposalUrlFor} />
-          <Dropdown options={cameraOptions} current={currentView} urlFor={(id) => urlForSet('view', id)} />
+          <GestureButton on={gestureOn} status={gestureStatus} onToggle={onToggleGesture} />
+          {!gestureOn && (
+            <>
+              <Dropdown options={proposalOptions} current={proposalId} urlFor={proposalUrlFor} />
+              <Dropdown options={cameraOptions} current={currentView} urlFor={(id) => urlForSet('view', id)} />
+            </>
+          )}
+          {gestureOn && scenes.length > 0 && (
+            <div className="space-y-1.5 pt-0.5">
+              <Label>Scenes</Label>
+              <div className="flex flex-wrap gap-1">
+                {scenes.map((s, i) => (
+                  <button
+                    key={s.label}
+                    type="button"
+                    onClick={() => onJumpScene && onJumpScene(i)}
+                    style={TRANSITION}
+                    className="pill-dense min-h-[30px] px-2.5 flex items-center rounded-full text-[12px] whitespace-nowrap cursor-pointer transition-colors text-white/55 hover:text-white hover:bg-white/10 bg-white/8"
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </Glass>
       </div>
 
+      {/* The settings panes recede while hand control is on, leaving just
+          the hand toggle and the scene buttons for a clean look-around. */}
+      {!gestureOn && (
+      <>
       {/* Desktop (1280+): pinned inspector pane — a glass pane floating
           over the room. It owns the right-hand strip; the player bar
           ends before this strip begins, so the two never overlap. */}
@@ -447,6 +478,8 @@ export default function ControlPanel({ brightness, onBrightnessChange, spotlight
           {settingsContent}
         </Glass>
       </dialog>
+      </>
+      )}
     </>
   )
 }

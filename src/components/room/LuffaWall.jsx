@@ -23,9 +23,6 @@ import {
   LOOFAH_GRID_COLS, LOOFAH_GRID_ROWS,
   LOOFAH_GRID_FRAME_T, LOOFAH_GRID_FRAME_COLOR,
   LOOFAH_GRID_CELL_BRIGHT_MIN, LOOFAH_GRID_CELL_BRIGHT_MAX,
-  LOOFAH_STICK_COUNT, LOOFAH_STICK_LENGTH_MIN, LOOFAH_STICK_LENGTH_MAX,
-  LOOFAH_BASE_STRIP_HEIGHT, LOOFAH_BASE_STRIP_DEPTH,
-  LOOFAH_BASE_STRIP_COLOR, LOOFAH_BASE_STRIP_INTENSITY,
 } from '../../geometry/dimensions.js'
 import { getLoofahCornerCenter } from '../../geometry/loofahCorners.js'
 import { makeRng } from '../../utils/parkMillerRng.js'
@@ -69,8 +66,13 @@ function useEveningFactor() {
 
 const SURFACE_NUDGE = 0.008
 const FRONT_WALL_SURFACE_X = ROOM.W - WALL_T              // 8.71
-const WALL_BACKLIGHT_X = FRONT_WALL_SURFACE_X - SURFACE_NUDGE   // 8.702
-const WALL_BAMBOO_X = WALL_BACKLIGHT_X - 0.01             // 8.692
+// The loofah is fixed to mounting boards on the front-wall that stand proud of
+// it — so the whole installation sits clearly in front of the wall (and in
+// front of the wainscoting). Everything hangs off the board's front face.
+const PANEL_T = 0.08                                      // mounting-board thickness / standoff
+const PANEL_FRONT_X = FRONT_WALL_SURFACE_X - PANEL_T      // board front face, proud of the wall
+const WALL_BACKLIGHT_X = PANEL_FRONT_X - SURFACE_NUDGE
+const WALL_BAMBOO_X = WALL_BACKLIGHT_X - 0.01
 // Per-piece centre X is computed as WALL_BAMBOO_X - sx/2 so the back
 // face of every piece sits flush with the bamboo plane and the piece
 // protrudes toward the viewer by its full depth `sx`.
@@ -341,6 +343,28 @@ function sampleColor(rng) {
   return new THREE.Color(r, g, b)
 }
 
+// --- Mounting panel ---
+// The board the loofah is fixed to, standing proud of the front-wall so the
+// whole installation reads as a forward-mounted piece, not the wall surface.
+const MOUNT_PANEL_MATERIAL = {
+  color: '#2a2622',
+  emissive: '#2a2622',
+  emissiveIntensity: 0.05,
+  roughness: 0.9,
+  metalness: 0,
+}
+function MountPanel() {
+  const yCenter = LOOFAH_WALL_Y_BASE + LOOFAH_WALL_HEIGHT / 2
+  const zCenter = (LOOFAH_WALL_Z_START + LOOFAH_WALL_Z_END) / 2
+  const xCenter = FRONT_WALL_SURFACE_X - PANEL_T / 2
+  return (
+    <mesh position={[xCenter, yCenter, zCenter]}>
+      <boxGeometry args={[PANEL_T, LOOFAH_WALL_HEIGHT, LOOFAH_WALL_WIDTH]} />
+      <meshStandardMaterial {...MOUNT_PANEL_MATERIAL} />
+    </mesh>
+  )
+}
+
 // --- Backlight plane behind the wall variants ---
 function BacklightPlane() {
   const evening = useEveningFactor()
@@ -590,68 +614,15 @@ function LoofahPiece({ piece, geometry, normalMap, normalScale }) {
   )
 }
 
-// --- Base strip (image 12) — bright warm line along the wall's foot ---
-function BaseStrip() {
-  const evening = useEveningFactor()
-  const zCenter = (LOOFAH_WALL_Z_START + LOOFAH_WALL_Z_END) / 2
-  // Sits on the floor just in front of the deepest loofah pieces.
-  const x = WALL_BAMBOO_X - LOOFAH_SIZE_X_RANGE[1] - LOOFAH_BASE_STRIP_DEPTH
-  return (
-    <mesh position={[x, LOOFAH_BASE_STRIP_HEIGHT / 2, zCenter]}>
-      <boxGeometry args={[LOOFAH_BASE_STRIP_DEPTH, LOOFAH_BASE_STRIP_HEIGHT, LOOFAH_WALL_WIDTH]} />
-      <meshStandardMaterial
-        color={LOOFAH_BASE_STRIP_COLOR}
-        emissive={LOOFAH_BASE_STRIP_COLOR}
-        emissiveIntensity={LOOFAH_BASE_STRIP_INTENSITY * evening}
-        roughness={1}
-        metalness={0}
-      />
-    </mesh>
-  )
-}
-
-// --- Criss-cross sticks (fibrous look, image 07) ---
-// Dark sticks laid over the piece field at random diagonal angles, in
-// the wall's own plane. Seeded; stick ends may poke slightly past the
-// wall edges, matching the image's organic overflow.
-function CrissCrossSticks() {
-  const sticks = useMemo(() => {
-    const rng = makeRng(LOOFAH_CLUSTER_SEED + 60)
-    const out = []
-    const x = WALL_BAMBOO_X - LOOFAH_SIZE_X_RANGE[1] - 0.01
-    for (let i = 0; i < LOOFAH_STICK_COUNT; i++) {
-      const y = LOOFAH_WALL_Y_BASE + LOOFAH_WALL_HEIGHT * (0.2 + rng() * 0.6)
-      const z = LOOFAH_WALL_Z_START + LOOFAH_WALL_WIDTH * (0.08 + rng() * 0.84)
-      const length = LOOFAH_STICK_LENGTH_MIN +
-        rng() * (LOOFAH_STICK_LENGTH_MAX - LOOFAH_STICK_LENGTH_MIN)
-      // Tilt from vertical, in the wall plane (rotation about X).
-      const tilt = (rng() - 0.5) * 2 * 1.15
-      out.push({ x, y, z, length, tilt })
-    }
-    return out
-  }, [])
-  return (
-    <group>
-      {sticks.map((s, i) => (
-        <mesh key={i} position={[s.x, s.y, s.z]} rotation={[s.tilt, 0, 0]}>
-          <cylinderGeometry args={[LOOFAH_BAMBOO_RADIUS * 1.3, LOOFAH_BAMBOO_RADIUS * 1.3, s.length, 6]} />
-          <meshStandardMaterial {...BAMBOO_MATERIAL} />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
 // --- Fibrous wall (image 07) ---
-// The dense loofah piece field over the warm backlight, with criss-
-// crossed sticks instead of the old regular bamboo grid.
+// The dense loofah piece field over the warm backlight.
 function FibrousWall({ boxGeo, normalMap, normalScale }) {
   const pieces = useMemo(() => generateDenseField(), [])
 
   return (
     <group>
+      <MountPanel />
       <BacklightPlane />
-      <CrissCrossSticks />
       {pieces.map((piece, i) => (
         <LoofahPiece
           key={i}
@@ -661,7 +632,6 @@ function FibrousWall({ boxGeo, normalMap, normalScale }) {
           normalScale={normalScale}
         />
       ))}
-      <BaseStrip />
     </group>
   )
 }
@@ -716,6 +686,7 @@ function GridWall({ fibreMap }) {
 
   return (
     <group>
+      <MountPanel />
       {/* backlight with one flat brightness per cell */}
       <GridBacklight cellMap={cellMap} yCenter={yCenter} zCenter={zCenter} />
       {/* fibre cutout sheet the glow shines through */}
@@ -742,7 +713,6 @@ function GridWall({ fibreMap }) {
           <meshStandardMaterial color={LOOFAH_GRID_FRAME_COLOR} roughness={0.85} metalness={0} />
         </mesh>
       ))}
-      <BaseStrip />
     </group>
   )
 }

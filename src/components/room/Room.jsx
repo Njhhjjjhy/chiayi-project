@@ -5,8 +5,6 @@ import EntranceWallPartition from './EntranceWallPartition.jsx'
 import Pathway from './Pathway.jsx'
 import TheatricalCurtain from './TheatricalCurtain.jsx'
 import {
-  WINDOW_CURTAIN_WIDTH, WINDOW_CURTAIN_HEIGHT,
-  WINDOW_CURTAIN_CENTER_X, WINDOW_CURTAIN_CENTER_Y, WINDOW_CURTAIN_CENTER_Z,
   ENTRANCE_CURTAIN_WIDTH, ENTRANCE_CURTAIN_HEIGHT,
   ENTRANCE_CURTAIN_CENTER_X, ENTRANCE_CURTAIN_CENTER_Y, ENTRANCE_CURTAIN_CENTER_Z,
   EXIT_CURTAIN_WIDTH, EXIT_CURTAIN_HEIGHT,
@@ -14,6 +12,8 @@ import {
 } from '../../geometry/dimensions.js'
 import Doors from './Doors.jsx'
 import Windows from './Windows.jsx'
+import Wainscot from './Wainscot.jsx'
+import HVAC from './HVAC.jsx'
 import SculpturalCeiling from './SculpturalCeiling.jsx'
 import CeilingLEDs from '../fireflies/CeilingLEDs.jsx'
 import Branches from './Branches.jsx'
@@ -78,18 +78,12 @@ export default function Room({
     <group>
       <Floor />
       <Walls />
+      <Wainscot />
+      <HVAC />
       <Column />
       <EntranceWallPartition />
       <Pathway variant={pathwayVariant} />
       <>
-          <TheatricalCurtain
-            width={WINDOW_CURTAIN_WIDTH}
-            height={WINDOW_CURTAIN_HEIGHT}
-            centerX={WINDOW_CURTAIN_CENTER_X}
-            centerY={WINDOW_CURTAIN_CENTER_Y}
-            centerZ={WINDOW_CURTAIN_CENTER_Z}
-            orientation="window-wall"
-          />
           <TheatricalCurtain
             width={ENTRANCE_CURTAIN_WIDTH}
             height={ENTRANCE_CURTAIN_HEIGHT}

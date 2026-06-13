@@ -1,4 +1,7 @@
-import { ROOM, WALL_T } from '../../geometry/dimensions.js'
+import {
+  ROOM, WALL_T,
+  SPRINKLER_Y, SPRINKLER_RADIUS, SPRINKLER_OFFSET,
+} from '../../geometry/dimensions.js'
 
 // Three real walls of the exhibition room: back, front, and window.
 // The entrance-wall is not a real wall — it is built from three plywood
@@ -22,6 +25,17 @@ const STRUCTURAL = {
   metalness: 0,
 }
 
+// Existing bright-red sprinkler pipe on the back-wall.
+const SPRINKLER_RED = {
+  color: '#c62828',
+  emissive: '#c62828',
+  emissiveIntensity: 0.15,
+  roughness: 0.6,
+  metalness: 0.1,
+}
+
+const PIPE_X = WALL_T + SPRINKLER_OFFSET
+
 export default function Walls() {
   return (
     <group>
@@ -29,6 +43,17 @@ export default function Walls() {
       <mesh position={[WALL_T / 2, ROOM.H / 2, ROOM.D / 2]}>
         <boxGeometry args={[WALL_T, ROOM.H, ROOM.D]} />
         <meshStandardMaterial {...STRUCTURAL} />
+      </mesh>
+
+      {/* back-wall red sprinkler pipe — horizontal run near the top, just off the wall */}
+      <mesh position={[PIPE_X, SPRINKLER_Y, ROOM.D / 2]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[SPRINKLER_RADIUS, SPRINKLER_RADIUS, ROOM.D, 12]} />
+        <meshStandardMaterial {...SPRINKLER_RED} />
+      </mesh>
+      {/* vertical drop near the entrance-wall corner (Z = 0) */}
+      <mesh position={[PIPE_X, (SPRINKLER_Y + ROOM.H) / 2, 0.15]}>
+        <cylinderGeometry args={[SPRINKLER_RADIUS, SPRINKLER_RADIUS, ROOM.H - SPRINKLER_Y, 12]} />
+        <meshStandardMaterial {...SPRINKLER_RED} />
       </mesh>
 
       {/* front-wall — X = ROOM.W face */}

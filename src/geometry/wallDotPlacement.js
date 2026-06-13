@@ -1,9 +1,7 @@
 import {
-  ROOM, WALL_T,
   ENTRY_GAP_WIDTH, COLUMN_X, PATHWAY_PARTITION_Z, CABINET_T,
-  LOOFAH_WALL_HEIGHT, LOOFAH_WALL_Z_START, LOOFAH_WALL_Z_END,
   WALL_DOT_DENSITY, WALL_DOT_MIN_GAP,
-  WALL_DOT_NUDGE, WALL_DOT_DRAWER_FACE_PROUD,
+  WALL_DOT_DRAWER_FACE_PROUD,
   WALL_DOT_BAND_Y_MIN, WALL_DOT_BAND_Y_MAX,
   WALL_DOT_BASE_SEED,
 } from './dimensions.js'
@@ -16,42 +14,27 @@ import { makeRng } from '../utils/parkMillerRng.js'
 
 const BAND_HEIGHT = WALL_DOT_BAND_Y_MAX - WALL_DOT_BAND_Y_MIN
 
-// Eight eligible surfaces. Each is described in face-local (u, v) where
-// v is world Y (vertical band) and u is the face's horizontal axis.
-// `toWorld(u, v)` projects local coords back to world and applies the
-// surface nudge along the outward normal (8 mm on real walls; 13 mm on
-// partition body so dots sit proud of the slice-15 drawer face fronts).
+// Fireflies live only on the ceiling and the partition cabinets, and are
+// only ever seen from inside the forest (locked decision). So the wall
+// dots sit on three surfaces only: the forest-facing face of each
+// partition cabinet. The side walls (front/back) carry none, and neither
+// do the cabinet faces that point back toward the entrance or along the
+// pathway — nothing glows toward the way in, nothing is visible from
+// outside the exhibition.
+//
+// Each surface is described in face-local (u, v) where v is world Y
+// (vertical band) and u is the face's horizontal axis. `toWorld(u, v)`
+// projects local coords back to world, the dots sitting proud of the
+// drawer fronts by WALL_DOT_DRAWER_FACE_PROUD. Seed offsets are kept
+// from the original eight-surface set so the surviving forest-facing
+// dots land in exactly the same places as before.
 const SURFACES = [
-  {
-    id: 'front-wall',
-    seedOffset: 0,
-    uMin: 0, uMax: ROOM.D,
-    excludes: [{
-      uMin: LOOFAH_WALL_Z_START, uMax: LOOFAH_WALL_Z_END,
-      vMin: WALL_DOT_BAND_Y_MIN, vMax: LOOFAH_WALL_HEIGHT,
-    }],
-    toWorld: (u, v) => [ROOM.W - WALL_T - WALL_DOT_NUDGE, v, u],
-  },
-  {
-    id: 'back-wall',
-    seedOffset: 1,
-    uMin: 0, uMax: ROOM.D,
-    excludes: [],
-    toWorld: (u, v) => [WALL_T + WALL_DOT_NUDGE, v, u],
-  },
   {
     id: 'entrance-partition-forest',
     seedOffset: 2,
     uMin: ENTRY_GAP_WIDTH, uMax: COLUMN_X,
     excludes: [],
     toWorld: (u, v) => [u, v, CABINET_T + WALL_DOT_DRAWER_FACE_PROUD],
-  },
-  {
-    id: 'entrance-partition-pathway',
-    seedOffset: 3,
-    uMin: ENTRY_GAP_WIDTH, uMax: COLUMN_X,
-    excludes: [],
-    toWorld: (u, v) => [u, v, -WALL_DOT_DRAWER_FACE_PROUD],
   },
   {
     id: 'pathway-vertical-forest',
@@ -61,25 +44,11 @@ const SURFACES = [
     toWorld: (u, v) => [ENTRY_GAP_WIDTH + CABINET_T + WALL_DOT_DRAWER_FACE_PROUD, v, u],
   },
   {
-    id: 'pathway-vertical-pathway',
-    seedOffset: 5,
-    uMin: 0, uMax: PATHWAY_PARTITION_Z,
-    excludes: [],
-    toWorld: (u, v) => [ENTRY_GAP_WIDTH - WALL_DOT_DRAWER_FACE_PROUD, v, u],
-  },
-  {
     id: 'pathway-horizontal-forest',
     seedOffset: 6,
     uMin: ENTRY_GAP_WIDTH, uMax: COLUMN_X,
     excludes: [],
     toWorld: (u, v) => [u, v, PATHWAY_PARTITION_Z - CABINET_T - WALL_DOT_DRAWER_FACE_PROUD],
-  },
-  {
-    id: 'pathway-horizontal-pathway',
-    seedOffset: 7,
-    uMin: ENTRY_GAP_WIDTH, uMax: COLUMN_X,
-    excludes: [],
-    toWorld: (u, v) => [u, v, PATHWAY_PARTITION_Z + WALL_DOT_DRAWER_FACE_PROUD],
   },
 ]
 
