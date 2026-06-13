@@ -1,133 +1,67 @@
 # Fireflies
 
-## Deployment policy (NEVER VIOLATE)
+An immersive firefly exhibition room in Alishan, Taiwan. The web app is a private
+3D preview for planning the real room — the room is the product, not the app.
 
-**NEVER commit, push, or deploy without an explicit instruction from the user for that specific change.** A previous "push this" is NOT a standing order for future changes. Each commit, push, and deploy must be explicitly authorized for the specific change at hand. Default behavior is: make the change locally, leave it uncommitted, and let the user verify in the browser. The user reviews UI changes visually before anything goes to git. When in doubt, stop and ask.
+## Read this first, every session
 
-## How to talk to the user (read this first)
+**All project knowledge lives in the [`design/`](design/) folder.** Before doing
+any real work, read:
 
-**The user is a designer, not a developer.** Never use code jargon, file names, function names, or technical shorthand in conversation. Describe everything in plain or design terms – what the user would *see, feel, or do*, not how the code does it.
+- [`design/README.md`](design/README.md) — the map and the one organising rule.
+- [`design/rules.md`](design/rules.md) — how to work and talk on this project.
+- [`design/decisions.md`](design/decisions.md) — what's locked. Build to it.
+- [`design/open.md`](design/open.md) — what's still being decided. Never treat as settled.
 
-Examples of what NOT to say:
-- "MeasureTool.jsx hardcodes [10, 3.52] planes"
-- "Refactored ClickPlane to derive from ROOM constants"
-- "kebab-case the dropdown values"
-- "rename PARTITION_HEIGHT to PATHWAY_HEIGHT"
+For the room, see [`design/room.md`](design/room.md); for the experience,
+[`design/experience.md`](design/experience.md); for context and history,
+[`design/reference/`](design/reference/). The exact room measurements live in one
+file the 3D app reads from (`src/geometry/dimensions.js`) — that is the source of
+truth for every number; quote from there, never from memory.
 
-Translated to plain language:
-- "the click-to-measure tool was still set up for the old, bigger room – fixed it to follow the current room size"
-- "the room dropdown buttons in the QA panel were named with the old labels – updated"
-- "the partition's height value had the old name – renamed to match the new naming"
+## The non-negotiables (full versions in `design/rules.md`)
 
-If a code change has no visible effect, just *do it silently* and don't mention it. If it does have a visible effect, describe the effect, not the change.
+- **Never commit, push, or deploy without an explicit instruction for that
+  specific change.** A previous "push this" is not a standing order. Default: make
+  the change locally, leave it uncommitted, let the user verify in the browser.
+  When in doubt, stop and ask.
+- **The user is a designer, not a developer.** Plain language only — describe what
+  he'd see, feel, or do, never code mechanics, file names, or jargon. If a change
+  has no visible effect, do it silently.
+- **No attribution, ever.** No designer, artist, studio, or specific-artwork names
+  anywhere — not in code, UI, docs, file names, or commit messages.
 
-When the user asks "what is X?", explain X in terms a non-developer can picture. Do not assume they know any naming conventions, file structures, or programming concepts.
+## Memory
 
-## Design Context
+There is **no auto-memory** on this project. The feature is turned off (pinned off
+in this repo's settings), and the old hidden memory has been migrated into
+[`design/rules.md`](design/rules.md) and [`design/decisions.md`](design/decisions.md).
+Everything Claude needs to "remember" lives in `design/`, in the open, versioned.
+Don't try to write learnings anywhere else.
 
-### Users
-Primarily non-artsy visitors: families, tourists already visiting Alishan, casual travelers. They arrive without art-world knowledge and should leave with a shifted perspective on nature. The storyline must be self-evident. Bilingual audience (Chinese/English) – both languages deserve equal design consideration.
+## Working in the codebase
 
-### Brand Personality
-**Poetic, scientific, alive.** Art + science + tech. The exhibition draws on large-scale immersive environmental art and on atmospheric installation work that treats real-world phenomena – light, weather, perception – as the medium itself. It must feel like a proper art exhibition – never a theme park, never a tech demo, never a DIY project.
+- `src/components/` — UI (control panel, timeline). `src/components/room/` — physical
+  room geometry. `src/components/fireflies/` — the firefly LED + behaviour system.
+  `src/components/lighting/` — fixtures and shaders. `src/components/QAPanel/` — QA
+  notes panel. `src/pages/FirefliesPage.jsx` — the only real page (`/3d`, `/proposals`
+  redirect here). `src/geometry/` — placement sources of truth (`dimensions.js` for all
+  measurements). `src/variants/` — option sets the picker chooses between.
+  `src/styles/index.css` — design tokens (CSS variables; use `var(--token)`).
+- `api/` — Vercel functions backing the QA panel. `scripts/` — capture/diagnostic tools.
+- `public/` — shipped static assets (keep lean). `reference/` (top level) — local-only
+  research material, never deployed. `baselines/` — local diagnostic screenshots (gitignored).
+- `3d-image/` — a separate, untracked 360° panorama tour sub-project; not part of the main app.
 
-### Two Stories
-There are two narrative layers, and they must not be confused:
-- **Outer story (promotional):** Tells the story *of* the project – what it is, why it exists, why you should visit. This is the website, marketing, social media. It sells the exhibition.
-- **Inner story (the experience):** What happens *inside* the room. This is the immersive journey itself – an environmental piece that visitors walk through and inhabit. No text panels, no explanation needed. The room tells the story through light, darkness, and rhythm.
+### Commands
 
-Both need a clear storyline because the audience is primarily non-artsy. The inner story must land without art-world knowledge.
+- `pnpm dev` — dev server. `pnpm build` — production build. `pnpm lint` — eslint.
+  `pnpm preview` — serve the production build.
 
-### Emotional Arc
-Wonder → connection → care. Visitors experience awe through bioluminescence and atmosphere, then arrive at a quiet realization: the fireflies are not separate from you. They are a reflection of you. The goal is positive reinforcement – visitors leave seeing nature differently, wanting to protect it because it is part of them. Not guilt, not doom.
+### Off-limits
 
-### Core Theme
-Fireflies represent the delicate balance between humans and nature. Their bioluminescence works through the same fundamental mechanism as electrical signals in human brain synapses – both are living systems communicating through light and chemistry. This scientific parallel connects to a Buddhist philosophical idea: everything you see is an extension of yourself, and you are part of everything.
-
-### Aesthetic Direction
-- **Dark, immersive, gallery-like.** Background #0a0a0a. UI recedes; content breathes.
-- **Opacity-driven hierarchy.** White text at varying opacities (90/75/60/40/30/20) rather than multiple colors.
-- **Accent colors are nature-coded:** green (moss/life), orange (warmth/sunset), purple (twilight/mystery).
-- **Typography:** System font stack, light weight for headings, tight hierarchy from text-xs to text-5xl. Uppercase micro-labels with wide tracking for navigation.
-- **Transitions:** Smooth, subtle. Backdrop blur on navigation. Hover states through opacity shifts, not color changes.
-- **References:** large-scale environmental installation (immersive scale), atmospheric and scientifically-grounded installation work (scientific wonder), the physical Nanghia venue (rooted in place).
-- **Anti-references:** Theme park (no flashy spectacle), corporate / sterile (no cold minimalism), academic / dry (no lecture-hall energy), DIY (no rough, unfinished feel).
-
-### Design Principles
-
-1. **The room is the interface.** Design for a physical space first. The digital tools (3D preview, website) serve the real installation – they are not the product.
-2. **Darkness is a material.** The absence of light is as designed as its presence. Respect the dark. Don't over-illuminate UI or environment.
-3. **Quiet confidence over spectacle.** Every element should feel considered, not showy. If it draws attention to the technology, it's wrong. If it draws attention to the fireflies, it's right.
-4. **Accessible wonder.** No art-world gatekeeping. Families and casual visitors should feel the experience without explanation. Support web accessibility (WCAG AA), motion sensitivity (reduced motion options), and bilingual Chinese/English parity.
-5. **Nature sets the palette.** Colors, timing, and rhythm come from the real Alishan sunset cycle and firefly behavior – golden hour → twilight → blue hour → darkness. The 4-phase lighting transition is the backbone of the experience.
-
-### Attribution policy
-No designer, artist, studio, or specific-artwork names appear anywhere in this codebase: not in comments, not in UI, not in plan documents, not in commit messages, not in asset filenames. The form carries the reference.
-
-### Tech Stack
-- React 19 + Vite 8 + Tailwind CSS 4
-- Three.js via @react-three/fiber + drei + postprocessing
-- React Router (single page at `/fireflies`; `/3d` and `/proposals` redirect there)
-- Design tokens live as CSS variables in `src/styles/index.css` (`--color-bg`, `--color-text`, `--color-muted`, `--color-dim`, `--color-rule`, `--color-red`, `--color-blue`, `--color-amber`, `--font-serif`, `--font-mono`). Use them via `var(--token)` rather than hardcoded values. Layout/spacing still uses Tailwind utilities inline.
-
-### Room glossary
-When interpreting QA notes from Corbett (or any informal language about room elements), read `docs/room-glossary.md` first. It maps every wall / fixture / fabric / firefly group to its canonical name and code reference, plus a translation cheatsheet for common informal phrases.
-
-### Naming rule (locked)
-Every room element has one canonical name with a hyphen: front-wall, back-wall, window-wall, entrance-wall, pathway, pathway-partition, entrance-wall-partition, column, forest, exhibition-area, hvac-plenum, silver-service-door, etc. Use these everywhere – comments, doc text, dropdown labels, file names. Old names like "corridor", "Segment 1/2/3", "EntryPathway" are forbidden – see `docs/room-glossary.md` for the translation table when reading old QA notes.
-
-**There are two partitions** – pathway-partition and entrance-wall-partition. Never say just "partition" alone – always qualify which one. The walking strip is always called "pathway", never "walking strip" or "corridor".
-
-### Real-world room sizes (locked)
-The room is rectangular: 8.83 m (front-wall and back-wall) × 8.78 m (entrance-wall and window-wall) × 3.52 m tall (working ceiling, after beams). Total height to the original structural ceiling is 4.2 m, but only 3.52 m is modelled. Visitor entrance is 2.4 m wide × full-height. Source of truth lives in `src/geometry/dimensions.js` – every other position derives from it. Don't hardcode numbers.
-
-### Window-wall layout (locked)
-Walking along the window-wall from the front-wall corner toward the back-wall corner: 119 cm plain wall (with the small 59 × 178 cm window cut in flush-left), then 99 cm silver service door, then 90 cm plain wall, then 570 cm main glass partition that ends flush with the back-wall corner. Total 878 cm.
-
-### Visual diagnostic snapshots
-The folder `baselines/` (top-level, gitignored) holds PNG screenshots from `scripts/screenshot-all-presets.mjs` and ad-hoc puppeteer captures. One PNG per significant change, filename `<YYYY-MM-DD-HHMMSS>-<label>.png`. Used to visually verify geometry changes side-by-side with prior states. Do not commit these.
-
-### Honesty about sources
-Never claim to have read documentation or URLs that weren't actually retrieved. WebFetch fails silently on JavaScript-rendered sites (e.g. developer.apple.com) – when that happens, say so explicitly and propose an alternative (puppeteer, user paste, PDF). Distinguish clearly between (a) content actually retrieved from a URL/file and (b) reference info from a Claude skill or training data. Do not substitute one for the other.
-
-
-## Folder map
-
-- `src/components/` – top-level UI components (control panel, timeline controller).
-- `src/components/room/` – physical room geometry (walls, ceiling, doors, windows, partitions, curtains, loofah wall, seating, lantern pillars, grove stems, flock hangers, nesting forms).
-- `src/components/fireflies/` – firefly system: ceiling LEDs, wall LEDs, particle renderer, behaviour modules (Awakening, Flashlight, Heartbeat, DriftingSwarm, PulseWave), and the `FireflySystem` dispatch.
-- `src/components/lighting/` – lighting fixtures and shaders that are not the LEDs themselves (experience lighting, seating spotlights, pathway edge lights, wall glow dots, wall lighting).
-- `src/components/QAPanel/` – shared QA notes panel backed by Vercel Blob.
-- `src/pages/FirefliesPage.jsx` – the only real page; `/3d` and `/proposals` redirect here.
-- `src/hooks/` – context providers and hooks (proposal, timeline).
-- `src/variants/` – named option sets the variant picker selects between (`proposals.js`, `fireflies.js`, `config.js`).
-- `src/geometry/` – single sources of truth for placement: `dimensions.js` for all room measurements, plus per-variant placement modules (`grovePlacement.js`, `lanternPlacement.js`, `flockPlacement.js`, `nestingPlacement.js`, `wallDotPlacement.js`, `ceilingForms.js`, `forestExclusion.js`).
-- `src/postfx/` – post-processing effects.
-- `src/utils/` – small shared helpers (`parkMillerRng.js`).
-- `src/styles/index.css` – design tokens (CSS variables) + base styles.
-- `api/` – Vercel functions (`notes.js`, `upload.js`) backing the QA panel via `@vercel/blob`.
-- `scripts/` – four reusable tools: `capture-phase.mjs` (proposal phase screenshots), `phase-e-led-totals.mjs` (LED total invariant check), `screenshot-all-presets.mjs` (per-preset capture), `diagnostic-floor.mjs` (floor diagnostic).
-- `docs/canonical/` – numbered canonical references (rooms, ceiling, loofah wall, proposals, experience directions, open items, discovery prompt, additional firefly variants). Start here for design context.
-- `docs/` – other internal docs; `room-glossary.md` translates informal QA language to canonical names.
-- `public/` – static assets shipped to the live site. Keep this lean.
-- `reference/` – local-only project material: research-trip photos, exhibition references, PBR texture libraries, ideas/notes. Never deployed. If you want to wire a texture or photo into the running app, copy it into `public/` first.
-- `showcase/` – auto-generated portfolio docs (regenerated by `/handoff`; do not hand-edit).
-
-## Commands
-
-- `pnpm dev` – start the Vite dev server.
-- `pnpm build` – production build.
-- `pnpm lint` – eslint over the project.
-- `pnpm preview` – serve the production build locally.
-- `node scripts/capture-phase.mjs` – capture proposal phase screenshots via puppeteer.
-
-## Off-limits
-
-- `dist/`, `node_modules/`, `.vercel/` – build/install artifacts, never edit.
-- `showcase/` – regenerated by `/handoff`, do not hand-edit.
-- `.handoffs/` – session handoff log, append-only.
-- Files currently in the user's stash or active edits – check `git status` first; do not refactor files mid-edit.
-
-## Obsidian vault (DISABLED)
-
-Obsidian vault writing is disabled. Do not write session notes to the vault.
+- `dist/`, `node_modules/`, `.vercel/` — build/install artifacts, never edit.
+- `showcase/` — regenerated by `/handoff`, do not hand-edit.
+- `.handoffs/` — session handoff log, append-only. Handoffs write here only (no
+  Obsidian copy).
+- Files in the user's active edits — check `git status` first; don't refactor mid-edit.
